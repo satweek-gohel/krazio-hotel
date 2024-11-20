@@ -1,8 +1,8 @@
 import React from 'react';
 import BaseCard from '../components/Base/BaseCard';
-
+import { useNavigate } from 'react-router-dom';
 const CardList = () => {
- 
+  const navigate = useNavigate();
   const restaurantData = [
     {
       id: 1,
@@ -32,17 +32,19 @@ const CardList = () => {
 
   const handlePickup = (name) => {
     console.log(`Pickup selected for ${name}`);
+    navigate('/branch-menu');
   };
 
   const handleDelivery = (name) => {
     console.log(`Delivery selected for ${name}`);
+    navigate('/branch-menu');
   };
 
   return (
     <div className="container mx-auto p-4">
          {/* Title and Subtitle */}
       <div className="p-4 text-center">
-        <h1 className="text-2xl font-bold text-black-600"><span className='text-red-600'>Hungry?</span> Let's Bring the Restaurant to You!</h1>
+        <h1 className="text-2xl font-bold text-black-600"><span className='text-red-600 font-extrabold'>Hungry?</span> Let's Bring the Restaurant to You!</h1>
         <p className="text-sm text-gray-500">Explore the top dishes from local restaurants, delivered straight to your door.</p>
       </div>
       <div className="cotainer flex align-center justify-center">

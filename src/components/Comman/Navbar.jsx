@@ -1,16 +1,49 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { navLinks } from '../Enumes/Enumes';
+import LoginModal from './LoginModal';
+import SignUpModal from './SignUpModal';
+import ForgotPasswordModal from './ForgotPasswordModal';
+import CheckoutAsGuestModal from './CheckoutAsGuestModal';
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
+  const [isCheckoutAsGuestModalOpen, setIsCheckoutAsGuestModalOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const openLoginModal = () => {
+    setIsLoginModalOpen(true);
+    setIsSignUpModalOpen(false);
+    setIsForgotPasswordModalOpen(false);
+    setIsCheckoutAsGuestModalOpen(false);
+  };
 
+  const openSignUpModal = () => {
+    setIsSignUpModalOpen(true);
+    setIsLoginModalOpen(false);
+    setIsForgotPasswordModalOpen(false);
+    setIsCheckoutAsGuestModalOpen(false);
+  };
 
+  const openForgotPasswordModal = () => {
+    setIsForgotPasswordModalOpen(true);
+    setIsLoginModalOpen(false);
+    setIsSignUpModalOpen(false);
+    setIsCheckoutAsGuestModalOpen(false);
+  };
+
+  const openCheckoutAsGuestModal = () => {
+    setIsCheckoutAsGuestModalOpen(true);
+    setIsLoginModalOpen(false);
+    setIsSignUpModalOpen(false);
+    setIsForgotPasswordModalOpen(false);
+  };
 
   return (
     <>
@@ -20,19 +53,23 @@ const Navbar = () => {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
-              <div className="text-2xl font-bold text-red-600">
-                Logo
-              </div>
+              <div className="text-2xl font-bold text-red-600">Logo</div>
             </div>
 
             {/* Auth Buttons and Menu Toggle */}
             <div className="flex items-center space-x-4">
               {/* Auth Buttons - Hidden on mobile */}
               <div className="hidden md:flex space-x-2">
-                <button className="px-4 py-2 text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition-colors">
+                <button
+                  onClick={openLoginModal}
+                  className="px-4 py-2 text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition-colors"
+                >
                   Log in
                 </button>
-                <button className="px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors">
+                <button
+                  onClick={openSignUpModal}
+                  className="px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+                >
                   Sign up
                 </button>
               </div>
@@ -89,15 +126,44 @@ const Navbar = () => {
 
           {/* Mobile Auth Buttons */}
           <div className="flex flex-col space-y-2 mt-4">
-            <button className="w-full px-4 py-2 text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition-colors">
+            <button
+              onClick={openLoginModal}
+              className="w-full px-4 py-2 text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition-colors"
+            >
               Log in
             </button>
-            <button className="w-full px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors">
+            <button
+              onClick={openSignUpModal}
+              className="w-full px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
+            >
               Sign up
             </button>
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onSignUpClick={openSignUpModal}
+        onForgotPasswordClick={openForgotPasswordModal}
+        onCheckoutAsGuestClick={openCheckoutAsGuestModal}
+      />
+      <SignUpModal
+        isOpen={isSignUpModalOpen}
+        onClose={() => setIsSignUpModalOpen(false)}
+        onLoginClick={openLoginModal}
+      />
+      <ForgotPasswordModal
+        isOpen={isForgotPasswordModalOpen}
+        onClose={() => setIsForgotPasswordModalOpen(false)}
+      />
+      <CheckoutAsGuestModal
+        isOpen={isCheckoutAsGuestModalOpen}
+        onClose={() => setIsCheckoutAsGuestModalOpen(false)}
+        onLoginClick={openLoginModal}
+      />
     </>
   );
 };
