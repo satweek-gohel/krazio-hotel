@@ -42,17 +42,17 @@ const BaseCard = ({
       <hr className="border-gray-200" />
 
       {/* Action Buttons */}
-      <div className="grid grid-cols-2 divide-x divide-gray-200">
+      <div className="grid grid-cols-2 divide-x divide-gray-200 gap-4 p-3 rounded">
         <button 
           onClick={onPickup}
-          className="flex items-center justify-center gap-2 p-3 bg-red-500 text-white hover:bg-red-600 transition-colors"
+          className="flex items-center justify-center gap-2 p-3 bg-red-500 text-white hover:bg-red-600 transition-colors rounded"
         >
           <Store className="w-5 h-5" />
           <span className="font-medium">Pickup</span>
         </button>
         <button 
           onClick={onDelivery}
-          className="flex items-center justify-center gap-2 p-3 bg-red-500 text-white hover:bg-red-600 transition-colors"
+          className="flex items-center justify-center gap-2 p-3 bg-red-500 text-white hover:bg-red-600 transition-colors rounded"
         >
           <Truck className="w-5 h-5" />
           <span className="font-medium">Delivery</span>

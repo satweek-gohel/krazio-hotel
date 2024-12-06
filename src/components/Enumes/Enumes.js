@@ -18,19 +18,19 @@ export   const navLinks = [
   ];
 
   export const categories = [
-    { name: 'Desserts', image: '/desserts.png' },
-    { name: 'Pizza', image: '/pizza.png' },
-    { name: 'Healthy', image: '/healthy.png' },
-    { name: 'Coffe', image: '/coffe.png' },
-    { name: 'Burgers', image: '/burgers.png' },
-    { name: 'Fast Food', image: '/fast-food.png' },
-    { name: 'Thia', image: '/thai.png' },
-    { name: 'Mexican', image: '/mexican.png' },
-    { name: 'Juices', image: '/juices.png' },
-    { name: 'Sandwich', image: '/sandwich.png' },
-    { name: 'Soup', image: '/soup.png' },
-    { name: 'Indian', image: '/indian.png' },
-    { name: 'Breakfast', image: '/breakfast.png' },
+    { category_name: 'Desserts', category_image: '/desserts.png' },
+    { category_name: 'Pizza', category_image: '/pizza.png' },
+    { category_name: 'Healthy', category_image: '/healthy.png' },
+    { category_name: 'Coffe', category_image: '/coffe.png' },
+    { category_name: 'Burgers', category_image: '/burgers.png' },
+    { category_name: 'Fast Food', category_image: '/fast-food.png' },
+    { category_name: 'Thia', category_image: '/thai.png' },
+    { category_name: 'Mexican', category_image: '/mexican.png' },
+    { category_name: 'Juices', category_image: '/juices.png' },
+    { category_name: 'Sandwich', category_image: '/sandwich.png' },
+    { category_name: 'Soup', category_image: '/soup.png' },
+    { category_name: 'Indian', category_image: '/indian.png' },
+    { category_name: 'Breakfast', category_image: '/breakfast.png' },
    
     
    

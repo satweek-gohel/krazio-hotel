@@ -1,87 +1,118 @@
-import React, { useState } from 'react';
-
-import PromotionalSlider from '../components/Base/BasePromotionSlider'; 
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext';
+import { getBranchDetails } from '../services/api/branchService';
+import PromotionalSlider from '../components/Base/BasePromotionSlider';
 import Category from '../components/Base/BaseCategory';
-import { categories, desserts, images2, menuItems, pizzas, toppicks } from '../components/Enumes/Enumes';
-import MenuCard from '../components/Base/BaseMenuCard';
+import CartSidebar from '../components/Cart/CartSidebar';
+import BranchHeader from '../components/Branch/BranchHeader';
+import MenuGrid from '../components/Menu/MenuGrid';
+import LoadingSpinner from '../components/Loading/LoadingSpinner';
+import ItemCustomizationModal from '../components/ItemCustomization/ItemCustomizationModal';
+import { images2 } from '../components/Enumes/Enumes';
+import RestaurantHeader from '../components/Branch/ResHeader';
 
 function BranchPage() {
+  const { restaurantId = "2", branchId = "3" } = useParams();
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [branchData, setBranchData] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const { addItem } = useCart();
+
+  useEffect(() => {
+    const fetchBranchData = async () => {
+      try {
+        const data = await getBranchDetails(restaurantId, branchId);
+        setBranchData(data);
+        
+        // Transform and set categories
+        const transformedCategories = data?.category_details.map(category => ({
+          category_name: category.category_name,
+          category_image: category.category_image || '/coffe.png',
+          category_id: category.category_id 
+        })) || [];
+        
+        setCategories(transformedCategories);
+      } catch (error) {
+        console.error('Failed to fetch branch data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBranchData();
+  }, [restaurantId, branchId]);
 
   const handleCategorySelect = (category) => {
-    // If the same category is clicked again, deselect it
     setSelectedCategory(prevCategory => 
-      prevCategory === category ? null : category
+      prevCategory?.category_id === category.category_id ? null : category
     );
   };
 
-  // Filter menu items based on selected category
-  const filteredMenuItems = selectedCategory
-    ? menuItems.filter(item => item.category === selectedCategory.name)
-    : menuItems;
-
-  const handleAddToCart = (item) => {
-    console.log(`Added ${item.foodName} to cart`);
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
   };
 
+  const handleAddToCart = (customizedItem) => {
+    addItem({
+      ...customizedItem,
+      id: customizedItem.item_id,
+      item_name: customizedItem.item_name,
+      price: customizedItem.price,
+      item_image: customizedItem.item_image
+    });
+    setSelectedItem(null);
+  };
+
+  const filteredItems = selectedCategory
+    ? branchData?.item_details.filter(item => item.category_id === selectedCategory.category_id)
+    : branchData?.item_details;
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <div className="container mx-auto px-0 md:px-[100px] py-0 md:py-[50px] branch-page"> 
-      <PromotionalSlider title="Deals For You" images={images2} />
-      <Category 
-        title="Food Categories" 
-        categories={categories} 
-        onSelect={handleCategorySelect} 
+    <div className="container mx-auto px-20 py-5 branch-page">
+      <CartSidebar />
+
+      <div className="base mt-20">
+      <RestaurantHeader 
+        name="SUSHI HOUSE"
+        address="1901 Thornridge Cir, Shiloh, Hawaii 81063"
+        hours="9:00AM - 10:00PM"
       />
-
-<h2 className="text-2xl font-bold text-left mb-6 px-4">Top picks menu for easy online food delivery</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {toppicks.map(item => (
-          <MenuCard
-            key={item.id}
-            foodName={item.foodName}
-            imageSrc={item.imageSrc}
-            rating={item.rating}
-            time={item.time}
-            price={item.price}
-            onAddClick={() => handleAddToCart(item)}
-          />
-        ))}
-      </div>
-
-      <h2 className="text-2xl font-bold text-left mb-6 px-4">Desserts</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {desserts.map(item => (
-          <MenuCard
-            key={item.id}
-            foodName={item.foodName}
-            imageSrc={item.imageSrc}
-            rating={item.rating}
-            time={item.time}
-            price={item.price}
-            onAddClick={() => handleAddToCart(item)}
-          />
-        ))}
-      </div>
-
-      <h2 className="text-2xl font-bold text-left mb-6 px-4">Pizzas</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {pizzas.map(item => (
-          <MenuCard
-            key={item.id}
-            foodName={item.foodName}
-            imageSrc={item.imageSrc}
-            rating={item.rating}
-            time={item.time}
-            price={item.price}
-            onAddClick={() => handleAddToCart(item)}
-          />
-        ))}
       </div>
       
-
-
-
+      <PromotionalSlider title="Deals For You" images={images2} />
       
+      {categories.length > 0 && (
+        <Category 
+          title="Food Categories" 
+          categories={categories} 
+          onSelect={handleCategorySelect} 
+        />
+      )}
+
+      {branchData?.branch_details?.[0] && (
+        <BranchHeader branchName={branchData.branch_details[0].branch_name} />
+      )}
+
+      {filteredItems && (
+        <MenuGrid 
+          items={filteredItems} 
+          onAddToCart={handleItemClick}
+        />
+      )}
+
+      <ItemCustomizationModal
+        item={selectedItem}
+        isOpen={!!selectedItem}
+        onClose={() => setSelectedItem(null)}
+        onAddToCart={handleAddToCart}
+      />
     </div>
   );
 }

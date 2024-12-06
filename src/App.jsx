@@ -1,8 +1,8 @@
 import React from 'react'
-import CenterFocusSlider from './components/Slider'
+
 import './index.css';
 import CardList from './components/CardList';
-import PromotionalSlider from './components/Base/BasePromotionSlider';
+import ImageSlider from './components/Slider';
 function App() {
   const images = [
     '/hero-1.jpg',
@@ -14,7 +14,9 @@ function App() {
   ];
   return (
     <div>
-     <CenterFocusSlider />
+  <div className='mt-20'>
+     <ImageSlider images={images} />
+     </div>
      <CardList />
     
     

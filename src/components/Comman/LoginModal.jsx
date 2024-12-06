@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { X, Eye, EyeOff } from 'lucide-react';
-
-
+import { useAuth } from '../../hooks/useAuth';
 
 const LoginModal = ({
   isOpen,
@@ -13,8 +12,20 @@ const LoginModal = ({
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login, isLoading, error } = useAuth();
 
   if (!isOpen) return null;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await login(email, password);
+      onClose();
+      
+    } catch (err) {
+    
+    }
+  };
 
   return (
     <>
@@ -24,13 +35,17 @@ const LoginModal = ({
           <X className="h-6 w-6" />
         </button>
 
-       
-
         <h2 className="text-2xl font-bold mb-8 flex items-center">
           Login <span className="ml-2">✌️</span>
         </h2>
 
-        <form className="space-y-6">
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-gray-700 mb-2">Email</label>
             <input
@@ -39,6 +54,7 @@ const LoginModal = ({
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email address"
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
+              required
             />
           </div>
 
@@ -51,6 +67,7 @@ const LoginModal = ({
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
+                required
               />
               <button
                 type="button"
@@ -73,9 +90,10 @@ const LoginModal = ({
 
           <button
             type="submit"
-            className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition-colors"
+            disabled={isLoading}
+            className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition-colors disabled:bg-red-300 disabled:cursor-not-allowed"
           >
-            Login
+            {isLoading ? 'Logging in...' : 'Login'}
           </button>
 
           <div className="relative my-6">

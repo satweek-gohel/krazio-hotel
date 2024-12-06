@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+
+
 const Category = ({ 
   title, 
   categories = [],
@@ -11,7 +13,6 @@ const Category = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(autoplay);
 
-  // Calculate visible items based on screen size
   const getVisibleItemCount = () => {
     return {
       default: 12, 
@@ -127,12 +128,12 @@ const Category = ({
              >
                <div className="relative w-12 h-12 flex items-center justify-center rounded-lg overflow-hidden mb-2">
                  <img
-                   src={category.image}
+                   src={category.category_image || 'https://images.ctfassets.net/ihx0a8chifpc/GTlzd4xkx4LmWsG1Kw1BB/ad1834111245e6ee1da4372f1eb5876c/placeholder.com-1280x720.png?w=1920&q=60&fm=webp'}
                    alt={category.name}
                    className="max-w-full max-h-full object-contain" 
                  />
                </div>
-               <p className="text-sm text-center font-bold line-clamp-2">{category.name}</p>
+               <p className="text-xs text-center font-bold line-clamp-2">{category.category_name}</p>
              </div>
            </div>
             ))}
