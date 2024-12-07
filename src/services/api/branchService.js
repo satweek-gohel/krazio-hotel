@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASE_URL = 'http://sandbox.vovpos.com:3002/web';
+const BASE_URL = 'https://sandbox.vovpos.com:3002/web';
 
 export const getBranchDetails = async (restaurantId, branchId) => {
   try {
