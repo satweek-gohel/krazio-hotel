@@ -75,7 +75,7 @@ function BranchPage() {
   }
 
   return (
-    <div className="container mx-auto px-20 py-5 branch-page">
+    <div className="container mx-auto px-2 lg:px-20 py-8 lg:py-5 branch-page">
       <CartSidebar />
 
       <div className="base mt-20">

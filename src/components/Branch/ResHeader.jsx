@@ -13,12 +13,12 @@ const RestaurantHeader = ({ name, address, hours }) => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-end gap-10">
           <div className="flex-2">
-            <h1 className="text-lg font-bold text-gray-900">{name}</h1>
+            <h1 className="lg:text-lg font-bold text-gray-900">{name}</h1>
             <div className="mt-1 flex items-center space-x-4 text-sm text-gray-500">
               <div className="flex items-center">
-              <img src="/clock.svg" className='h-4 w-4 mr-1' />
+              <img src="/clock.svg" className="h-4 w-4 mr-1 hidden md:block" />
                
-                <span className='text-red-600'>Min.Delivery in 20 mins</span>
+                <span className='text-xs text-red-600'>Min.Delivery in 20 mins</span>
               </div>
             </div>
           </div>
