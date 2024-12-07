@@ -85,7 +85,7 @@ const PromotionalSlider = ({
 
   return (
     <div 
-      className="relative w-full mt-10 mx-auto px-4 py-8"
+      className="relative w-full mt-10 mx-auto px-4 py-3"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

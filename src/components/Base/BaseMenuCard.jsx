@@ -10,12 +10,12 @@ price,
 onAddClick
 }) => {
 return (
-<div className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white">
+<div className="max-w-sm rounded-lg p-1 overflow-hidden shadow-lg bg-white">
 {/* Food Image */}
 <img
 src={imageSrc || "/api/placeholder/400/200"}
 alt={foodName}
-className="w-full h-48 object-cover"
+className="w-full h-48 object-cover p-1 rounded-lg"
 />
 
 
@@ -33,7 +33,7 @@ className="w-full h-48 object-cover"
     {/* Time Row */}
     <div className="flex items-center gap-1 mb-2">
       <Clock className="w-4 h-4 text-red-500" />
-      <span className="text-sm text-gray-600">{time}</span>
+      <span className="text-sm text-gray-600">{time} Minutes</span>
     </div>
     
     {/* Divider */}

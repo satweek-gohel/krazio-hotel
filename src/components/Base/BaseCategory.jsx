@@ -126,14 +126,17 @@ const Category = ({
                className="flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-transform"
                onClick={() => onSelect && onSelect(category)}
              >
-               <div className="relative w-12 h-12 flex items-center justify-center rounded-lg overflow-hidden mb-2">
+               <div className="relative w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-lg overflow-hidden mb-2">
+
                  <img
                    src={category.category_image || 'https://images.ctfassets.net/ihx0a8chifpc/GTlzd4xkx4LmWsG1Kw1BB/ad1834111245e6ee1da4372f1eb5876c/placeholder.com-1280x720.png?w=1920&q=60&fm=webp'}
                    alt={category.name}
                    className="max-w-full max-h-full object-contain" 
                  />
                </div>
-               <p className="text-xs text-center font-bold line-clamp-2">{category.category_name}</p>
+               <p className="text-[9px] sm:text-[9px] lg:text-[12px] text-center font-bold line-clamp-2">
+  {category.category_name}
+</p>
              </div>
            </div>
             ))}
