@@ -19,6 +19,7 @@ function BranchPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [RecommendedItems,setRecommendedItems] = useState([]);
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -34,7 +35,13 @@ function BranchPage() {
           category_id: category.category_id 
         })) || [];
         
+        // Filter recommended items
+        const recommendedItems = data?.item_details.filter(
+          item => item.is_recommended_item === "1"
+        ) || [];
+        
         setCategories(transformedCategories);
+        setRecommendedItems(recommendedItems); // Assuming you have a state for recommended items
       } catch (error) {
         console.error('Failed to fetch branch data:', error);
       } finally {
@@ -87,6 +94,17 @@ function BranchPage() {
       </div>
       
       <PromotionalSlider title="Deals For You" images={images2} />
+      <div className="recmandtions mt-5">
+        <div className="title">
+      <BranchHeader branchName={'Top Recommendations'} />
+      </div>
+      <div className="items">
+      <MenuGrid 
+          items={RecommendedItems} 
+          onAddToCart={handleItemClick}
+        />
+        </div>
+        </div>
       
       {categories.length > 0 && (
         <Category 
