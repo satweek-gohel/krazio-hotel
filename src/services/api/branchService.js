@@ -76,3 +76,28 @@ export const getBranches = async (restaurantId) => {
     throw error;
   }
 };
+
+export const getCoupons = async (restaurantId,branch_id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/coupons`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        restaurant_id:restaurantId,
+        branch_id:branch_id
+      
+      }),
+    });
+
+    const data = await response.json();
+    if (data.STATUS === "1") {
+      return data.RESULT;
+    }
+    throw new Error(data.MESSAGE || 'Failed to fetch coupon details');
+  } catch (error) {
+    console.error('Error fetching branch details:', error);
+    throw error;
+  }
+};

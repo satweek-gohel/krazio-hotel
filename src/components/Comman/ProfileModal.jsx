@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 function ProfileModal({ isOpen, onClose }) {
-
-  const [formData, setFormData] = useState({
-    firstName: 'Vivek',
-    lastName: 'Patel',
-    mobile: '8787877478',
-    email: 'Vivek@gmail.com',
-    birthdate: '1990-04-18',
-    anniversary: '2001-02-22'
-  });
+  const { userDetails } = useAuth();
+  const [formData, setFormData] = useState({}); 
   const [isEditing, setIsEditing] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Update formData when userDetails changes
+  useEffect(() => {
+    if (userDetails) {
+      setFormData({
+        first_name: userDetails.first_name || '',
+        last_name: userDetails.last_name || '',
+        mobile_number: userDetails.mobile_number || '',
+        email_address: userDetails.email_address || '',
+        date_of_birth: userDetails.date_of_birth || null,
+        wedding_anniversary: userDetails.wedding_anniversary || null
+      });
+    }
+  }, [userDetails]);
+
+  const formatDateForInput = (isoDate) => {
+    if (!isoDate) return ""; // Handle undefined or null dates
+    const date = new Date(isoDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   if (!isOpen) return null;
 
@@ -22,12 +39,33 @@ function ProfileModal({ isOpen, onClose }) {
       ...prev,
       [name]: value
     }));
+    setHasChanges(true);
+    setIsEditing(true);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('Submitted Data:', formData);
     setIsEditing(false);
-    // Here you would typically save the data to your backend
+    setHasChanges(false);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    // Reset form data to original userDetails
+    setFormData({
+      first_name: userDetails.first_name || '',
+      last_name: userDetails.last_name || '',
+      mobile_number: userDetails.mobile_number || '',
+      email_address: userDetails.email_address || '',
+      date_of_birth: userDetails.date_of_birth || null,
+      wedding_anniversary: userDetails.wedding_anniversary || null
+    });
+    setIsEditing(false);
+    setHasChanges(false);
   };
 
   return (
@@ -60,8 +98,8 @@ function ProfileModal({ isOpen, onClose }) {
               </label>
               <input
                 type="text"
-                name="firstName"
-                value={formData.firstName}
+                name="first_name"
+                value={formData.first_name || ''}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-md disabled:bg-gray-50"
@@ -73,8 +111,8 @@ function ProfileModal({ isOpen, onClose }) {
               </label>
               <input
                 type="text"
-                name="lastName"
-                value={formData.lastName}
+                name="last_name"
+                value={formData.last_name || ''}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-md disabled:bg-gray-50"
@@ -92,8 +130,8 @@ function ProfileModal({ isOpen, onClose }) {
               </span>
               <input
                 type="tel"
-                name="mobile"
-                value={formData.mobile}
+                name="mobile_number"
+                value={formData.mobile_number || ''}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-r-md disabled:bg-gray-50"
@@ -107,8 +145,8 @@ function ProfileModal({ isOpen, onClose }) {
             </label>
             <input
               type="email"
-              name="email"
-              value={formData.email}
+              name="email_address"
+              value={formData.email_address || ''}
               onChange={handleChange}
               disabled={!isEditing}
               className="w-full px-3 py-2 border rounded-md disabled:bg-gray-50"
@@ -122,8 +160,8 @@ function ProfileModal({ isOpen, onClose }) {
               </label>
               <input
                 type="date"
-                name="birthdate"
-                value={formData.birthdate}
+                name="date_of_birth"
+                value={formatDateForInput(formData.date_of_birth)}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-md disabled:bg-gray-50"
@@ -135,8 +173,8 @@ function ProfileModal({ isOpen, onClose }) {
               </label>
               <input
                 type="date"
-                name="anniversary"
-                value={formData.anniversary}
+                name="wedding_anniversary"
+                value={formatDateForInput(formData.wedding_anniversary)}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-md disabled:bg-gray-50"
@@ -144,22 +182,33 @@ function ProfileModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          {isEditing ? (
-            <button
-              type="submit"
-              className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition-colors"
-            >
-              Save Changes
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setIsEditing(true)}
-              className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition-colors"
-            >
-              Edit
-            </button>
-          )}
+          <div className="space-y-2">
+            {isEditing && hasChanges ? (
+              <div className="flex space-x-2">
+                <button
+                  type="submit"
+                  className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="w-full bg-gray-200 text-gray-800 py-2 rounded-md hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleEditClick}
+                className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition-colors"
+              >
+                Edit
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </div>

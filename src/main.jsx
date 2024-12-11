@@ -23,7 +23,6 @@ createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path="/*" element={<App />} />
           <Route path='/branch-menu/:restaurantId/:branchId' element={<BranchPage />} />
-          <Route path='/branch-menu' element={<BranchPage />} />
           <Route path='/checkout' element={<CheckoutPage />} />
           
           

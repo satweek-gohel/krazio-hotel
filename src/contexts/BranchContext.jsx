@@ -1,33 +1,34 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getBranchDetails } from '../services/api/branchService';
 
 const BranchContext = createContext(null);
 
-export const BranchProvider = ({ children }) => {
+export const BranchProvider = ({ children}) => {
   const [branchDetails, setBranchDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchBranchDetails = async (restaurantId, branchId) => {
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
+    const fetchBranchDetails = async () => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const details = await getBranchDetails(restaurantId, branchId);
-      setBranchDetails(details);
-      setLoading(false);
-      return details;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('An error occurred');
-      setError(error);
-      setLoading(false);
-      throw error;
-    }
-  };
+      try {
+        const details = await getBranchDetails(2,3);
+        setBranchDetails(details);
+        setLoading(false);
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('An error occurred');
+        setError(error);
+        setLoading(false);
+      }
+    };
+
+    fetchBranchDetails();
+  }, []);
 
   const contextValue = {
     branchDetails,
-    fetchBranchDetails,
     loading,
     error,
     setBranchDetails

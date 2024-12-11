@@ -9,14 +9,16 @@ const BaseCard = ({
   onDelivery 
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="bg-white rounded-lg shadow-lg shadow-slate-300 overflow-hidden">
      
 
       {/* Restaurant Header */}
       <div className="p-4">
         <div className="flex items-center gap-3">
-          <Store className="w-6 h-6 text-red-500" />
-          <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
+          <div className="img shadow-lg rounded-lg p-2">
+          <img src="/res-icon.svg" alt=""  className='w-8 h-8 shadow-lg rounded-lg'/>
+          </div>
+          <h2 className="text-xl font-[900] uppercase text-gray-800">{name}</h2>
         </div>
       </div>
 
@@ -27,13 +29,14 @@ const BaseCard = ({
       <div className="p-4 space-y-3">
         {/* Address */}
         <div className="flex items-center gap-3">
-          <MapPin className="w-5 h-5 text-black-500" />
+         
+          <img src="/home-location-dark.svg" alt=""  className='w-5 h-5'/>
           <p className="text-gray-600">{address}</p>
         </div>
 
         {/* Opening Hours */}
         <div className="flex items-center gap-3">
-          <Clock className="w-5 h-5 text-black-500" />
+        <img src="/home-time-dark.svg" alt=""  className='w-5 h-5'/>
           <p className="text-gray-600">{hours}</p>
         </div>
       </div>
@@ -45,16 +48,16 @@ const BaseCard = ({
       <div className="grid grid-cols-2 divide-x divide-gray-200 gap-4 p-3 rounded">
         <button 
           onClick={onPickup}
-          className="flex items-center justify-center gap-2 p-3 bg-red-500 text-white hover:bg-red-600 transition-colors rounded"
+          className="flex items-center justify-center gap-2 p-2 bg-red-600 text-white hover:bg-red-600 transition-colors rounded"
         >
-          <Store className="w-5 h-5" />
+         
           <span className="font-medium">Pickup</span>
         </button>
         <button 
           onClick={onDelivery}
-          className="flex items-center justify-center gap-2 p-3 bg-red-500 text-white hover:bg-red-600 transition-colors rounded"
+          className="flex items-center justify-center gap-2 p-2 bg-red-600 text-white hover:bg-red-600 transition-colors rounded"
         >
-          <Truck className="w-5 h-5" />
+         
           <span className="font-medium">Delivery</span>
         </button>
       </div>

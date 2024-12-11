@@ -17,8 +17,9 @@ function App() {
   <div className='mt-20'>
      <ImageSlider images={images} />
      </div>
+     <div className="cardlist pt-5">
      <CardList />
-    
+  </div>
     
     </div>
   )

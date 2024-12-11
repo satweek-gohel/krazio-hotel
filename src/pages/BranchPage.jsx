@@ -11,17 +11,20 @@ import LoadingSpinner from '../components/Loading/LoadingSpinner';
 import ItemCustomizationModal from '../components/ItemCustomization/ItemCustomizationModal';
 import { images2 } from '../components/Enumes/Enumes';
 import RestaurantHeader from '../components/Branch/ResHeader';
+import { useBranchContext } from '../contexts/BranchContext';
 
 function BranchPage() {
-  const { restaurantId = "2", branchId = "3" } = useParams();
+  const { restaurantId , branchId} = useParams();
+  console.log(branchId,restaurantId);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [branchData, setBranchData] = useState(null);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
   const [RecommendedItems,setRecommendedItems] = useState([]);
+  
   const { addItem } = useCart();
-
+ 
   useEffect(() => {
     const fetchBranchData = async () => {
       try {

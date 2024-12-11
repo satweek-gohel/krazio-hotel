@@ -16,11 +16,16 @@ import { useCart } from "../../contexts/CartContext";
 import CartSidebar from "../Cart/CartSidebar";
 import CouponSidebar from "./CouponSidebar";
 import ProfileModal from "./ProfileModal";
+import { useBranchContext } from "../../contexts/BranchContext";
+import { useLocation, useParams } from "react-router-dom";
 
 
 function Navbar() {
+  const {branchDetails} = useBranchContext();
+  
+  console.log(branchDetails)
   const { uniqueItemsCount, toggleCart } = useCart();
-  const { isAuthenticated, isAuthReady, logout } = useAuth();
+  const { isAuthenticated, isAuthReady, logout, userDetails } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isCouponSidebarOpen, setIsCouponSidebarOpen] = useState(false);
@@ -28,6 +33,16 @@ function Navbar() {
   const [branches, setBranches] = useState([]);
   const modals = useModals();
 
+
+  
+
+  const params = useParams();
+  const location = useLocation();
+
+  const isBranchMenuPage = location.pathname.startsWith('/branch-menu/');
+  const [restaurantId, branchId] = isBranchMenuPage 
+    ? location.pathname.split('/').slice(-2) 
+    : [null, null];
   useEffect(() => {
     if (isAuthReady) {
       setIsLoading(false);
@@ -56,7 +71,7 @@ function Navbar() {
       );
     }
 
-    return true ? (
+    return isAuthenticated() ? (
       <div className="flex items-center gap-2 sm:gap-4">
         <button
           onClick={toggleCart}
@@ -69,16 +84,18 @@ function Navbar() {
             </span>
           )}
         </button>
-        <button
-          onClick={() => setIsCouponSidebarOpen(true)}
-          className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 shadow-lg transition-colors"
-        >
-          <img
-            src="/coupon.svg"
-            alt="Coupon"
-            className="w-4 h-4 sm:w-5 sm:h-5 object-cover"
-          />
-        </button>
+        {restaurantId && branchId && (
+          <button
+            onClick={() => setIsCouponSidebarOpen(true)}
+            className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 shadow-lg transition-colors"
+          >
+            <img
+              src="/coupon.svg"
+              alt="Coupon"
+              className="w-4 h-4 sm:w-5 sm:h-5 object-cover"
+            />
+          </button>
+        )}
         
         <button
           onClick={() => setIsProfileModalOpen(true)}
@@ -125,6 +142,7 @@ function Navbar() {
             </div>
 
             {/* Location & Time */}
+            {restaurantId && branchId && (
             <div className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 max-w-xl justify-center">
               <div className="flex items-center gap-2 text-black-500 border bg-white-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded text-xs sm:text-sm">
                 <img
@@ -148,6 +166,7 @@ function Navbar() {
                 </span>
               </div>
             </div>
+            )}
 
             {/* Search, Auth & Cart */}
             <div className="flex items-center gap-2 sm:gap-4">

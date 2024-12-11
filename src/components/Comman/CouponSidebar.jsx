@@ -1,25 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Copy } from 'lucide-react';
+import { getCoupons } from '../../services/api/branchService';
+import { useLocation, useParams } from 'react-router-dom';
+
 
 
 const CouponSidebar = ({ isOpen, onClose }) => {
-  const coupons = [
-    {
-      discount: '10% Off',
-      description: 'On Purchase on Pizza items',
-      expiryDate: '22 Dec, 2024',
-    },
-    {
-      discount: '15% Off',
-      description: 'On all Burger items',
-      expiryDate: '25 Dec, 2024',
-    },
-    {
-      discount: '20% Off',
-      description: 'On your first order',
-      expiryDate: '31 Dec, 2024',
-    }
-  ];
+  const location = useLocation();
+
+  const isBranchMenuPage = location.pathname.startsWith('/branch-menu/');
+  const [restaurantId, branchId] = isBranchMenuPage 
+    ? location.pathname.split('/').slice(-2) 
+    : [null, null];
+  console.log(restaurantId,branchId);
+  const [coupons, setCoupon] = useState([]);
+  useEffect(() => {
+    const fetchBranchData = async (restaurantId,branchId) => {
+      try {
+        const data = await getCoupons(restaurantId,branchId);
+        setCoupon(data);
+        console.log(data)
+      
+        } catch (error) {
+        console.error('Failed to fetch branch data:', error);
+      } finally {
+        
+      }
+    };
+
+    fetchBranchData();
+  }, [restaurantId,branchId]);
 
   return (
     <>
@@ -55,7 +65,7 @@ const CouponSidebar = ({ isOpen, onClose }) => {
               {/* Left red section with vertical text */}
               <div className="bg-red-600 w-[70px] flex items-center justify-center relative">
                 <div className="transform -rotate-90 whitespace-nowrap text-white text-2xl font-bold absolute w-[120px] text-center">
-                  {coupon.discount}
+                  {coupon.coupon_code}
                 </div>
                 
                 {/* Circular cutouts */}
@@ -68,8 +78,8 @@ const CouponSidebar = ({ isOpen, onClose }) => {
                   <div>
                     <div className="parent flex justify-between items-start">
                     <div className="left">
-                  <p className="text-blsck-600 text-lg mb-2 font-bold">Extra {coupon.discount}</p>
-                    <p className="text-gray-600 text-sm mb-2">{coupon.description}</p>
+                  <p className="text-blsck-600 text-lg mb-2 font-bold">Extra {coupon.coupon_code_title}</p>
+                    <p className="text-gray-600 text-sm mb-2">{coupon.coupon_code_description}</p>
                     </div>
                     <div className="right">
                     <button className=" text-red-600 font-semibold text-right hover:text-red-700 transition-colors">
@@ -78,7 +88,7 @@ const CouponSidebar = ({ isOpen, onClose }) => {
                     </div>
                     </div>
                     <div className="border-t border-dashed my-3" />
-                    <p className="text-xs text-gray-500">*Expires on {coupon.expiryDate}</p>
+                    <p className="text-xs text-gray-500">*Expires on {coupon.coupon_end_date || '27-04-2003'}</p>
                   </div>
                  
                 </div>
