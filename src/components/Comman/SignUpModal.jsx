@@ -82,15 +82,15 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={onClose} />
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-lg p-6 z-50 max-h-[90vh] overflow-y-auto">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
-          <X className="h-6 w-6" />
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-lg p-6 z-50 max-h-[90vh] overflow-auto scrollbar-thin scrollbar-thumb-red-500 ">
+        <button onClick={onClose} className="absolute top-4 right-4 bg-black p-1 rounded-full">
+          <X className="h-4 w-4 text-white" />
         </button>
 
-        <h2 className="text-2xl font-bold mb-8">Sign Up</h2>
+        <h2 className="text-2xl font-semibold mb-8">Sign Up</h2>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-3 bg-primary border border-red-400 text-primary rounded">
             {error}
           </div>
         )}
@@ -126,7 +126,7 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
             <div className="flex">
               <div className="w-24 mr-2">
                 <select className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none">
-                  <option value="+91">🇮🇳 +91</option>
+                  <option value="+91" className='font-sm'>IN +91</option>
                 </select>
               </div>
               <input
@@ -206,7 +206,7 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Enter Confirm password"
+                  placeholder="Confirm password"
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
                 />
                 <button
@@ -225,15 +225,15 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
               type="checkbox"
               checked={agreeToTerms}
               onChange={(e) => setAgreeToTerms(e.target.checked)}
-              className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded" 
+              className="h-4 w-4 text-primary focus:ring-red-500 border-gray-300 rounded" 
             />
             <span className="ml-2 text-sm text-gray-600">
               I agree to{' '}
-              <button type="button" className="text-red-500 hover:text-red-600">
+              <button type="button" className="text-primary hover:text-primary">
                 Privacy Policy
               </button>{' '}
               and{' '}
-              <button type="button" className="text-red-500 hover:text-red-600">
+              <button type="button" className="text-primary hover:text-primary">
                 Terms and Condition
               </button>
             </span>
@@ -242,7 +242,7 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition-colors disabled:bg-red-300 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white py-3 rounded-lg hover:bg-primary transition-colors disabled:bg-primary disabled:cursor-not-allowed"
           >
             {loading ? 'Signing Up...' : 'Sign Up'}
           </button>
@@ -250,7 +250,7 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
           <div className="text-center mt-4">
             <p className="text-gray-600">
               Already have an account?{' '}
-              <button type="button" onClick={onLoginClick} className="text-red-500 hover:text-red-600">
+              <button type="button" onClick={onLoginClick} className="text-primary hover:text-primary">
                 Login
               </button>
             </p>

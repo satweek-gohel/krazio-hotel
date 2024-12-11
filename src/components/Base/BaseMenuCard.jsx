@@ -32,7 +32,7 @@ className="w-full h-48 object-cover p-1 rounded-lg"
     
     {/* Time Row */}
     <div className="flex items-center gap-1 mb-2">
-      <Clock className="w-4 h-4 text-red-500" />
+      <Clock className="w-4 h-4 text-primary" />
       <span className="text-sm text-gray-600">{time} Minutes</span>
     </div>
     
@@ -41,9 +41,9 @@ className="w-full h-48 object-cover p-1 rounded-lg"
     
     {/* Price and Add Button Row */}
     <div className="flex items-center justify-between">
-      <span className="text-red-500 font-bold">{`$${price}`}</span>
+      <span className="text-primary font-bold">{`$${price}`}</span>
       <button 
-        className="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600 transition-colors"
+        className="px-3 py-1 bg-primary text-white text-sm rounded-md hover:bg-red-600 transition-colors"
         onClick={onAddClick}
       >
         Add

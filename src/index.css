@@ -1,11 +1,71 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
     html {
-      font-family: 'Poppins', sans-serif;
-      
+        font-family: 'Poppins', sans-serif;
     }
-  }
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #C8102E;
+    border-radius: 3px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #C8102E;
+}
+
+@layer utilities {
+    /* Primary Color Utilities */
+    .text-primary {
+        color:#C8102E; /* Primary Red */
+    }
+    .bg-primary {
+        background-color: #C8102E; /* Primary Red */
+    }
+    .border-primary {
+        border-color: #E30B0B; /* Primary Red */
+    }
+    .ring-primary {
+        --tw-ring-color: #C8102E; /* Primary Red */
+    }
+    .hover\:bg-primary-dark:hover {
+        background-color: #C20909; /* Slightly darker shade for hover state */
+    }
+
+    /* Secondary Color Utilities */
+    .text-secondary {
+        color: #4A4A4A; /* Dark Gray */
+    }
+    .bg-secondary {
+        background-color: #4A4A4A; /* Dark Gray */
+    }
+
+    /* Additional Color Variations */
+    .text-primary-light {
+        color: #FF4444; /* Lighter Red */
+    }
+    .bg-primary-light {
+        background-color: #FF4444; /* Lighter Red */
+    }
+
+    /* Gradient Utilities */
+    .bg-primary-gradient {
+        background: linear-gradient(to right, #E30B0B, #FF4444);
+    }
+}

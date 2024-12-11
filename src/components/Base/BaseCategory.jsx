@@ -94,18 +94,18 @@ const Category = ({
       onMouseLeave={handleMouseLeave}
     >
       <div className="flex justify-between items-center mb-6 px-4">
-        <h2 className="text-2xl font-bold text-left">{title}</h2>
+        <h2 className="text-2xl font-semibold text-left">{title}</h2>
         <div className="flex gap-4">
           <button
             onClick={handlePrevious}
-            className="p-2 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-700 transition-colors"
+            className="p-2 bg-primary text-white rounded-full shadow-lg hover:bg-red-700 transition-colors"
             aria-label="Previous category"
           >
             <ChevronLeft className="w-5 h-5 text-white" />
           </button>
           <button
             onClick={handleNext}
-            className="p-2 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-700 transition-colors"
+            className="p-2 bg-primary text-white rounded-full shadow-lg hover:bg-red-700 transition-colors"
             aria-label="Next category"
           >
             <ChevronRight className="w-5 h-5 text-white" />
@@ -134,7 +134,7 @@ const Category = ({
                    className="max-w-full max-h-full object-contain" 
                  />
                </div>
-               <p className="text-[9px] sm:text-[9px] lg:text-[12px] text-center font-bold line-clamp-2">
+               <p className="text-[9px] sm:text-[9px] lg:text-[12px] text-center font-semibold line-clamp-2">
   {category.category_name}
 </p>
              </div>

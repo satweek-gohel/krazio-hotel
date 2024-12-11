@@ -9,13 +9,13 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={onClose} />
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-lg p-6 z-50">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
-          <X className="h-6 w-6" />
+        <button onClick={onClose} className="absolute top-4 right-4 bg-black rounded-full p-1">
+          <X className="h-4 w-4 text-white" />
         </button>
 
        
 
-        <h2 className="text-2xl font-bold mb-4">Forgot Password</h2>
+        <h2 className="text-2xl font-semibold mb-4">Forgot Password</h2>
         <p className="text-gray-600 mb-6">Enter your email address below to reset your password</p>
 
         <form className="space-y-4">
@@ -30,7 +30,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
 
           <button
             type="submit"
-            className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition-colors"
+            className="w-full bg-primary text-white py-3 rounded-lg hover:bg-red-600 transition-colors"
           >
             Send
           </button>

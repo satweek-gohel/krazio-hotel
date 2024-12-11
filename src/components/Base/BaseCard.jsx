@@ -18,7 +18,7 @@ const BaseCard = ({
           <div className="img shadow-lg rounded-lg p-2">
           <img src="/res-icon.svg" alt=""  className='w-8 h-8 shadow-lg rounded-lg'/>
           </div>
-          <h2 className="text-xl font-[900] uppercase text-gray-800">{name}</h2>
+          <h2 className="text-lg font-bold uppercase text-black">{name}</h2>
         </div>
       </div>
 
@@ -48,14 +48,14 @@ const BaseCard = ({
       <div className="grid grid-cols-2 divide-x divide-gray-200 gap-4 p-3 rounded">
         <button 
           onClick={onPickup}
-          className="flex items-center justify-center gap-2 p-2 bg-red-600 text-white hover:bg-red-600 transition-colors rounded"
+          className="flex items-center justify-center gap-2 p-2 bg-primary text-white hover:bg-red-600 transition-colors rounded"
         >
          
           <span className="font-medium">Pickup</span>
         </button>
         <button 
           onClick={onDelivery}
-          className="flex items-center justify-center gap-2 p-2 bg-red-600 text-white hover:bg-red-600 transition-colors rounded"
+          className="flex items-center justify-center gap-2 p-2 bg-primary text-white hover:bg-red-600 transition-colors rounded"
         >
          
           <span className="font-medium">Delivery</span>

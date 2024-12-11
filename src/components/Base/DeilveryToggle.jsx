@@ -10,7 +10,7 @@ const DeliveryToggle = ({ selected, onToggle }) => {
           rounded-md font-medium transition-colors 
           ${
             selected === 'delivery'
-              ? 'bg-red-600 text-white'
+              ? 'bg-primary text-white'
               : 'text-gray-600 hover:bg-gray-100'
           }
         `}
@@ -24,7 +24,7 @@ const DeliveryToggle = ({ selected, onToggle }) => {
           rounded-md font-medium transition-colors 
           ${
             selected === 'pickup'
-              ? 'bg-red-600 text-white'
+              ? 'bg-primary text-white'
               : 'text-gray-600 hover:bg-gray-100'
           }
         `}

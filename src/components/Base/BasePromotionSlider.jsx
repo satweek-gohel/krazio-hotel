@@ -91,13 +91,13 @@ const PromotionalSlider = ({
     >
       {/* Title and Navigation */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-left text-white">{title}</h2>
+        <h2 className="text-2xl font-semibold text-left text-black">{title}</h2>
 
         {/* Navigation Controls */}
         <div className="flex gap-4">
           <button
             onClick={handlePrevious}
-            className="p-2 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-700 k transition-colors"
+            className="p-2 bg-primary text-white rounded-full shadow-lg hover:bg-primary k transition-colors"
             aria-label="Previous image"
           >
             <ChevronLeft className="w-5 h-5 text-white" />
@@ -105,7 +105,7 @@ const PromotionalSlider = ({
 
           <button
             onClick={handleNext}
-            className="p-2 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-700  transition-colors"
+            className="p-2 bg-primary text-white rounded-full shadow-lg hover:bg-primary  transition-colors"
             aria-label="Next image"
           >
             <ChevronRight className="w-5 h-5 text-white" />

@@ -79,7 +79,7 @@ function Navbar() {
         >
           <img src="/cart.svg" alt="Cart" className="w-4 h-4 sm:w-5 sm:h-5 object-cover" />
           {uniqueItemsCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
               {uniqueItemsCount}
             </span>
           )}
@@ -117,13 +117,13 @@ function Navbar() {
       <div className="flex items-center gap-2 sm:gap-3">
         <button
           onClick={modals.openLoginModal}
-          className="px-2 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-gray-700 hover:text-red-600 transition-colors"
+          className="px-2 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-primary text-white rounded-lg transition-colors"
         >
           Log in
         </button>
         <button
           onClick={modals.openSignUpModal}
-          className="px-3 sm:px-4 py-1.5 sm:py-2 bg-red-600 text-white text-sm sm:text-base rounded-full hover:bg-red-700 transition-colors"
+          className="px-3 sm:px-4 py-1.5 sm:py-2 bg-primary text-white text-sm sm:text-base rounded-lg hover:bg-red-700 transition-colors"
         >
           Sign up
         </button>
@@ -138,7 +138,7 @@ function Navbar() {
           <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-8">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <span className="text-xl sm:text-2xl font-bold text-red-600">LOGO</span>
+              <span className="text-xl sm:text-2xl font-bold text-primary">LOGO</span>
             </div>
 
             {/* Location & Time */}
@@ -175,7 +175,7 @@ function Navbar() {
                 <input
                   type="text"
                   placeholder="Search for food"
-                  className="w-full px-4 py-1.5 sm:py-2 bg-gray-50 rounded border text-sm focus:ring-2 focus:ring-red-500 pl-9 sm:pl-10"
+                  className="w-full px-4 py-1.5 sm:py-2 bg-gray-50 rounded border text-sm focus:ring-2 focus:ring-primary  pl-9 sm:pl-10"
                 />
               </div>
               {renderAuthButtons()}

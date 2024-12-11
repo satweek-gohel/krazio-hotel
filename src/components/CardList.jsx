@@ -33,7 +33,7 @@ const CardList = () => {
     <div className="container mx-auto p-4">
       {/* Title and Subtitle */}
       <div className="p-4 text-center">
-        <h1 className="text-2xl font-bold text-black-600"><span className='text-red-600 font-black'>Hungry?</span> Let's Bring the Restaurant to You!</h1>
+        <h1 className="text-2xl font-semibold text-black-600"><span className='text-primary font-bold'>Hungry?</span> Let's Bring the Restaurant to You!</h1>
         <p className="text-sm text-gray-500">Explore the top dishes from local restaurants, delivered straight to your door.</p>
       </div>
       <div className="container flex align-center justify-center">
