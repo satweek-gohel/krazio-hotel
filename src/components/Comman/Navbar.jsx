@@ -157,7 +157,7 @@ function Navbar() {
             className="w-3 h-3 sm:w-4 sm:h-4 object-cover"
           />
           <span>{openTime} - {closeTime}</span>
-          <span className={`ml-1 sm:ml-2 px-1.5 sm:px-2 py-0.5 text-xs ${isOpen ? 'bg-green-500' : 'bg-red-500'} text-white rounded-full`}>
+          <span className={`ml-1 sm:ml-2 px-1 sm:px-2 py-0.5 text-xs badge ${isOpen ? 'bg-green-500' : 'bg-red-500'} text-white rounded-full`}>
             {isOpen ? 'OPEN' : 'CLOSED'}
           </span>
         </div>
