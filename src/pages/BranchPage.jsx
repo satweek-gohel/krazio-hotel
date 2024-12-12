@@ -90,7 +90,7 @@ function BranchPage() {
 
       <div className="base mt-20">
       <RestaurantHeader 
-        name="SUSHI HOUSE"
+        name={branchData.branch_details[0].branch_name}
         address="1901 Thornridge Cir, Shiloh, Hawaii 81063"
         hours="9:00AM - 10:00PM"
       />
