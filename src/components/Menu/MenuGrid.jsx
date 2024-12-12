@@ -1,7 +1,7 @@
 import React from 'react';
 import MenuCard from '../Base/BaseMenuCard';
 
-function MenuGrid({ items, onAddToCart }) {
+function MenuGrid({ items, onAddToCart,disabled }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {items.map(item => (
@@ -13,6 +13,7 @@ function MenuGrid({ items, onAddToCart }) {
           time={30} 
           price={item.price}
           onAddClick={() => onAddToCart(item)}
+          disabled={disabled}
         />
       ))}
     </div>

@@ -22,6 +22,7 @@ function BranchPage() {
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
   const [RecommendedItems,setRecommendedItems] = useState([]);
+  const [isOpen, setIsOpen] = useState(false); // Assuming isOpen state is available or can be derived from branchData
   
   const { addItem } = useCart();
  
@@ -42,6 +43,10 @@ function BranchPage() {
         const recommendedItems = data?.item_details.filter(
           item => item.is_recommended_item === "1"
         ) || [];
+        
+        // Assuming isOpen state can be derived from branchData
+        const isOpen = data?.branch_details[0].is_open === "1";
+        setIsOpen(isOpen);
         
         setCategories(transformedCategories);
         setRecommendedItems(recommendedItems); // Assuming you have a state for recommended items
@@ -103,6 +108,7 @@ function BranchPage() {
       <MenuGrid 
           items={RecommendedItems} 
           onAddToCart={handleItemClick}
+          disabled={!isOpen} 
         />
         </div>
         </div>
@@ -123,6 +129,7 @@ function BranchPage() {
         <MenuGrid 
           items={filteredItems} 
           onAddToCart={handleItemClick}
+          disabled={!isOpen} 
         />
       )}
 

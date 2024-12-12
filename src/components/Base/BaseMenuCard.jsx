@@ -7,10 +7,11 @@ imageSrc,
 rating,
 time,
 price,
-onAddClick
+onAddClick,
+disabled
 }) => {
 return (
-<div className="max-w-sm rounded-lg p-1 overflow-hidden shadow-lg bg-white">
+<div className={`max-w-sm rounded-lg p-1 overflow-hidden shadow-lg bg-white`}>
 {/* Food Image */}
 <img
 src={imageSrc || "/api/placeholder/400/200"}
@@ -43,8 +44,9 @@ className="w-full h-48 object-cover p-1 rounded-lg"
     <div className="flex items-center justify-between">
       <span className="text-primary font-bold">{`$${price}`}</span>
       <button 
-        className="px-3 py-1 bg-primary text-white text-sm rounded-md hover:bg-red-600 transition-colors"
+        className={`px-3 py-1 ${disabled ? 'bg-gray-400' : 'bg-primary'} text-white text-sm rounded-md ${disabled ? 'cursor-not-allowed' : 'hover:bg-red-600 transition-colors'}`}
         onClick={onAddClick}
+        disabled={disabled}
       >
         Add
       </button>
