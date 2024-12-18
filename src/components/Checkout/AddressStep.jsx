@@ -1,10 +1,29 @@
 import React from 'react';
+import { useCart } from '../../contexts/CartContext';
 
+export default function AddressStep({ onNext }) {
+  const { 
+    setSelectedAddress, 
+    setDeliveryInstructions,
+    deliveryInstructions
+  } = useCart();
 
+  const handleAddressSelect = (address) => {
+    setSelectedAddress(address);
+    onNext();
+  };
 
-export default function AddressStep({ onAddNewAddress, onSelectAddress }) {
+  const handleInstructionToggle = (instruction) => {
+    setDeliveryInstructions(prev => {
+      if (prev.includes(instruction)) {
+        return prev.filter(i => i !== instruction);
+      }
+      return [...prev, instruction];
+    });
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <h2 className="text-2xl font-semibold">Delivery Address</h2>
       <p className="text-gray-600">Choose where to deliver your order</p>
 
@@ -20,10 +39,14 @@ export default function AddressStep({ onAddNewAddress, onSelectAddress }) {
             <button className="text-gray-400 hover:text-gray-600">•••</button>
           </div>
           <button
-            onClick={onSelectAddress}
-            className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600"
+            onClick={() => handleAddressSelect({
+              name: 'Gokuldham Society',
+              distance: '20.6 km',
+              address: 'SG Highway, Ahmedabad, Gujarat, India'
+            })}
+            className="w-full bg-primary text-white py-2 rounded-md hover:bg-red-600"
           >
-            Deliver
+            Deliver Here
           </button>
         </div>
 
@@ -36,8 +59,7 @@ export default function AddressStep({ onAddNewAddress, onSelectAddress }) {
             </div>
           </div>
           <button
-            onClick={onAddNewAddress}
-            className="w-full border-2 border-red-500 text-red-500 py-2 rounded-md hover:bg-red-50"
+            className="w-full border-2 border-primary text-red-500 py-2 rounded-md hover:bg-red-50"
           >
             Add New
           </button>
@@ -47,18 +69,19 @@ export default function AddressStep({ onAddNewAddress, onSelectAddress }) {
       <div className="mt-8">
         <h3 className="font-medium mb-4">Delivery Instructions</h3>
         <div className="flex flex-wrap gap-3">
-          <button className="px-4 py-2 bg-red-500 text-white rounded-full text-sm">
-            Leave at the door
-          </button>
-          <button className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm">
-            Avoid ringing bell
-          </button>
-          <button className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm">
-            Avoid calling
-          </button>
-          <button className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm">
-            Other Details
-          </button>
+          {['Leave at the door', 'Avoid ringing bell', 'Avoid calling', 'Other Details'].map((instruction) => (
+            <button
+              key={instruction}
+              onClick={() => handleInstructionToggle(instruction)}
+              className={`px-4 py-2 rounded-full text-sm ${
+                deliveryInstructions.includes(instruction)
+                  ? 'bg-primary text-white'
+                  : 'bg-gray-100 text-gray-600'
+              }`}
+            >
+              {instruction}
+            </button>
+          ))}
         </div>
       </div>
     </div>

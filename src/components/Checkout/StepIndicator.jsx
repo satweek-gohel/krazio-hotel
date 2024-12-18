@@ -17,7 +17,7 @@ export default function StepIndicator({ currentStep }) {
             <div
               className={`w-10 h-10 rounded flex items-center justify-center ${
                 index + 1 <= currentStep
-                  ? 'bg-red-500 text-white'
+                  ? 'bg-primary text-white'
                   : 'bg-gray-100 text-gray-400'
               }`}
             >

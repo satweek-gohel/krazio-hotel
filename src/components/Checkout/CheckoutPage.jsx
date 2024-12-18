@@ -37,7 +37,7 @@ const CheckoutPage = () => {
             </div>
             <button
               onClick={handleNextStep}
-              className="mt-6 w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600"
+              className="mt-6 w-full bg-primary text-white py-3 rounded-lg hover:bg-red-600"
             >
               Continue to Delivery
             </button>
@@ -47,6 +47,7 @@ const CheckoutPage = () => {
         return (
           <AddressStep
             onAddNewAddress={handleNextStep}
+            onNext={handleNextStep}
             onSelectAddress={handleNextStep}
           />
         );

@@ -2,27 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { getBranchDetails } from '../services/api/branchService';
+import { getItemSteps } from '../services/api/itemService';
 import PromotionalSlider from '../components/Base/BasePromotionSlider';
 import Category from '../components/Base/BaseCategory';
 import CartSidebar from '../components/Cart/CartSidebar';
 import BranchHeader from '../components/Branch/BranchHeader';
 import MenuGrid from '../components/Menu/MenuGrid';
 import LoadingSpinner from '../components/Loading/LoadingSpinner';
-import ItemCustomizationModal from '../components/ItemCustomization/ItemCustomizationModal';
+import { ItemCustomizationModal } from '../components/ItemCustomization';
 import { images2 } from '../components/Enumes/Enumes';
 import RestaurantHeader from '../components/Branch/ResHeader';
-import { useBranchContext } from '../contexts/BranchContext';
 
 function BranchPage() {
-  const { restaurantId , branchId} = useParams();
-  console.log(branchId,restaurantId);
+  const { restaurantId, branchId } = useParams();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [branchData, setBranchData] = useState(null);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [RecommendedItems,setRecommendedItems] = useState([]);
-  const [isOpen, setIsOpen] = useState(false); // Assuming isOpen state is available or can be derived from branchData
+  const [RecommendedItems, setRecommendedItems] = useState([]);
+  const [isOpen, setIsOpen] = useState(true);
   
   const { addItem } = useCart();
  
@@ -32,24 +31,21 @@ function BranchPage() {
         const data = await getBranchDetails(restaurantId, branchId);
         setBranchData(data);
         
-        // Transform and set categories
         const transformedCategories = data?.category_details.map(category => ({
           category_name: category.category_name,
           category_image: category.category_image || '/coffe.png',
           category_id: category.category_id 
         })) || [];
         
-        // Filter recommended items
         const recommendedItems = data?.item_details.filter(
           item => item.is_recommended_item === "1"
         ) || [];
         
-        // Assuming isOpen state can be derived from branchData
-        const isOpen = data?.branch_details[0].is_open === "1";
+        const isOpen = data?.branch_details[0].is_open === "0";
         setIsOpen(isOpen);
         
         setCategories(transformedCategories);
-        setRecommendedItems(recommendedItems); // Assuming you have a state for recommended items
+        setRecommendedItems(recommendedItems);
       } catch (error) {
         console.error('Failed to fetch branch data:', error);
       } finally {
@@ -66,8 +62,18 @@ function BranchPage() {
     );
   };
 
-  const handleItemClick = (item) => {
-    setSelectedItem(item);
+  const handleItemClick = async (item) => {
+    try {
+      
+      const enrichedItem = {
+        ...item,
+        restaurant_id: restaurantId,
+        branch_id: branchId
+      };
+      setSelectedItem(enrichedItem);
+    } catch (error) {
+      console.error('Error preparing item for customization:', error);
+    }
   };
 
   const handleAddToCart = (customizedItem) => {
@@ -75,7 +81,7 @@ function BranchPage() {
       ...customizedItem,
       id: customizedItem.item_id,
       item_name: customizedItem.item_name,
-      price: customizedItem.price,
+      price: customizedItem.totalPrice,
       item_image: customizedItem.item_image
     });
     setSelectedItem(null);
@@ -94,24 +100,25 @@ function BranchPage() {
       <CartSidebar />
 
       <div className="base mt-20">
-      <RestaurantHeader 
-        name={branchData.branch_details[0].branch_name}
-      />
+        <RestaurantHeader 
+          name={branchData.branch_details[0].branch_name}
+        />
       </div>
       
       <PromotionalSlider title="Deals For You" images={images2} />
+      
       <div className="recmandtions mt-5">
         <div className="title">
-      <BranchHeader branchName={'Top Recommendations'} />
+          <BranchHeader branchName={'Top Recommendations'} />
+        </div>
+        <div className="items">
+          <MenuGrid 
+            items={RecommendedItems} 
+            onAddToCart={handleItemClick}
+            disabled={isOpen} 
+          />
+        </div>
       </div>
-      <div className="items">
-      <MenuGrid 
-          items={RecommendedItems} 
-          onAddToCart={handleItemClick}
-          disabled={!isOpen} 
-        />
-        </div>
-        </div>
       
       {categories.length > 0 && (
         <Category 
@@ -129,7 +136,7 @@ function BranchPage() {
         <MenuGrid 
           items={filteredItems} 
           onAddToCart={handleItemClick}
-          disabled={!isOpen} 
+          disabled={isOpen} 
         />
       )}
 

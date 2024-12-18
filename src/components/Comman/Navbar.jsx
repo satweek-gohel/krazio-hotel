@@ -20,34 +20,40 @@ function Navbar() {
   const modals = useModals();
   const location = useLocation();
   function formatTime(timeString) {
-    // Convert 24-hour format to 12-hour format with AM/PM
-    const [hours, minutes] = timeString.split(':');
+    const [hours, minutes] = timeString.split(":");
     const hour = parseInt(hours, 10);
-    const period = hour >= 12 ? 'PM' : 'AM';
+    const period = hour >= 12 ? "PM" : "AM";
     const formattedHour = hour % 12 || 12;
     return `${formattedHour}:${minutes} ${period}`;
   }
-  
+
   function isBranchCurrentlyOpen(schedule) {
     if (!schedule || schedule.length === 0) return false;
-  
-    const today = new Date().toLocaleString('en-US', { weekday: 'short' }).toLowerCase();
-    const currentDaySchedule = schedule.find(day => day.day === today);
-  
+
+    const today = new Date()
+      .toLocaleString("en-US", { weekday: "short" })
+      .toLowerCase();
+    const currentDaySchedule = schedule.find((day) => day.day === today);
+
     if (!currentDaySchedule || currentDaySchedule.is_open !== "1") return false;
-  
+
     const now = new Date();
-    const currentTime = now.toTimeString().split(' ')[0];
-  
-    return currentTime >= currentDaySchedule.open_time && 
-           currentTime <= currentDaySchedule.close_time;
+    const currentTime = now.toTimeString().split(" ")[0];
+
+    return (
+      currentTime >= currentDaySchedule.open_time &&
+      currentTime <= currentDaySchedule.close_time
+    );
   }
-  const isBranchMenuPage = location.pathname.startsWith('/branch-menu/');
-  const [restaurantId, branchId] = isBranchMenuPage 
-    ? location.pathname.split('/').slice(-2) 
+  const isBranchMenuPage = location.pathname.startsWith("/branch-menu/");
+  const [restaurantId, branchId] = isBranchMenuPage
+    ? location.pathname.split("/").slice(-2)
     : [null, null];
 
-  const { branchDetails, loading: branchLoading } = useBranchData(restaurantId, branchId);
+  const { branchDetails, loading: branchLoading } = useBranchData(
+    restaurantId,
+    branchId
+  );
 
   useEffect(() => {
     if (isAuthReady) {
@@ -58,7 +64,6 @@ function Navbar() {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-  
 
   const renderAuthButtons = () => {
     if (isLoading) {
@@ -76,7 +81,11 @@ function Navbar() {
             onClick={toggleCart}
             className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 transition-colors shadow-lg"
           >
-            <img src="/cart.svg" alt="Cart" className="w-4 h-4 sm:w-5 sm:h-5 object-cover" />
+            <img
+              src="/cart.svg"
+              alt="Cart"
+              className="w-4 h-4 sm:w-5 sm:h-5 object-cover"
+            />
             {uniqueItemsCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                 {uniqueItemsCount}
@@ -131,11 +140,17 @@ function Navbar() {
     if (!restaurantId || !branchId || !branchDetails) return null;
 
     const schedule = branchDetails.branch_details[0].branch_schedule;
-    const today = new Date().toLocaleString('en-US', { weekday: 'short' }).toLowerCase();
-    const currentDaySchedule = schedule.find(day => day.day === today);
+    const today = new Date()
+      .toLocaleString("en-US", { weekday: "short" })
+      .toLowerCase();
+    const currentDaySchedule = schedule.find((day) => day.day === today);
 
-    const openTime = currentDaySchedule ? formatTime(currentDaySchedule.open_time) : '9:00 AM';
-    const closeTime = currentDaySchedule ? formatTime(currentDaySchedule.close_time) : '10:00 PM';
+    const openTime = currentDaySchedule
+      ? formatTime(currentDaySchedule.open_time)
+      : "9:00 AM";
+    const closeTime = currentDaySchedule
+      ? formatTime(currentDaySchedule.close_time)
+      : "10:00 PM";
     const isOpen = isBranchCurrentlyOpen(schedule);
 
     return (
@@ -156,16 +171,23 @@ function Navbar() {
             alt="Time"
             className="w-3 h-3 sm:w-4 sm:h-4 object-cover"
           />
-          <span>{openTime} - {closeTime}</span>
-          <span className={`ml-1 sm:ml-2 px-1 sm:px-2 py-0.5 text-xs badge ${isOpen ? 'bg-green-500' : 'bg-red-500'} text-white rounded-full`}>
-            {isOpen ? 'OPEN' : 'CLOSED'}
+          <span>
+            {openTime} - {closeTime}
+          </span>
+          <span
+            className={`ml-1 sm:ml-2 px-1 sm:px-2 py-0.5 text-xs badge ${
+              isOpen ? "bg-green-500" : "bg-red-500"
+            } text-white rounded-full`}
+          >
+            {isOpen ? "OPEN" : "CLOSED"}
           </span>
         </div>
       </div>
     );
   };
   const renderMobileBranchInfo = () => {
-    if (!restaurantId || !branchId || branchLoading || !branchDetails) return null;
+    if (!restaurantId || !branchId || branchLoading || !branchDetails)
+      return null;
 
     return (
       <div className="space-y-3">
@@ -192,7 +214,9 @@ function Navbar() {
         <div className="max-w-7xl mx-auto px-3 sm:px-4">
           <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-8">
             <div className="flex-shrink-0">
-              <span className="text-xl sm:text-2xl font-bold text-primary">LOGO</span>
+              <span className="text-xl sm:text-2xl font-bold text-primary">
+                LOGO
+              </span>
             </div>
 
             {renderBranchInfo()}
@@ -253,19 +277,17 @@ function Navbar() {
 
         <div className="p-4 space-y-4">
           {renderMobileBranchInfo()}
-          <div className="pt-4 border-t">
-            {renderAuthButtons()}
-          </div>
+          <div className="pt-4 border-t">{renderAuthButtons()}</div>
         </div>
       </div>
 
       <AuthModals {...modals} />
       <CartSidebar />
-      <CouponSidebar 
+      <CouponSidebar
         isOpen={isCouponSidebarOpen}
         onClose={() => setIsCouponSidebarOpen(false)}
       />
-      <ProfileModal 
+      <ProfileModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
       />

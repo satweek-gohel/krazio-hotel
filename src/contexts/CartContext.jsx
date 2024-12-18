@@ -1,124 +1,151 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-
-// Local storage key
-const CART_STORAGE_KEY = 'shopping_cart';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  // Initialize state from localStorage or with an empty array
-  const [items, setItems] = useState(() => {
-    try {
-      const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-      return savedCart ? JSON.parse(savedCart) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [isOpen, setIsOpen] = useState(() => localStorage.getItem('cartOpen') === 'true');
+  const [items, setItems] = useState(() => JSON.parse(localStorage.getItem('cartItems') || '[]'));
+  const [orderType, setOrderType] = useState('Delivery');
+  const [deliveryTime, setDeliveryTime] = useState('Now');
+  const [selectedDateTime, setSelectedDateTime] = useState('');
+  const [selectedTip, setSelectedTip] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [deliveryInstructions, setDeliveryInstructions] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState(null);
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Sync localStorage whenever items change
   useEffect(() => {
-    try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-    } catch (error) {
-      console.error('Failed to save cart to localStorage', error);
-    }
+    localStorage.setItem('cartOpen', isOpen);
+  }, [isOpen]);
+
+  useEffect(() => {
+    localStorage.setItem('cartItems', JSON.stringify(items));
   }, [items]);
 
-  // Listen for localStorage changes in other tabs
-  useEffect(() => {
-    const handleStorageChange = (event) => {
-      if (event.key === CART_STORAGE_KEY && event.newValue) {
-        try {
-          const parsedItems = JSON.parse(event.newValue);
-          setItems(parsedItems);
-        } catch (error) {
-          console.error('Failed to parse cart from localStorage', error);
-        }
-      }
-    };
+  const toggleCart = () => setIsOpen(!isOpen);
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-
-  const addItem = useCallback((item) => {
+  const addItem = (item) => {
     setItems(currentItems => {
       const existingItem = currentItems.find(i => 
         i.id === item.id && 
-        JSON.stringify(i.selectedToppings) === JSON.stringify(item.selectedToppings)
+        i.selectedSize === item.size &&
+        JSON.stringify(i.selectedSauces) === JSON.stringify(item.sauces) &&
+        i.selectedTaste === item.taste
       );
-      
+
       if (existingItem) {
-        return currentItems.map(i =>
-          i.id === item.id && 
-          JSON.stringify(i.selectedToppings) === JSON.stringify(item.selectedToppings)
-            ? { ...i, quantity: i.quantity + (item.quantity || 1) }
+        return currentItems.map(i => 
+          i === existingItem 
+            ? { ...i, quantity: i.quantity + item.quantity }
             : i
         );
       }
-      return [...currentItems, { ...item, quantity: item.quantity || 1 }];
+
+      return [...currentItems, {
+        ...item,
+        selectedSize: item.size,
+        selectedSauces: item.sauces,
+        selectedTaste: item.taste,
+        price: item.totalPrice / item.quantity
+      }];
     });
-    setIsOpen(true);
-  }, []);
+  };
 
-  const removeItem = useCallback((id, selectedToppings) => {
-    setItems(items => items.filter(item => 
-      !(item.id === id && 
-        JSON.stringify(item.selectedToppings) === JSON.stringify(selectedToppings))
-    ));
-  }, []);
-
-  const updateQuantity = useCallback((id, quantity, selectedToppings) => {
-    setItems(items =>
-      items.map(item =>
-        (item.id === id && 
-         JSON.stringify(item.selectedToppings) === JSON.stringify(selectedToppings))
-          ? { ...item, quantity: Math.max(0, quantity) }
-          : item
-      ).filter(item => item.quantity > 0)
+  const updateItem = (itemId, updatedItem) => {
+    setItems(currentItems =>
+      currentItems.map(item =>
+        item.id === itemId ? { ...item, ...updatedItem } : item
+      )
     );
-  }, []);
+  };
 
-  const toggleCart = useCallback(() => {
-    setIsOpen(prevIsOpen => !prevIsOpen);
-  }, []);
+  const removeItem = (itemId) => {
+    setItems(currentItems => currentItems.filter(item => item.id !== itemId));
+  };
 
-  const closeCart = useCallback(() => {
-    setIsOpen(false);
-  }, []);
+  const updateQuantity = (itemId, newQuantity) => {
+    if (newQuantity < 1) {
+      removeItem(itemId);
+      return;
+    }
 
-  const clearCart = useCallback(() => {
+    setItems(currentItems =>
+      currentItems.map(item =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  const placeOrder = () => {
+    const deliveryFee = orderType === 'Delivery' ? 5.99 : 0;
+    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const total = subtotal + deliveryFee + (selectedTip || 0);
+
+    const orderData = {
+      orderId: Date.now(),
+      orderDate: new Date().toISOString(),
+      items,
+      orderType,
+      deliveryTime: deliveryTime === 'Now' ? 'ASAP' : selectedDateTime,
+      selectedAddress,
+      deliveryInstructions,
+      paymentMethod,
+      pricing: {
+        subtotal,
+        deliveryFee,
+        tip: selectedTip || 0,
+        total
+      }
+    };
+
+    // Store order in localStorage
+    const previousOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    localStorage.setItem('orders', JSON.stringify([...previousOrders, orderData]));
+
+    // Clear cart
     setItems([]);
-  }, []);
+    setOrderType('Delivery');
+    setDeliveryTime('Now');
+    setSelectedDateTime('');
+    setSelectedTip(null);
+    setSelectedAddress(null);
+    setDeliveryInstructions([]);
+    setPaymentMethod(null);
 
-  // Total quantity of all items
+    console.log('Order placed:', orderData);
+    return orderData;
+  };
+
+  const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-
-  // Number of unique items (unique combinations of ID and toppings)
   const uniqueItemsCount = items.length;
-
-  const totalPrice = items.reduce((sum, item) => {
-    const itemTotal = item.price * item.quantity;
-    const toppingsTotal = (item.selectedToppings?.length || 0) * 1.5 * item.quantity;
-    return sum + itemTotal + toppingsTotal;
-  }, 0);
 
   return (
     <CartContext.Provider value={{
-      items,
       isOpen,
+      items,
+      toggleCart,
       addItem,
       removeItem,
+      updateItem,
       updateQuantity,
-      toggleCart,
-      closeCart,
-      clearCart,
+      totalPrice,
       totalItems,
       uniqueItemsCount,
-      totalPrice
+      orderType,
+      setOrderType,
+      deliveryTime,
+      setDeliveryTime,
+      selectedDateTime,
+      setSelectedDateTime,
+      selectedTip,
+      setSelectedTip,
+      selectedAddress,
+      setSelectedAddress,
+      deliveryInstructions,
+      setDeliveryInstructions,
+      paymentMethod,
+      setPaymentMethod,
+      placeOrder
     }}>
       {children}
     </CartContext.Provider>
@@ -127,7 +154,7 @@ export const CartProvider = ({ children }) => {
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;

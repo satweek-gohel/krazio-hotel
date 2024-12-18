@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useCart } from '../../contexts/CartContext';
-import { X, Plus, Minus, ShoppingCart, Settings2, StickyNote, MessageCircle } from 'lucide-react';
+import { X, Plus, Minus, ShoppingCart, Settings2, StickyNote, MessageCircle, Calendar } from 'lucide-react';
 import CartSteps from './CartSteps';
 import AddressStep from './AddressStep';
 import PaymentStep from './PaymentStep';
 import ConfirmedStep from './ConfirmedStep';
+import { useCart } from '../../contexts/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 const CartSidebar = () => {
   const { 
@@ -16,6 +17,7 @@ const CartSidebar = () => {
     totalPrice,
     totalItems 
   } = useCart();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [orderType, setOrderType] = useState('Delivery');
   const [deliveryTime, setDeliveryTime] = useState('Now');
@@ -76,8 +78,6 @@ const CartSidebar = () => {
 
     const handleNoteChange = (e) => {
       setItemNote(e.target.value);
-      // Assuming you have a function in your cart context to update item notes
-      updateItemNote(item.id, e.target.value);
     };
 
     return (
@@ -214,16 +214,50 @@ const CartSidebar = () => {
         )}
 
         {deliveryTime === 'Later' && orderType === 'Delivery' && (
-          <div className="mb-6">
-            <input
-              type="datetime-local"
-              value={selectedDateTime}
-              onChange={(e) => setSelectedDateTime(e.target.value)}
-              className="w-full px-4 py-2 border rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-              min={new Date().toISOString().slice(0, 16)}
-            />
-          </div>
+           <div className=" bg-gray-100 flex items-center justify-center">
+           <div className="w-full max-w-md p-6">
+             <div className="relative mb-6 group">
+               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-primary/50 group-focus-within:text-primary transition-colors">
+                 <Calendar className="w-5 h-5" />
+               </div>
+               
+               <input 
+                 type="datetime-local" 
+                 value={selectedDateTime} 
+                 onChange={(e) => setSelectedDateTime(e.target.value)} 
+                 className="w-full pl-10 pr-4 py-3 bg-primary/5 border-2 border-primary/10 
+                          rounded-lg text-primary placeholder-primary/50
+                          focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20
+                          transition-all duration-200 ease-in-out
+                          hover:border-primary/30"
+                 min={new Date().toISOString().slice(0, 16)}
+                 placeholder="Select date and time"
+               />
+               
+               <div className="absolute inset-0 rounded-lg bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
+             </div>
+             
+             {selectedDateTime && (
+               <p className="text-primary/70 text-sm">
+                 Selected: {new Date(selectedDateTime).toLocaleString()}
+               </p>
+             )}
+           </div>
+         </div>
         )}
+      </div>
+
+      <div className="mb-6 border p-3 rounded">
+        <div className="flex items-center gap-2 mb-4">
+          <img src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=50&h=50&fit=crop" alt="Tip" className="w-8 h-8 rounded-full" />
+          <p className="text-sm text-gray-600">If am shine, they deliver your orders with care. Show your support with a small tip.</p>
+        </div>
+        <div className="flex gap-3">
+          <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700">$20</button>
+          <button className="flex-1 py-2 bg-red-600 text-white rounded-lg">$40</button>
+          <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700">$60</button>
+          <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700">Other</button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-6">
@@ -271,10 +305,14 @@ const CartSidebar = () => {
 
         <button
           className="w-full py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
-          onClick={() => setCurrentStep(2)}
+          onClick={() => {
+            toggleCart();
+            setCurrentStep(1);
+            navigate('/checkout');
+          }}
           disabled={items.length === 0}
         >
-          Next
+          Checkout
         </button>
       </div>
     </>

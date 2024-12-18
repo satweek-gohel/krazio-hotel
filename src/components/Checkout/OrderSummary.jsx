@@ -39,7 +39,7 @@ const OrderSummary = () => {
           onClick={() => handleOrderTypeChange('Delivery')}
           className={`px-4 py-2 rounded text-sm transition-colors duration-200 md:w-[100px] ${
             orderType === 'Delivery' 
-              ? 'bg-red-600 text-white' 
+              ? 'bg-primary text-white' 
               : 'bg-gray-100 text-gray-700'
           }`}
         >
@@ -49,7 +49,7 @@ const OrderSummary = () => {
           onClick={() => handleOrderTypeChange('Pick Up')}
           className={`px-4 py-2 rounded text-sm transition-colors duration-200 md:w-[100px] ${
             orderType === 'Pick Up' 
-              ? 'bg-red-600 text-white' 
+              ? 'bg-primary text-white' 
               : 'bg-gray-100 text-gray-700'
           }`}
         >
@@ -66,7 +66,7 @@ const OrderSummary = () => {
             onClick={() => handleDeliveryTimeChange('Now')}
             className={`px-4 py-2 rounded text-sm transition-colors duration-200 md:w-[100px] ${
               deliveryTime === 'Now' 
-                ? 'bg-red-600 text-white' 
+                ? 'bg-primary text-white' 
                 : 'bg-gray-100 text-gray-700'
             }`}
           >
@@ -76,7 +76,7 @@ const OrderSummary = () => {
             onClick={() => handleDeliveryTimeChange('Later')}
             className={`px-4 py-2 rounded text-sm transition-colors duration-200 md:w-[100px] ${
               deliveryTime === 'Later' 
-                ? 'bg-red-600 text-white' 
+                ? 'bg-primary text-white' 
                 : 'bg-gray-100 text-gray-700'
             }`}
           >
@@ -125,7 +125,7 @@ const OrderSummary = () => {
                 className={`p-1 rounded-full text-white ${
                   item.quantity === 1 
                     ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-red-600'
+                    : 'bg-primary'
                 }`}
               >
                 <Minus className="w-4 h-4" />
@@ -133,7 +133,7 @@ const OrderSummary = () => {
               <span className="text-sm font-medium">{item.quantity}</span>
               <button 
                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                className="p-1 bg-red-600 rounded-full text-white"
+                className="p-1 bg-primary rounded-full text-white"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -178,14 +178,14 @@ const OrderSummary = () => {
         </div>
         <div className="flex gap-3">
           <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700">$20</button>
-          <button className="flex-1 py-2 bg-red-600 text-white rounded-lg">$40</button>
+          <button className="flex-1 py-2 bg-primary text-white rounded-lg">$40</button>
           <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700">$60</button>
           <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700">Other</button>
         </div>
       </div>
 
       {/* Place Order Button */}
-      <button className="w-full py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">
+      <button className="w-full py-3 bg-primary text-white rounded-lg font-medium hover:bg-red-700 transition-colors">
         Place Order
       </button>
     </div>

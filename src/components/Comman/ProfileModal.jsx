@@ -8,7 +8,7 @@ function ProfileModal({ isOpen, onClose }) {
   const [isEditing, setIsEditing] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
-  // Update formData when userDetails changes
+
   useEffect(() => {
     if (userDetails) {
       setFormData({
@@ -23,7 +23,7 @@ function ProfileModal({ isOpen, onClose }) {
   }, [userDetails]);
 
   const formatDateForInput = (isoDate) => {
-    if (!isoDate) return ""; // Handle undefined or null dates
+    if (!isoDate) return ""; 
     const date = new Date(isoDate);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -55,8 +55,7 @@ function ProfileModal({ isOpen, onClose }) {
   };
 
   const handleCancelEdit = () => {
-    // Reset form data to original userDetails
-    setFormData({
+        setFormData({
       first_name: userDetails.first_name || '',
       last_name: userDetails.last_name || '',
       mobile_number: userDetails.mobile_number || '',
@@ -78,7 +77,7 @@ function ProfileModal({ isOpen, onClose }) {
           <X className="h-6 w-6" />
         </button>
 
-        <h2 className="text-2xl font-bold mb-6">Profile Details</h2>
+        <h2 className="text-2xl font-semibold mb-6">Profile Details</h2>
 
         <div className="mb-6 flex justify-start">
           <div className="w-24 h-24 rounded overflow-hidden">
@@ -124,9 +123,9 @@ function ProfileModal({ isOpen, onClose }) {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Mobile No
             </label>
-            <div className="flex">
-              <span className="inline-flex items-center px-3 border border-r-0 rounded-l-md bg-gray-50">
-                🇮🇳 +91
+            <div className="flex gap-20">
+              <span className="flex items-center px-3 border border-r-0 rounded-l-md bg-gray-50">
+                IN +91
               </span>
               <input
                 type="tel"

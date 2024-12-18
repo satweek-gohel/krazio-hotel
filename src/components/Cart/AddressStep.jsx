@@ -20,6 +20,8 @@ L.Marker.prototype.options.icon = DefaultIcon;
 const AddressStep = ({ onNext }) => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [mapCenter, setMapCenter] = useState([23.0225, 72.5714]); // Ahmedabad coordinates
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDeliveryInstruction, setSelectedDeliveryInstruction] = useState(null);
 
   const savedAddresses = [
     {
@@ -35,16 +37,32 @@ const AddressStep = ({ onNext }) => {
       address: 'B 202 Gate, Ahmedabad, Gujarat, India',
       distance: '18.0 km',
       coordinates: [23.0225, 72.5850]
+    },
+    {
+      id: 3,
+      name: 'Vgec boy hostel 2',
+      address: 'visat, Ahmedabad, Gujarat, India',
+      distance: '18.0 km',
+      coordinates: [25.2225, 80.5850]
     }
   ];
+
+  const filteredAddresses = savedAddresses.filter(address => 
+    address.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    address.address.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleAddressSelect = (address) => {
     setSelectedAddress(address.id);
     setMapCenter(address.coordinates);
   };
 
+  const handleDeliveryInstructionSelect = (instruction) => {
+    setSelectedDeliveryInstruction(instruction);
+  };
+
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col overflow-y-auto pb-5 bg-white">
       {/* Map Container */}
       <div className="relative h-48 bg-gray-100">
         <div className="absolute top-4 right-4 z-10">
@@ -63,7 +81,7 @@ const AddressStep = ({ onNext }) => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {savedAddresses.map((address) => (
+          {filteredAddresses.map((address) => (
             <Marker 
               key={address.id} 
               position={address.coordinates}
@@ -81,6 +99,8 @@ const AddressStep = ({ onNext }) => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search your location"
             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
           />
@@ -93,7 +113,10 @@ const AddressStep = ({ onNext }) => {
             {['Leave at door', 'Avoid ringing', 'Avoid calling'].map((instruction) => (
               <button 
                 key={instruction}
-                className="p-3 border border-gray-200 rounded-xl text-center hover:border-red-500 hover:text-red-500 flex flex-col items-center"
+                onClick={() => handleDeliveryInstructionSelect(instruction)}
+                className={`p-3 border border-gray-200 rounded-xl text-center hover:border-red-500 hover:text-red-500 flex flex-col items-center ${
+                  selectedDeliveryInstruction === instruction ? 'border-red-500 bg-red-50' : ''
+                }`}
               >
                 <div className="w-8 h-8 bg-red-50 rounded-full flex items-center justify-center mb-1">
                   <MapPin className="w-4 h-4 text-red-500" />
@@ -108,7 +131,7 @@ const AddressStep = ({ onNext }) => {
         <div>
           <h3 className="text-base font-semibold mb-3">Saved Addresses</h3>
           <div className="space-y-3">
-            {savedAddresses.map((addr) => (
+            {filteredAddresses.map((addr) => (
               <button
                 key={addr.id}
                 onClick={() => handleAddressSelect(addr)}
@@ -139,7 +162,7 @@ const AddressStep = ({ onNext }) => {
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t">
         <button
           onClick={onNext}
-          disabled={!selectedAddress}
+          disabled={!selectedAddress || !selectedDeliveryInstruction}
           className="w-full py-3.5 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           Next
