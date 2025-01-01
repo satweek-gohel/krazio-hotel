@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { prepareOrderPayload } from '../utils/orderCalculate';
+import { calculateOrder } from '../services/api/orderCalculations';
+
 
 const CartContext = createContext();
 
@@ -12,6 +15,9 @@ export const CartProvider = ({ children }) => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [deliveryInstructions, setDeliveryInstructions] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState(null);
+  const [checkoutStep, setCheckoutStep] = useState(1);
+  const [orderCalculation, setOrderCalculation] = useState(null);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('cartOpen', isOpen);
@@ -20,6 +26,25 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(items));
   }, [items]);
+
+  const updateOrderCalculation = async () => {
+    if (items.length === 0) return;
+
+    setIsCalculating(true);
+    try {
+      const payload = prepareOrderPayload(items, selectedTip, orderType);
+      const result = await calculateOrder(payload);
+      setOrderCalculation(result.RESULT);
+    } catch (error) {
+      console.error('Error updating order calculation:', error);
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+
+  useEffect(() => {
+    updateOrderCalculation();
+  }, [items, selectedTip, orderType]);
 
   const toggleCart = () => setIsOpen(!isOpen);
 
@@ -75,10 +100,19 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  const canPlaceOrder = () => {
+    if (items.length === 0) return false;
+    if (!selectedAddress) return false;
+    if (!paymentMethod) return false;
+    if (orderType === 'Delivery' && deliveryTime === 'Later' && !selectedDateTime) return false;
+    return true;
+  };
+
   const placeOrder = () => {
-    const deliveryFee = orderType === 'Delivery' ? 5.99 : 0;
-    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const total = subtotal + deliveryFee + (selectedTip || 0);
+    if (!canPlaceOrder()) {
+      console.error('Cannot place order: missing required information');
+      return null;
+    }
 
     const orderData = {
       orderId: Date.now(),
@@ -89,12 +123,10 @@ export const CartProvider = ({ children }) => {
       selectedAddress,
       deliveryInstructions,
       paymentMethod,
-      pricing: {
-        subtotal,
-        deliveryFee,
-        tip: selectedTip || 0,
-        total
-      }
+      pricing: orderCalculation?.payable_amount?.reduce((acc, item) => {
+        acc[item.title.toLowerCase().replace(/\s+/g, '_')] = Number(item.value);
+        return acc;
+      }, {})
     };
 
     // Store order in localStorage
@@ -110,42 +142,46 @@ export const CartProvider = ({ children }) => {
     setSelectedAddress(null);
     setDeliveryInstructions([]);
     setPaymentMethod(null);
+    setCheckoutStep(1);
 
-    console.log('Order placed:', orderData);
     return orderData;
   };
 
-  const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const uniqueItemsCount = items.length;
 
   return (
     <CartContext.Provider value={{
       isOpen,
       items,
+      orderType,
+      deliveryTime,
+      selectedDateTime,
+      selectedTip,
+      selectedAddress,
+      deliveryInstructions,
+      paymentMethod,
+      checkoutStep,
+      orderCalculation,
+      isCalculating,
+      uniqueItemsCount,
       toggleCart,
       addItem,
       removeItem,
       updateItem,
       updateQuantity,
-      totalPrice,
-      totalItems,
-      uniqueItemsCount,
-      orderType,
+      setIsOpen,
+      setItems,
       setOrderType,
-      deliveryTime,
       setDeliveryTime,
-      selectedDateTime,
       setSelectedDateTime,
-      selectedTip,
       setSelectedTip,
-      selectedAddress,
       setSelectedAddress,
-      deliveryInstructions,
       setDeliveryInstructions,
-      paymentMethod,
       setPaymentMethod,
-      placeOrder
+      setCheckoutStep,
+      placeOrder,
+      canPlaceOrder,
+      updateOrderCalculation
     }}>
       {children}
     </CartContext.Provider>

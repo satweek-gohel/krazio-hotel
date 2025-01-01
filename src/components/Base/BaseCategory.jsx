@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-
-
 const Category = ({ 
   title, 
   categories = [],
@@ -23,25 +21,61 @@ const Category = ({
     };
   };
 
+  // Calculate visible categories without repeats
+  const getVisibleCategories = () => {
+    const visibleCount = getVisibleItemCount().default;
+    const uniqueCategories = Array.from(new Set(categories.map(c => c.category_name)))
+      .map(name => categories.find(c => c.category_name === name));
+
+    // If unique categories are less than or equal to visible count, return all
+    if (uniqueCategories.length <= visibleCount) {
+      return uniqueCategories;
+    }
+
+    // Slice to get only the first set of unique categories
+    return uniqueCategories.slice(0, visibleCount);
+  };
+
   const handleNext = useCallback(() => {
+    const visibleCategories = getVisibleCategories();
+    
+    // If categories fit in one view, do nothing
+    if (visibleCategories.length <= getVisibleItemCount().default) {
+      return;
+    }
+
     setCurrentIndex((prev) => {
       const newIndex = prev + 1;
-      return newIndex >= categories.length ? 0 : newIndex;
+      return newIndex >= visibleCategories.length ? 0 : newIndex;
     });
-  }, [categories.length]);
+  }, [categories]);
 
   const handlePrevious = () => {
+    const visibleCategories = getVisibleCategories();
+    
+    // If categories fit in one view, do nothing
+    if (visibleCategories.length <= getVisibleItemCount().default) {
+      return;
+    }
+
     setCurrentIndex((prev) => {
       const newIndex = prev - 1;
-      return newIndex < 0 ? categories.length - 1 : newIndex;
+      return newIndex < 0 ? visibleCategories.length - 1 : newIndex;
     });
   };
 
   // Autoplay functionality
   useEffect(() => {
     let intervalId;
+    const visibleCategories = getVisibleCategories();
     
-    if (isPlaying && categories.length > 1) {
+    // Disable autoplay if categories fit in one view
+    if (visibleCategories.length <= getVisibleItemCount().default) {
+      setIsPlaying(false);
+      return;
+    }
+    
+    if (isPlaying && visibleCategories.length > 1) {
       intervalId = setInterval(() => {
         handleNext();
       }, autoplaySpeed);
@@ -52,17 +86,19 @@ const Category = ({
         clearInterval(intervalId);
       }
     };
-  }, [isPlaying, handleNext, autoplaySpeed, categories.length]);
+  }, [isPlaying, handleNext, autoplaySpeed, categories]);
 
   // Pause autoplay when hovering
   const handleMouseEnter = () => {
-    if (autoplay) {
+    const visibleCategories = getVisibleCategories();
+    if (autoplay && visibleCategories.length > getVisibleItemCount().default) {
       setIsPlaying(false);
     }
   };
 
   const handleMouseLeave = () => {
-    if (autoplay) {
+    const visibleCategories = getVisibleCategories();
+    if (autoplay && visibleCategories.length > getVisibleItemCount().default) {
       setIsPlaying(true);
     }
   };
@@ -75,70 +111,62 @@ const Category = ({
     );
   }
 
-  const getVisibleCategories = () => {
-    const visibleCategories = [];
-    const totalCategories = categories.length;
-    const visibleCount = getVisibleItemCount().default; 
-    
-    for (let i = 0; i < visibleCount; i++) {
-      const index = (currentIndex + i) % totalCategories;
-      visibleCategories.push(categories[index]);
-    }
-    return visibleCategories;
-  };
+  const visibleCategories = getVisibleCategories();
+  const showNavigation = visibleCategories.length > getVisibleItemCount().default;
 
   return (
     <div 
-      className="relative w-full mt-5 mb-10 "
+      className="relative w-full mt-5 mb-10"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="flex justify-between items-center mb-6 px-4">
+      <div className="flex justify-between items-center mb-6 py-5 px-4">
         <h2 className="text-2xl font-semibold text-left">{title}</h2>
-        <div className="flex gap-4">
-          <button
-            onClick={handlePrevious}
-            className="p-2 bg-primary text-white rounded-full shadow-lg hover:bg-red-700 transition-colors"
-            aria-label="Previous category"
-          >
-            <ChevronLeft className="w-5 h-5 text-white" />
-          </button>
-          <button
-            onClick={handleNext}
-            className="p-2 bg-primary text-white rounded-full shadow-lg hover:bg-red-700 transition-colors"
-            aria-label="Next category"
-          >
-            <ChevronRight className="w-5 h-5 text-white" />
-          </button>
-        </div>
+        {showNavigation && (
+          <div className="flex gap-4">
+            <button
+              onClick={handlePrevious}
+              className="p-2 bg-primary text-white rounded-full shadow-lg hover:bg-red-700 transition-colors"
+              aria-label="Previous category"
+            >
+              <ChevronLeft className="w-5 h-5 text-white" />
+            </button>
+            <button
+              onClick={handleNext}
+              className="p-2 bg-primary text-white rounded-full shadow-lg hover:bg-red-700 transition-colors"
+              aria-label="Next category"
+            >
+              <ChevronRight className="w-5 h-5 text-white" />
+            </button>
+          </div>
+        )}
       </div>
     
-      <div className="relative group bg-white-500 shadow rounded ">
+      <div className="relative group bg-white-500 shadow rounded">
         <div className="relative overflow-hidden px-4">
           <div className="flex transition-transform duration-500 ease-in-out gap-0"> 
-            {getVisibleCategories().map((category, index) => (
-             <div
-             key={`${currentIndex}-${index}`}
-             className="flex-shrink-0 transition-all duration-300
-                        w-1/4 sm:w-1/6 md:w-1/8 lg:w-1/10 xl:w-1/12 flex justify-center p-[10px]" 
-           >
-             <div 
-               className="flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-transform"
-               onClick={() => onSelect && onSelect(category)}
-             >
-               <div className="relative w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-lg overflow-hidden mb-2">
-
-                 <img
-                   src={category.category_image || 'https://images.ctfassets.net/ihx0a8chifpc/GTlzd4xkx4LmWsG1Kw1BB/ad1834111245e6ee1da4372f1eb5876c/placeholder.com-1280x720.png?w=1920&q=60&fm=webp'}
-                   alt={category.name}
-                   className="max-w-full max-h-full object-contain" 
-                 />
-               </div>
-               <p className="text-[9px] sm:text-[9px] lg:text-[12px] text-center font-semibold line-clamp-2">
-  {category.category_name}
-</p>
-             </div>
-           </div>
+            {visibleCategories.map((category, index) => (
+              <div
+                key={`${index}`}
+                className="flex-shrink-0 transition-all duration-300
+                           w-1/4 sm:w-1/6 md:w-1/8 lg:w-1/10 xl:w-1/12 flex justify-center p-[10px]" 
+              >
+                <div 
+                  className="flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-transform"
+                  onClick={() => onSelect && onSelect(category)}
+                >
+                  <div className="relative w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-lg overflow-hidden mb-2">
+                    <img
+                      src={category.category_image || 'https://images.ctfassets.net/ihx0a8chifpc/GTlzd4xkx4LmWsG1Kw1BB/ad1834111245e6ee1da4372f1eb5876c/placeholder.com-1280x720.png?w=1920&q=60&fm=webp'}
+                      alt={category.name}
+                      className="max-w-full max-h-full object-contain" 
+                    />
+                  </div>
+                  <p className="text-[9px] sm:text-[9px] lg:text-[12px] text-center font-semibold line-clamp-2">
+                    {category.category_name}
+                  </p>
+                </div>
+              </div>
             ))}
           </div>
         </div>

@@ -1,19 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import StepIndicator from './StepIndicator';
-import AuthContainer from './AuthContainer';
-import AddressStep from './AddressStep';
+
+import AddressStep from './Address/AddressStep';
 import PaymentForm from './PaymentForm';
 import OrderSummary from './OrderSummary';
+import AuthCard from './Auth/AuthContainer';
 
 const CheckoutPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const { userDetails, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (isAuthenticated()) {
+      setCurrentStep(2); // Directly go to Address Step if authenticated
+    }
+  }, [isAuthenticated]);
+
   const handleNextStep = () => {
-    if (!isAuthenticated && currentStep === 1) {
+    if (!isAuthenticated() && currentStep === 1) {
       return;
     }
     setCurrentStep(prev => Math.min(prev + 1, 3));
@@ -27,22 +34,8 @@ const CheckoutPage = () => {
     switch (currentStep) {
       case 1:
         return !isAuthenticated() ? (
-          <AuthContainer onAuthSuccess={() => handleNextStep()} />
-        ) : (
-          <div className="bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold mb-4">Welcome back!</h2>
-            <div className="space-y-2">
-              <p className="text-gray-600">Logged in as {userDetails?.first_name}</p>
-              <p className="text-gray-600">{userDetails?.email_address}</p>
-            </div>
-            <button
-              onClick={handleNextStep}
-              className="mt-6 w-full bg-primary text-white py-3 rounded-lg hover:bg-red-600"
-            >
-              Continue to Delivery
-            </button>
-          </div>
-        );
+          <AuthCard />
+        ) : null; // No need to show anything if authenticated and on step 1
       case 2:
         return (
           <AddressStep
@@ -60,20 +53,15 @@ const CheckoutPage = () => {
 
   return (
     <div className="w-full">
-      
-      <div className="w-full mt-20" >
-        
-        
+      <div className="w-full mt-20">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="lg:w-2/3 ">
-          <div className="steps p-4">
-          <StepIndicator currentStep={currentStep} />
-          </div>
+            <div className="steps p-4">
+              <StepIndicator currentStep={currentStep} />
+            </div>
             <div className="rounded-lg p-7">
-            
               {renderStepContent()}
             </div>
-           
 
             <div className="flex justify-between p-10">
               {currentStep > 1 && (
@@ -87,7 +75,7 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          <div className="lg:w-1/3 p-5">
+          <div className="lg:w-1/3 p-5 me-20">
             <OrderSummary />
           </div>
         </div>

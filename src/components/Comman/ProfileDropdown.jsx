@@ -1,26 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { 
-  LogOut, 
-  User as UserIcon, 
-  ChevronDown
-} from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useEffect, useRef, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from 'react-router-dom';
+import ProfileModal from "./ProfileModal";
+import ConfirmLogout from "./ConfirmLogout";
+import SavedAddressModal from "./AddressModal";
 
-function ProfileDropdown() {
-  const { userDetails, logout, token } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
+const ProfileDropdown = () => {
   const dropdownRef = useRef(null);
-  
-
-  
-  useEffect(() => {
-    console.log('User data from context:', userDetails);
-    console.log('token data from context:', token);
-    console.log('Session storage data:', {
-      userDetails: JSON.parse(sessionStorage.getItem('userDetails')),
-      token: sessionStorage.getItem('token')
-    });
-  }, [userDetails, token]);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isConfirmLogoutOpen, setIsConfirmLogoutOpen] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -33,59 +25,79 @@ function ProfileDropdown() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  if (!userDetails) return null;
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      console.log('Logged out successfully');
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+  const handleOrdersClick = () => {
+    setIsOpen(false);  // Close dropdown first
+    navigate('/my-orders');  // Then navigate
   };
+
+  const menuItems = [
+    { 
+      icon: '/profiledropdown.svg', 
+      label: 'Profile', 
+      onClick: () => setIsProfileModalOpen(true) 
+    },
+    { 
+      icon: '/orderdropdown.svg', 
+      label: 'Orders', 
+      onClick: handleOrdersClick  // Use the new handler
+    },
+    { 
+      icon: '/addressdropdown.svg', 
+      label: 'My Address', 
+      onClick: () => setIsAddressModalOpen(true) 
+    },
+    { 
+      icon: '/logoutdropdown.svg', 
+      label: 'Logout', 
+      onClick: () => setIsConfirmLogoutOpen(true) 
+    }
+  ];
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-3 focus:outline-none bg-white rounded-lg px-4 py-2 hover:bg-gray-50"
+        className="flex items-center space-x-2 focus:outline-none"
       >
-        {userDetails.profile_picture
- ? (
+        <div className="w-10 h-10 rounded-full overflow-hidden">
           <img
-            src={userDetails.profile_picture
-            }
-            alt={userDetails.name}
-            className="w-10 h-10 rounded-full object-cover"
+            src="/profile.svg"
+            alt="Profile"
+            className="w-full h-full object-cover"
           />
-        ) : (
-          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-            <span className="text-gray-600 font-semibold text-sm">
-              {userDetails.first_name}
-            </span>
-          </div>
-        )}
-        
-        <div className="text-left">
-          <div className="text-sm font-medium text-gray-900">{userDetails.first_name}</div>
-          <div className="text-xs text-gray-500">{userDetails.email_address}</div>
         </div>
-        <ChevronDown className={`w-4 h-4 text-gray-500 ${isOpen ? 'transform rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1">
-          <button
-            onClick={handleLogout}
-            className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign out
-          </button>
+        <div className="absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-lg py-2 z-50">
+          {menuItems.map((item, index) => (
+            <button
+              key={index}
+              onClick={item.onClick}  // Simplified onClick handler
+              className="w-full px-4 py-3 flex items-center space-x-3 hover:bg-gray-50 transition-colors border-b"
+            >
+              <img src={item.icon} alt={item.label} className="w-5 h-5" />
+              <span className="text-black text-sm font-medium">{item.label}</span>
+            </button>
+          ))}
         </div>
       )}
+
+      <ProfileModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)}
+      />
+      <ConfirmLogout 
+        isOpen={isConfirmLogoutOpen} 
+        onClose={() => setIsConfirmLogoutOpen(false)}
+        onConfirm={logout}
+      />
+      <SavedAddressModal 
+        isOpen={isAddressModalOpen} 
+        onClose={() => setIsAddressModalOpen(false)}
+      />
     </div>
   );
-}
+};
 
 export default ProfileDropdown;

@@ -11,6 +11,7 @@ import "slick-carousel/slick/slick-theme.css";
 import CheckoutPage from './components/Checkout/CheckoutPage.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import { BranchProvider } from './contexts/BranchContext.jsx';
+import Orders from './components/Comman/Orders.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -24,6 +25,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/*" element={<App />} />
           <Route path='/branch-menu/:restaurantId/:branchId' element={<BranchPage />} />
           <Route path='/checkout' element={<CheckoutPage />} />
+          <Route path='/my-orders' element={<Orders />} />
           
           
         </Routes>

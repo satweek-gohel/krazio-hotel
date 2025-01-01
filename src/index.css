@@ -69,3 +69,31 @@
         background: linear-gradient(to right, #E30B0B, #FF4444);
     }
 }
+
+.phone-input {
+    @apply w-full;
+  }
+  
+  .phone-input .form-control {
+    @apply w-full px-3 py-2 md:px-4 md:py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none text-sm md:text-base pl-12 md:pl-14;
+  }
+  
+  .phone-dropdown-button {
+    @apply bg-transparent border-r-0 rounded-l-lg h-full absolute left-0 top-0 px-2 md:px-3 hover:bg-gray-50 transition-colors;
+  }
+  
+  .phone-dropdown {
+    @apply bg-white border border-gray-200 rounded-lg shadow-lg max-h-[200px] overflow-y-auto mt-1;
+  }
+  
+  .phone-dropdown .country {
+    @apply px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm;
+  }
+  
+  .phone-dropdown .search {
+    @apply p-2 border-b border-gray-200;
+  }
+  
+  .phone-dropdown .search input {
+    @apply w-full px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500;
+  }

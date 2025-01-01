@@ -158,13 +158,13 @@ const CartSidebar = () => {
 
   const CartContent = () => (
     <>
-      <div className="px-4 py-4 space-y-4">
-        <div className="mb-6 flex justify-between border p-3 rounded items-center">
-          <p className="text-black mb-2 font-bold">Order Type</p>
+      <div className="px-4 mx-3 py-1 space-y-4 border rounded">
+        <div className="mb-0 flex justify-between p-3 rounded items-center border-b">
+          <p className="text-black text-sm font-semibold">Order Type</p>
           <div className="flex gap-3">
             <button
               onClick={() => handleOrderTypeChange('Delivery')}
-              className={`px-4 py-2 rounded text-sm transition-colors duration-200 md:w-[100px] ${
+              className={`px-4 py-2 rounded text-xs transition-colors duration-200 md:w-[80px] ${
                 orderType === 'Delivery'
                   ? 'bg-red-600 text-white'
                   : 'bg-gray-100 text-gray-700'
@@ -174,7 +174,7 @@ const CartSidebar = () => {
             </button>
             <button
               onClick={() => handleOrderTypeChange('Pick Up')}
-              className={`px-4 py-2 rounded text-sm transition-colors duration-200 md:w-[100px] ${
+              className={`px-4 py-2 rounded text-xs transition-colors duration-200 md:w-[80px] ${
                 orderType === 'Pick Up'
                   ? 'bg-red-600 text-white'
                   : 'bg-gray-100 text-gray-700'
@@ -186,12 +186,12 @@ const CartSidebar = () => {
         </div>
 
         {orderType === 'Delivery' && (
-          <div className="mb-6 flex justify-between items-center border p-3 rounded">
-            <p className="text-black font-semibold mb-2">Food Delivery Time</p>
+          <div className=" flex justify-between items-center p-3 rounded">
+            <p className="text-black text-sm font-semibold mb-2">Food Delivery Time</p>
             <div className="flex gap-3">
               <button
                 onClick={() => handleDeliveryTimeChange('Now')}
-                className={`px-4 py-2 rounded text-sm transition-colors duration-200 w-[80px] ${
+                className={`px-4 py-2 rounded text-xs transition-colors duration-200 w-[80px] ${
                   deliveryTime === 'Now'
                     ? 'bg-red-600 text-white'
                     : 'bg-gray-100 text-gray-700'
@@ -201,7 +201,7 @@ const CartSidebar = () => {
               </button>
               <button
                 onClick={() => handleDeliveryTimeChange('Later')}
-                className={`px-4 py-2 rounded text-sm transition-colors duration-200 w-[80px] ${
+                className={`px-4 py-2 rounded text-xs transition-colors duration-200 w-[80px] ${
                   deliveryTime === 'Later'
                     ? 'bg-red-600 text-white'
                     : 'bg-gray-100 text-gray-700'
@@ -247,18 +247,7 @@ const CartSidebar = () => {
         )}
       </div>
 
-      <div className="mb-6 border p-3 rounded">
-        <div className="flex items-center gap-2 mb-4">
-          <img src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=50&h=50&fit=crop" alt="Tip" className="w-8 h-8 rounded-full" />
-          <p className="text-sm text-gray-600">If am shine, they deliver your orders with care. Show your support with a small tip.</p>
-        </div>
-        <div className="flex gap-3">
-          <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700">$20</button>
-          <button className="flex-1 py-2 bg-red-600 text-white rounded-lg">$40</button>
-          <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700">$60</button>
-          <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700">Other</button>
-        </div>
-      </div>
+     
 
       <div className="flex-1 overflow-y-auto px-4 py-6">
         {items.length === 0 ? (
@@ -277,6 +266,19 @@ const CartSidebar = () => {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="mb-6 border p-3 mx-3 mt-2 rounded">
+        <div className="flex items-center gap-2 mb-4">
+          <img src="https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=50&h=50&fit=crop" alt="Tip" className="w-8 h-8 rounded-full" />
+          <p className="text-sm text-gray-600">Show your support with a small tip.</p>
+        </div>
+        <div className="flex gap-3">
+          <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700 text-xs">$20</button>
+          <button className="flex-1 py-2 bg-red-600 text-white rounded-lg text-xs">$40</button>
+          <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700 text-xs">$60</button>
+          <button className="flex-1 py-2 border border-gray-200 rounded-lg text-gray-700 text-xs">Other</button>
+        </div>
       </div>
 
       <div className="border-t px-4 py-6">

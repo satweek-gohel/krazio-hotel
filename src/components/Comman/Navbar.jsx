@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, Search, MapPin, Clock } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import AuthModals from "../auth/authModals";
 import { useAuth } from "../../contexts/AuthContext";
 import { useModals } from "../../hooks/useModals";
@@ -9,16 +9,20 @@ import CartSidebar from "../Cart/CartSidebar";
 import CouponSidebar from "./CouponSidebar";
 import ProfileModal from "./ProfileModal";
 import { useBranchData } from "../../hooks/useBranchData";
+import ProfileDropdown from "./ProfileDropdown";
 
 function Navbar() {
-  const { uniqueItemsCount, toggleCart } = useCart();
+  const { uniqueItemsCount } = useCart();
   const { isAuthenticated, isAuthReady } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isCouponSidebarOpen, setIsCouponSidebarOpen] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
   const modals = useModals();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   function formatTime(timeString) {
     const [hours, minutes] = timeString.split(":");
     const hour = parseInt(hours, 10);
@@ -78,7 +82,7 @@ function Navbar() {
       return (
         <div className="flex items-center gap-2 sm:gap-4">
           <button
-            onClick={toggleCart}
+            onClick={() => navigate('/checkout')}
             className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 transition-colors shadow-lg"
           >
             <img
@@ -104,16 +108,13 @@ function Navbar() {
               />
             </button>
           )}
-          <button
-            onClick={() => setIsProfileModalOpen(true)}
-            className="h-7 w-7 sm:h-8 sm:w-8 rounded overflow-hidden"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=faces"
-              alt="Profile"
-              className="w-full h-full object-cover"
+          <div className="flex items-center">
+            <ProfileDropdown 
+              isOpen={isDropdownOpen}
+              setIsOpen={setIsDropdownOpen}
+             
             />
-          </button>
+          </div>
         </div>
       );
     }
@@ -291,6 +292,7 @@ function Navbar() {
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
       />
+
     </>
   );
 }

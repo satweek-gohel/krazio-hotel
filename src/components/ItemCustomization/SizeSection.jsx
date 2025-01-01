@@ -10,7 +10,9 @@ const SizeSection = ({ sizeStep, selectedSize, onSizeSelect }) => {
         {sizeStep.category_steps_item.map((size) => (
           <label 
             key={size.branch_extra_ingredient_category_steps_item} 
-            className="flex items-center justify-between p-3 border rounded-lg"
+            className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer ${
+              selectedSize === size.extra_ingredient_name ? 'border-red-500 bg-red-50' : ''
+            }`}
           >
             <div className="flex items-center">
               <input

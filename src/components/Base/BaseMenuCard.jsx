@@ -29,10 +29,10 @@ const MenuCard = ({
         {/* Name and Rating Row */}
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-semibold truncate">{foodName}</h3>
-          <div className="flex items-center gap-1">
+          {/* <div className="flex items-center gap-1">
             <span className="text-sm">{rating}</span>
             <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-          </div>
+          </div> */}
         </div>
         
         {/* Time Row */}

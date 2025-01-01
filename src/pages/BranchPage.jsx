@@ -31,11 +31,23 @@ function BranchPage() {
         const data = await getBranchDetails(restaurantId, branchId);
         setBranchData(data);
         
+        // Add "All" category at the beginning of the categories array
+        const allCategory = {
+          category_name: "All",
+          category_image: '/coffe.png', // You can use an appropriate image for "All"
+          category_id: 'all'
+        };
+        localStorage.setItem('branch_schedule', JSON.stringify(data?.branch_details[0]?.branch_schedule));
+    
+        setSelectedItem(null);
         const transformedCategories = data?.category_details.map(category => ({
           category_name: category.category_name,
           category_image: category.category_image || '/coffe.png',
           category_id: category.category_id 
         })) || [];
+        
+        // Add the "All" category at the beginning
+        const categoriesWithAll = [allCategory, ...transformedCategories];
         
         const recommendedItems = data?.item_details.filter(
           item => item.is_recommended_item === "1"
@@ -44,7 +56,7 @@ function BranchPage() {
         const isOpen = data?.branch_details[0].is_open === "0";
         setIsOpen(isOpen);
         
-        setCategories(transformedCategories);
+        setCategories(categoriesWithAll);
         setRecommendedItems(recommendedItems);
       } catch (error) {
         console.error('Failed to fetch branch data:', error);
@@ -64,7 +76,6 @@ function BranchPage() {
 
   const handleItemClick = async (item) => {
     try {
-      
       const enrichedItem = {
         ...item,
         restaurant_id: restaurantId,
@@ -77,6 +88,8 @@ function BranchPage() {
   };
 
   const handleAddToCart = (customizedItem) => {
+    // Clear local storage when adding an order from another branch
+   
     addItem({
       ...customizedItem,
       id: customizedItem.item_id,
@@ -84,11 +97,13 @@ function BranchPage() {
       price: customizedItem.totalPrice,
       item_image: customizedItem.item_image
     });
-    setSelectedItem(null);
   };
 
+ 
   const filteredItems = selectedCategory
-    ? branchData?.item_details.filter(item => item.category_id === selectedCategory.category_id)
+    ? selectedCategory.category_id === 'all'
+      ? branchData?.item_details  // Show all items when "All" category is selected
+      : branchData?.item_details.filter(item => item.category_id === selectedCategory.category_id)
     : branchData?.item_details;
 
   if (loading) {
@@ -128,8 +143,8 @@ function BranchPage() {
         />
       )}
 
-      {branchData?.branch_details?.[0] && (
-        <BranchHeader branchName={branchData.branch_details[0].branch_name} />
+      {selectedCategory && selectedCategory.category_id !== 'all' && (
+        <BranchHeader branchName={selectedCategory.category_name} />
       )}
 
       {filteredItems && (
