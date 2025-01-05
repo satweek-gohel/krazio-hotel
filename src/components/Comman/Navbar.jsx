@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, Search, MapPin, Clock } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AuthModals from "../auth/authModals";
@@ -37,7 +37,7 @@ function Navbar() {
     const today = new Date()
       .toLocaleString("en-US", { weekday: "short" })
       .toLowerCase();
-    const currentDaySchedule = schedule.find((day) => day.day === today);
+    const currentDaySchedule = schedule?.find((day) => day.day === today);
 
     if (!currentDaySchedule || currentDaySchedule.is_open !== "1") return false;
 
@@ -82,7 +82,7 @@ function Navbar() {
       return (
         <div className="flex items-center gap-2 sm:gap-4">
           <button
-            onClick={() => navigate('/checkout')}
+            onClick={() => navigate("/checkout")}
             className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 transition-colors shadow-lg"
           >
             <img
@@ -109,10 +109,9 @@ function Navbar() {
             </button>
           )}
           <div className="flex items-center">
-            <ProfileDropdown 
+            <ProfileDropdown
               isOpen={isDropdownOpen}
               setIsOpen={setIsDropdownOpen}
-             
             />
           </div>
         </div>
@@ -144,7 +143,7 @@ function Navbar() {
     const today = new Date()
       .toLocaleString("en-US", { weekday: "short" })
       .toLowerCase();
-    const currentDaySchedule = schedule.find((day) => day.day === today);
+    const currentDaySchedule = schedule?.find((day) => day.day === today);
 
     const openTime = currentDaySchedule
       ? formatTime(currentDaySchedule.open_time)
@@ -292,7 +291,6 @@ function Navbar() {
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
       />
-
     </>
   );
 }
