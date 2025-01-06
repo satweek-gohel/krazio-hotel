@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
-import { useCart } from '../../contexts/CartContext';
-import CartItem from './CartItem';
-import TipSection from './TipSection';
-import OrderTypeSelector from './OrderTypeSelector';
-import { formatPrice } from '../../utils/orderCalculate';
+import { useEffect } from "react";
+import { useCart } from "../../contexts/CartContext";
+import CartItem from "./CartItem";
+import TipSection from "./TipSection";
+import OrderTypeSelector from "./OrderTypeSelector";
+import { formatPrice } from "../../utils/orderCalculate";
+import { useLocation } from "react-router-dom";
 
 const OrderSummary = () => {
-  const { 
+  const location = useLocation();
+  const {
     items,
     orderType,
     setOrderType,
@@ -21,23 +23,34 @@ const OrderSummary = () => {
     isCalculating,
     paymentMethod,
     selectedAddress,
-    placeOrder
+    placeOrder,
   } = useCart();
 
+  const today = new Date()
+    .toLocaleString("en-US", { weekday: "short" })
+    .toLowerCase();
+
+  const { branchDetails } = location.state || {};
+  const schedule = branchDetails.branch_details[0].branch_schedule;
+  const currentDaySchedule = schedule?.find((day) => day.day === today);
+  const [hours, minutes, seconds] = currentDaySchedule.close_time
+    .split(":")
+    .map(Number);
+
+  const milliseconds = (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
+
+  const totalTimeToCreateTheFood = new Date(
+    new Date().getTime() + 30 * 60 * 1000
+  ); // Add 30 minutes in milliseconds + estimateTime;
+
+  const condition = milliseconds < totalTimeToCreateTheFood;
+
   useEffect(() => {
-    const branchSchedule = JSON.parse(localStorage.getItem('branch_schedule'));
-    const isBranchOpen = branchSchedule?.some(schedule => schedule.is_open === "1");
-    
-    if (isBranchOpen) {
-      setOrderType('Delivery');
-      setDeliveryTime('Later')
-      const today = new Date();
-      const nextFiveDays = new Date(today);
-      nextFiveDays.setDate(today.getDate() + 5);
-      const formattedDate = nextFiveDays.toISOString().slice(0, 10);
-      setSelectedDateTime(formattedDate);
+    if (condition) {
+      // setOrderType('Delivery')
+      setDeliveryTime("Later");
     }
-  }, [setOrderType, setSelectedDateTime]);
+  }, []);
 
   const isOrderEnabled = () => {
     return paymentMethod && selectedAddress;
@@ -46,7 +59,7 @@ const OrderSummary = () => {
   const handlePlaceOrder = () => {
     const orderData = placeOrder();
     if (orderData) {
-      console.log('Order successfully placed:', orderData);
+      console.log("Order successfully placed:", orderData);
     }
   };
 
@@ -72,11 +85,14 @@ const OrderSummary = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg max-w-xl w-full p-4 border overflow-auto" 
-         style={{ maxHeight: 'calc(100vh - 150px)' }}>
+    <div
+      className="bg-white rounded-xl shadow-lg max-w-xl w-full p-4 border overflow-auto"
+      style={{ maxHeight: "calc(100vh - 150px)" }}
+    >
       <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
-      
+
       <OrderTypeSelector
+        condition={condition}
         orderType={orderType}
         onOrderTypeChange={setOrderType}
         deliveryTime={deliveryTime}
@@ -103,15 +119,19 @@ const OrderSummary = () => {
 
       {renderOrderSummary()}
 
-      <button 
+      <button
         onClick={handlePlaceOrder}
         disabled={!isOrderEnabled()}
         className={`w-full py-3 rounded-lg font-medium transition-colors mt-6
-          ${isOrderEnabled()
-            ? 'bg-red-600 text-white hover:bg-red-700'
-            : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+          ${
+            isOrderEnabled()
+              ? "bg-red-600 text-white hover:bg-red-700"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
       >
-        {isOrderEnabled() ? 'Place Order' : 'Select Payment Method to Place Order'}
+        {isOrderEnabled()
+          ? "Place Order"
+          : "Select Payment Method to Place Order"}
       </button>
     </div>
   );

@@ -10,6 +10,7 @@ import CouponSidebar from "./CouponSidebar";
 import ProfileModal from "./ProfileModal";
 import { useBranchData } from "../../hooks/useBranchData";
 import ProfileDropdown from "./ProfileDropdown";
+import { formatTime } from "../../utils/cartHelpers";
 
 function Navbar() {
   const { uniqueItemsCount } = useCart();
@@ -23,13 +24,6 @@ function Navbar() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  function formatTime(timeString) {
-    const [hours, minutes] = timeString.split(":");
-    const hour = parseInt(hours, 10);
-    const period = hour >= 12 ? "PM" : "AM";
-    const formattedHour = hour % 12 || 12;
-    return `${formattedHour}:${minutes} ${period}`;
-  }
 
   function isBranchCurrentlyOpen(schedule) {
     if (!schedule || schedule.length === 0) return false;
@@ -82,7 +76,11 @@ function Navbar() {
       return (
         <div className="flex items-center gap-2 sm:gap-4">
           <button
-            onClick={() => navigate("/checkout")}
+            onClick={() =>
+              navigate("/checkout", {
+                state: { branchDetails },
+              })
+            }
             className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 transition-colors shadow-lg"
           >
             <img
