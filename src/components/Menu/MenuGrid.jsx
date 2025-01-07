@@ -20,7 +20,7 @@ const MenuGrid = ({ items, onAddToCart, disabled }) => {
             "https://media.istockphoto.com/id/1442417585/photo/person-getting-a-piece-of-cheesy-pepperoni-pizza.jpg?s=612x612&w=0&k=20&c=k60TjxKIOIxJpd4F4yLMVjsniB4W1BpEV4Mi_nb4uJU="
           }
           rating={item.rating || 4.5}
-          time={item.preparation_time || 30}
+          time={item.item_preparation_time || 30}
           price={item.price}
           onAddClick={() => onAddToCart(item)}
           disabled={disabled}

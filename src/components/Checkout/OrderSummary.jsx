@@ -5,6 +5,10 @@ import TipSection from "./TipSection";
 import OrderTypeSelector from "./OrderTypeSelector";
 import { formatPrice } from "../../utils/orderCalculate";
 import { useLocation } from "react-router-dom";
+import {
+  findLargestTimestamp,
+  timeStringToMilliseconds,
+} from "../../utils/cartHelpers";
 
 const OrderSummary = () => {
   const location = useLocation();
@@ -26,6 +30,7 @@ const OrderSummary = () => {
     placeOrder,
   } = useCart();
 
+  //! Improve the logic
   const today = new Date()
     .toLocaleString("en-US", { weekday: "short" })
     .toLowerCase();
@@ -33,17 +38,19 @@ const OrderSummary = () => {
   const { branchDetails } = location.state || {};
   const schedule = branchDetails.branch_details[0].branch_schedule;
   const currentDaySchedule = schedule?.find((day) => day.day === today);
-  const [hours, minutes, seconds] = currentDaySchedule.close_time
-    .split(":")
-    .map(Number);
+  const closedInMilliseconds = timeStringToMilliseconds(
+    currentDaySchedule.close_time
+  );
 
-  const milliseconds = (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
+  const tookLArgestTimeToCook = findLargestTimestamp(
+    items,
+    "item_preparation_time"
+  );
 
-  const totalTimeToCreateTheFood = new Date(
-    new Date().getTime() + 30 * 60 * 1000
-  ); // Add 30 minutes in milliseconds + estimateTime;
+  const currentTime = Date.now();
+  const totalTimeToCook = currentTime + tookLArgestTimeToCook;
 
-  const condition = milliseconds < totalTimeToCreateTheFood;
+  const condition = closedInMilliseconds < totalTimeToCook;
 
   useEffect(() => {
     if (condition) {
