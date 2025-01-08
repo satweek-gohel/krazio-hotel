@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 
 const AddressForm = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
-    street: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    phone: ''
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    phone: "",
   });
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -24,7 +24,7 @@ const AddressForm = ({ onSubmit }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <h2 className="text-xl font-semibold">Delivery Address</h2>
-      
+
       <div className="space-y-4">
         <div>
           <label className="block text-gray-700 mb-2">Street Address</label>

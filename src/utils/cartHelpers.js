@@ -54,6 +54,7 @@ export function formatTime(timeString) {
 }
 
 export function timeStringToMilliseconds(timeString) {
+  console.log("timeString ===========>", timeString);
   if (!timeString || typeof timeString !== "string") {
     throw new Error("Invalid time string format. Expected 'HH:MM:SS'");
   }
@@ -89,5 +90,5 @@ export function findLargestTimestamp(objects, key) {
     return Math.max(max, timestamp);
   }, -Infinity);
 
-  return new Date(largestTimestamp); // Return as a Date object
+  return largestTimestamp ? new Date(largestTimestamp) : 1800000; // Return as a Date object OR 30 mins in milliseconds
 }

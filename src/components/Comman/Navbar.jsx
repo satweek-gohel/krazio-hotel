@@ -76,11 +76,7 @@ function Navbar() {
       return (
         <div className="flex items-center gap-2 sm:gap-4">
           <button
-            onClick={() =>
-              navigate("/checkout", {
-                state: { branchDetails },
-              })
-            }
+            onClick={() => navigate("/checkout")}
             className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 transition-colors shadow-lg"
           >
             <img

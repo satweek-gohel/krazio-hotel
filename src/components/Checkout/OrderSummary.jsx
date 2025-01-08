@@ -4,14 +4,12 @@ import CartItem from "./CartItem";
 import TipSection from "./TipSection";
 import OrderTypeSelector from "./OrderTypeSelector";
 import { formatPrice } from "../../utils/orderCalculate";
-import { useLocation } from "react-router-dom";
 import {
   findLargestTimestamp,
   timeStringToMilliseconds,
 } from "../../utils/cartHelpers";
 
 const OrderSummary = () => {
-  const location = useLocation();
   const {
     items,
     orderType,
@@ -34,12 +32,11 @@ const OrderSummary = () => {
   const today = new Date()
     .toLocaleString("en-US", { weekday: "short" })
     .toLowerCase();
+  const schedule = JSON.parse(localStorage.getItem("branch_schedule"));
 
-  const { branchDetails } = location.state || {};
-  const schedule = branchDetails.branch_details[0].branch_schedule;
   const currentDaySchedule = schedule?.find((day) => day.day === today);
   const closedInMilliseconds = timeStringToMilliseconds(
-    currentDaySchedule.close_time
+    currentDaySchedule?.close_time
   );
 
   const tookLArgestTimeToCook = findLargestTimestamp(
