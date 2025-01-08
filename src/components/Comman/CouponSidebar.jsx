@@ -16,9 +16,10 @@ const CouponSidebar = ({ isOpen, onClose }) => {
       try {
         const data = await getCoupons(restaurantId, branchId);
         setCoupon(data);
-        console.log(data);
-      } catch (error) {
-        console.error("Failed to fetch branch data:", error);
+        } catch (error) {
+        console.error('Failed to fetch branch data:', error);
+      } finally {
+        
       }
     };
 

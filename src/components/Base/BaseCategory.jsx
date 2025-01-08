@@ -21,25 +21,25 @@ const Category = ({
     };
   };
 
-  // Calculate visible categories without repeats
+  
   const getVisibleCategories = () => {
     const visibleCount = getVisibleItemCount().default;
     const uniqueCategories = Array.from(new Set(categories.map(c => c.category_name)))
       .map(name => categories.find(c => c.category_name === name));
 
-    // If unique categories are less than or equal to visible count, return all
+   
     if (uniqueCategories.length <= visibleCount) {
       return uniqueCategories;
     }
 
-    // Slice to get only the first set of unique categories
+   
     return uniqueCategories.slice(0, visibleCount);
   };
 
   const handleNext = useCallback(() => {
     const visibleCategories = getVisibleCategories();
     
-    // If categories fit in one view, do nothing
+   
     if (visibleCategories.length <= getVisibleItemCount().default) {
       return;
     }
@@ -53,7 +53,7 @@ const Category = ({
   const handlePrevious = () => {
     const visibleCategories = getVisibleCategories();
     
-    // If categories fit in one view, do nothing
+   
     if (visibleCategories.length <= getVisibleItemCount().default) {
       return;
     }
@@ -64,12 +64,12 @@ const Category = ({
     });
   };
 
-  // Autoplay functionality
+
   useEffect(() => {
     let intervalId;
     const visibleCategories = getVisibleCategories();
     
-    // Disable autoplay if categories fit in one view
+   
     if (visibleCategories.length <= getVisibleItemCount().default) {
       setIsPlaying(false);
       return;
@@ -88,7 +88,7 @@ const Category = ({
     };
   }, [isPlaying, handleNext, autoplaySpeed, categories]);
 
-  // Pause autoplay when hovering
+
   const handleMouseEnter = () => {
     const visibleCategories = getVisibleCategories();
     if (autoplay && visibleCategories.length > getVisibleItemCount().default) {
@@ -116,11 +116,11 @@ const Category = ({
 
   return (
     <div 
-      className="relative w-full mt-5 mb-10"
+      className="relative w-full mb-10 rounded shadow-md"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="flex justify-between items-center mb-6 py-5 px-4">
+      <div className="flex justify-between items-center mb-6  px-4">
         <h2 className="text-2xl font-semibold text-left">{title}</h2>
         {showNavigation && (
           <div className="flex gap-4">

@@ -1,33 +1,102 @@
-import React, { useState } from 'react';
-import { Banknote, CreditCard, Gift, ChartBar } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Banknote, CreditCard } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import PaymentOption from './PaymentOption';
 import DeliveryInfo from './DeliveryInfo';
 
 export default function PaymentForm({ onSubmit }) {
-  const { setPaymentMethod } = useCart();
+  const { setPaymentMethod, selectedAddress } = useCart();
   const [selectedMethod, setSelectedMethod] = useState('');
-  const [giftCardData, setGiftCardData] = useState({
-    cardNumber: '',
-    pin: ''
-  });
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const address = selectedAddress.location_name + selectedAddress.address;
+  const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+  const restaurantId = cartItems[0]?.restaurant_id;
+  const branchId = cartItems[0]?.branch_id;
+
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      try {
+        const response = await fetch('https://sandbox.vovpos.com:3002/web/payments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            restaurant_id: restaurantId,
+            branch_id: branchId
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.STATUS === "1") {
+          // Filter unique payment modes and active payments
+          const uniqueMethods = data.RESULT.filter(
+            (method, index, self) =>
+              method.is_active === "1" &&
+              index === self.findIndex(m => m.payment_mode === method.payment_mode)
+          );
+          setPaymentMethods(uniqueMethods);
+        } else {
+          setError('Failed to load payment methods');
+        }
+      } catch (err) {
+        setError('Failed to fetch payment methods');
+        console.error('Error fetching payment methods:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (restaurantId && branchId) {
+      fetchPaymentMethods();
+    }
+  }, [restaurantId, branchId]);
 
   const handleMethodSelect = (method) => {
     setSelectedMethod(method);
-    // Immediately set payment method in context when selected
-    const paymentData = method === 'gift' 
-      ? { method, ...giftCardData }
-      : { method };
-    setPaymentMethod(paymentData);
+    setPaymentMethod({ method });
   };
 
-  const handleGiftCardChange = (field, value) => {
-    const newGiftCardData = { ...giftCardData, [field]: value };
-    setGiftCardData(newGiftCardData);
-    if (selectedMethod === 'gift') {
-      setPaymentMethod({ method: 'gift', ...newGiftCardData });
+  const getPaymentIcon = (paymentMode) => {
+    switch (paymentMode.toLowerCase()) {
+      case 'cash':
+        return <Banknote className="w-6 h-6 text-green-500" />;
+      case 'credit card':
+        return <CreditCard className="w-6 h-6 text-blue-500" />;
+      default:
+        return <CreditCard className="w-6 h-6 text-gray-500" />;
     }
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl">
+        <div className="bg-white rounded-lg p-6 shadow-sm">
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-16 bg-gray-100 rounded"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-2xl">
+        <div className="bg-white rounded-lg p-6 shadow-sm">
+          <div className="text-red-500">{error}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl">
@@ -36,59 +105,22 @@ export default function PaymentForm({ onSubmit }) {
       <DeliveryInfo 
         restaurantName="SUSHI HOUSE"
         deliveryTime="20 Mins"
-        address="SG Highway, Ahmedabad, Gujarat, India"
+        address={address}
       />
 
       <div className="bg-white rounded-lg p-6 shadow-sm">
         <h2 className="text-lg font-semibold mb-4">Select Your Payment Preference</h2>
         
         <div className="space-y-4">
-          <PaymentOption
-            icon={<Banknote className="w-6 h-6 text-green-500" />}
-            label="Cash"
-            selected={selectedMethod === 'cash'}
-            onClick={() => handleMethodSelect('cash')}
-          />
-
-          <PaymentOption
-            icon={<CreditCard className="w-6 h-6 text-blue-500" />}
-            label="Credit Card"
-            selected={selectedMethod === 'credit'}
-            onClick={() => handleMethodSelect('credit')}
-          />
-
-          <PaymentOption
-            icon={<Gift className="w-6 h-6 text-red-500" />}
-            label="Gift Card"
-            selected={selectedMethod === 'gift'}
-            onClick={() => handleMethodSelect('gift')}
-          >
-            {selectedMethod === 'gift' && (
-              <div className="space-y-3 mt-3">
-                <input
-                  type="text"
-                  placeholder="Gift Card Number"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  value={giftCardData.cardNumber}
-                  onChange={(e) => handleGiftCardChange('cardNumber', e.target.value)}
-                />
-                <input
-                  type="text"
-                  placeholder="Gift Card PIN"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  value={giftCardData.pin}
-                  onChange={(e) => handleGiftCardChange('pin', e.target.value)}
-                />
-              </div>
-            )}
-          </PaymentOption>
-
-          <PaymentOption
-            icon={<ChartBar className="w-6 h-6 text-purple-500" />}
-            label="Royalty Points"
-            selected={selectedMethod === 'points'}
-            onClick={() => handleMethodSelect('points')}
-          />
+          {paymentMethods.map((method) => (
+            <PaymentOption
+              key={method.branch_payment_id}
+              icon={getPaymentIcon(method.payment_mode)}
+              label={method.reference_name}
+              selected={selectedMethod === method.payment_mode}
+              onClick={() => handleMethodSelect(method.payment_mode)}
+            />
+          ))}
         </div>
       </div>
     </div>

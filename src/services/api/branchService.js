@@ -29,17 +29,17 @@ export const getBranchDetails = async (restaurantId, branchId) => {
 export async function loginUser(email, password) {
   try {
     const response = await axios.post(`${BASE_URL}/login`, {
-      email_address:email,
-      password:password
+      email_address: email,
+      password: password
     });
     return response.data;
-  }  catch (error) {
+  } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.MESSAGE || 'Login failed');
     }
     throw error;
   }
-};
+}
 
 
 export async function logoutUser() {
