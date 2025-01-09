@@ -25,31 +25,47 @@ const ProfileDropdown = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Close dropdown when any modal opens
+  useEffect(() => {
+    if (isProfileModalOpen || isConfirmLogoutOpen || isAddressModalOpen) {
+      setIsOpen(false);
+    }
+  }, [isProfileModalOpen, isConfirmLogoutOpen, isAddressModalOpen]);
+
   const handleOrdersClick = () => {
-    setIsOpen(false);  // Close dropdown first
-    navigate('/my-orders');  // Then navigate
+    setIsOpen(false);
+    navigate('/my-orders');
+  };
+
+  const handleModalOpen = (modalSetter) => {
+    return () => {
+      setIsOpen(false); // Close dropdown first
+      setTimeout(() => { // Small delay for smooth transition
+        modalSetter(true);
+      }, 100);
+    };
   };
 
   const menuItems = [
     { 
       icon: '/profiledropdown.svg', 
       label: 'Profile', 
-      onClick: () => setIsProfileModalOpen(true) 
+      onClick: handleModalOpen(setIsProfileModalOpen)
     },
     { 
       icon: '/orderdropdown.svg', 
       label: 'Orders', 
-      onClick: handleOrdersClick  // Use the new handler
+      onClick: handleOrdersClick
     },
     { 
       icon: '/addressdropdown.svg', 
       label: 'My Address', 
-      onClick: () => setIsAddressModalOpen(true) 
+      onClick: handleModalOpen(setIsAddressModalOpen)
     },
     { 
       icon: '/logoutdropdown.svg', 
       label: 'Logout', 
-      onClick: () => setIsConfirmLogoutOpen(true) 
+      onClick: handleModalOpen(setIsConfirmLogoutOpen)
     }
   ];
 
@@ -69,12 +85,12 @@ const ProfileDropdown = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-lg py-2 z-50">
+        <div className="absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-lg py-2 z-50 transform transition-transform duration-200 ease-out">
           {menuItems.map((item, index) => (
             <button
               key={index}
-              onClick={item.onClick}  // Simplified onClick handler
-              className="w-full px-4 py-3 flex items-center space-x-3 hover:bg-gray-50 transition-colors border-b"
+              onClick={item.onClick}
+              className="w-full px-4 py-3 flex items-center space-x-3 hover:bg-gray-50 transition-colors border-b last:border-b-0"
             >
               <img src={item.icon} alt={item.label} className="w-5 h-5" />
               <span className="text-black text-sm font-medium">{item.label}</span>

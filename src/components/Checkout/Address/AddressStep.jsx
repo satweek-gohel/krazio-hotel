@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCart } from '../../../contexts/CartContext';
 import AddressModal from './AddressModal';
 import AddressCard from './AddressCard';
@@ -7,12 +7,22 @@ import { CheckCircle, XCircle, Phone, BellElectricIcon, Bell, BellOffIcon, DoorC
 export default function AddressStep({ onNext }) {
   const [showModal, setShowModal] = useState(false);
   const [addresses, setAddresses] = useState([]);
+  
   const { 
     setSelectedAddress, 
     setDeliveryInstructions,
     deliveryInstructions,
     setCheckoutStep
   } = useCart();
+
+  
+
+  useEffect(() => {
+    const addressesString = sessionStorage.getItem("addresses");
+    if (addressesString) {
+      setAddresses(JSON.parse(addressesString));
+    }
+  }, []);
 
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
@@ -41,6 +51,7 @@ export default function AddressStep({ onNext }) {
       <div className="grid md:grid-cols-2 gap-4">
         {/* Saved Addresses */}
         {addresses.map((address) => (
+        
           <AddressCard
             key={address.id}
             address={address}

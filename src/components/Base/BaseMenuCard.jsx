@@ -1,3 +1,4 @@
+import React from "react";
 import { Clock } from "lucide-react";
 
 const MenuCard = ({
@@ -9,8 +10,7 @@ const MenuCard = ({
   disabled,
 }) => {
   return (
-    <div className="max-w-sm rounded-lg p-1 overflow-hidden shadow-lg bg-white hover:shadow-xl transition-shadow duration-300">
-      {/* Food Image */}
+    <div className="max-w-sm rounded-lg p-1 overflow-hidden shadow-lg bg-white hover:shadow-xl border border-gray-300 transition-shadow duration-300">
       <div className="relative">
         <img
           src={imageSrc}
@@ -22,9 +22,7 @@ const MenuCard = ({
         />
       </div>
 
-      {/* Content Container */}
       <div className="p-4">
-        {/* Name and Rating Row */}
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-semibold truncate">{foodName}</h3>
           {/* <div className="flex items-center gap-1">
@@ -33,22 +31,22 @@ const MenuCard = ({
           </div> */}
         </div>
 
-        {/* Time Row */}
+        
         <div className="flex items-center gap-1 mb-2">
           <Clock className="w-4 h-4 text-primary" />
           <span className="text-sm text-gray-600">{time} Minutes</span>
         </div>
 
-        {/* Divider */}
+       
         <hr className="my-3 border-gray-200" />
 
-        {/* Price and Add Button Row */}
+     
         <div className="flex items-center justify-between">
           <span className="text-primary font-bold">
             ${Number(price).toFixed(2)}
           </span>
           <button
-            className={`px-4 py-2 rounded-md ${
+            className={`px-4 sm:px-10 py-2 rounded-md ${
               disabled
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-primary hover:bg-red-600 active:bg-red-700"

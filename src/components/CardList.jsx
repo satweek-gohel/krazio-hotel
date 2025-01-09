@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getBranches } from '../services/api/branchService';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getBranches } from "../services/api/branchService";
 
 const CardList = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const CardList = () => {
         const data = await getBranches();
         setBranches(data.branchDetails);
       } catch (error) {
-        console.error('Failed to fetch branch data:', error);
+        console.error("Failed to fetch branch data:", error);
       } finally {
         setLoading(false);
       }
@@ -22,15 +22,44 @@ const CardList = () => {
     fetchBranches();
   }, []);
 
+  const getCurrentDaySchedule = (schedule) => {
+    if (!schedule || schedule.length === 0) return null;
+    
+    const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const today = new Date().getDay();
+    const currentDay = days[today];
+    
+    return schedule.find(s => s.day === currentDay);
+  };
+
+  const formatTime = (time) => {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours), parseInt(minutes));
+    return date.toLocaleTimeString('en-US', { 
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true 
+    });
+  };
+
   const handlePickup = (restaurant) => {
-    navigate(`/branch-menu/${restaurant.restaurant_id}/${restaurant.branch_id}`);
+    if (restaurant.is_pickup_available === "1" || restaurant.is_pickup_available === 1) {
+      navigate(
+        `/branch-menu/${restaurant.restaurant_id}/${restaurant.branch_id}?mode=pickup`
+      );
+    }
   };
 
   const handleDelivery = (restaurant) => {
-    navigate(`/branch-menu/${restaurant.restaurant_id}/${restaurant.branch_id}`);
+    if (restaurant.is_delivery_available === "1" || restaurant.is_delivery_available === 1) {
+      navigate(
+        `/branch-menu/${restaurant.restaurant_id}/${restaurant.branch_id}?mode=delivery`
+      );
+    }
   };
 
-  // Skeleton Card Component
   const SkeletonCard = () => (
     <div className="bg-white rounded-lg shadow-lg shadow-slate-300 overflow-hidden animate-pulse">
       <div className="p-4">
@@ -58,72 +87,99 @@ const CardList = () => {
     </div>
   );
 
-  // Regular Card Component
-  const Card = ({ restaurant }) => (
-    <div className="bg-white rounded-lg shadow-lg shadow-slate-300 overflow-hidden">
-      <div className="p-4">
-        <div className="flex items-center gap-3">
-          <div className="img shadow-lg rounded-lg p-2">
-            <img src="/res-icon.svg" alt="" className="w-8 h-8 shadow-lg rounded-lg"/>
+
+  const Card = ({ restaurant }) => {
+    const todaySchedule = getCurrentDaySchedule(restaurant.branch_schedule);
+    const isOpen = todaySchedule?.is_open === "1";
+    const openTime = formatTime(todaySchedule?.open_time);
+    const closeTime = formatTime(todaySchedule?.close_time);
+
+    const pickupDisabled = restaurant.is_pickup_available !== "1" && restaurant.is_pickup_available !== 1;
+    const deliveryDisabled = restaurant.is_delivery_available !== "1" && restaurant.is_delivery_available !== 1;
+
+    return (
+      <div className="bg-white rounded-lg shadow-lg shadow-slate-300 overflow-hidden">
+        <div className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="img shadow-lg rounded-lg p-2">
+              <img
+                src="/res-icon.svg"
+                alt=""
+                className="w-8 h-8 shadow-lg rounded-lg"
+              />
+            </div>
+            <h2 className="text-lg font-bold uppercase text-black">
+              {restaurant.branch_name}
+            </h2>
           </div>
-          <h2 className="text-lg font-bold uppercase text-black">{restaurant.branch_name}</h2>
+        </div>
+        <hr className="border-gray-200" />
+        <div className="p-4 space-y-3">
+          <div className="flex items-center gap-3">
+            <img src="/home-location-dark.svg" alt="" className="w-5 h-5" />
+            <p className="text-gray-600">
+              {restaurant.street1 || restaurant.branch_address || "Address not available"}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <img src="/home-time-dark.svg" alt="" className="w-5 h-5" />
+            <p className="text-gray-600">
+              {isOpen ? `${openTime} - ${closeTime}` : "Closed Today"}
+            </p>
+          </div>
+        </div>
+        <hr className="border-gray-200" />
+        <div className="grid grid-cols-2 divide-x divide-gray-200 gap-4 p-3 rounded">
+          <button
+            onClick={() => handlePickup(restaurant)}
+            disabled={pickupDisabled}
+            className={`flex items-center justify-center gap-2 p-2 text-white rounded transition-colors ${
+              pickupDisabled
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-primary hover:bg-red-600"
+            }`}
+          >
+            <span className="font-medium">Pickup</span>
+          </button>
+          <button
+            onClick={() => handleDelivery(restaurant)}
+            disabled={deliveryDisabled}
+            className={`flex items-center justify-center gap-2 p-2 text-white rounded transition-colors ${
+              deliveryDisabled
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-primary hover:bg-red-600"
+            }`}
+          >
+            <span className="font-medium">Delivery</span>
+          </button>
         </div>
       </div>
-      <hr className="border-gray-200" />
-      <div className="p-4 space-y-3">
-        <div className="flex items-center gap-3">
-          <img src="/home-location-dark.svg" alt="" className="w-5 h-5"/>
-          <p className="text-gray-600">{restaurant.branch_street1 || '456 Pizza Avenue, Foodville, FV 67890'}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <img src="/home-time-dark.svg" alt="" className="w-5 h-5"/>
-          <p className="text-gray-600">{restaurant.branch_street2 || '10:00 AM - 12:00 AM'}</p>
-        </div>
-      </div>
-      <hr className="border-gray-200" />
-      <div className="grid grid-cols-2 divide-x divide-gray-200 gap-4 p-3 rounded">
-        <button 
-          onClick={() => handlePickup(restaurant)}
-          className="flex items-center justify-center gap-2 p-2 bg-primary text-white hover:bg-red-600 transition-colors rounded"
-        >
-          <span className="font-medium">Pickup</span>
-        </button>
-        <button 
-          onClick={() => handleDelivery(restaurant)}
-          className="flex items-center justify-center gap-2 p-2 bg-primary text-white hover:bg-red-600 transition-colors rounded"
-        >
-          <span className="font-medium">Delivery</span>
-        </button>
-      </div>
-    </div>
-  );
+    );
+  };
+
 
   return (
     <div className="container mx-auto p-4">
-      {/* Header Section */}
       <div className="p-4 text-center">
         <h1 className="text-2xl font-semibold text-black-600">
-          <span className='text-primary font-bold'>Hungry?</span> Let's Bring the Restaurant to You!
+          <span className="text-primary font-bold">Hungry?</span> Let's Bring
+          the Restaurant to You!
         </h1>
         <p className="text-sm text-gray-500">
-          Explore the top dishes from local restaurants, delivered straight to your door.
+          Explore the top dishes from local restaurants, delivered straight to
+          your door.
         </p>
       </div>
 
-      {/* Cards Grid */}
       <div className="container flex align-center justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 p-3 lg:w-2/3">
           {loading
-            ? Array(4).fill(null).map((_, index) => (
-                <SkeletonCard key={`skeleton-${index}`} />
-              ))
+            ? Array(2)
+                .fill(null)
+                .map((_, index) => <SkeletonCard key={`skeleton-${index}`} />)
             : branches.map((restaurant) => (
-                <Card 
-                  key={restaurant.branch_id} 
-                  restaurant={restaurant}
-                />
-              ))
-          }
+                <Card key={restaurant.branch_id} restaurant={restaurant} />
+              ))}
         </div>
       </div>
     </div>

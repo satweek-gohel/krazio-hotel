@@ -7,64 +7,76 @@
     html {
         font-family: 'Poppins', sans-serif;
     }
+
+    input[type="radio"] {
+        @apply accent-[#C8102E]; 
+      }
+
+      body {
+        background-image: url('/landing_page.png');
+        background-size: cover; 
+        background-repeat: no-repeat; 
+        background-attachment: fixed; 
+        background-position: center; 
+        z-index: -999;
+    }
 }
 
-/* width */
+
 ::-webkit-scrollbar {
     width: 10px;
 }
 
-/* Track */
+
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
 }
 
-/* Handle */
+
 ::-webkit-scrollbar-thumb {
     background: #C8102E;
     border-radius: 3px;
 }
 
-/* Handle on hover */
+
 ::-webkit-scrollbar-thumb:hover {
     background: #C8102E;
 }
 
 @layer utilities {
-    /* Primary Color Utilities */
+   
     .text-primary {
-        color:#C8102E; /* Primary Red */
+        color:#C8102E; 
     }
     .bg-primary {
-        background-color: #C8102E; /* Primary Red */
+        background-color: #C8102E; 
     }
     .border-primary {
-        border-color: #E30B0B; /* Primary Red */
+        border-color: #E30B0B; 
     }
     .ring-primary {
-        --tw-ring-color: #C8102E; /* Primary Red */
+        --tw-ring-color: #C8102E; 
     }
     .hover\:bg-primary-dark:hover {
-        background-color: #C20909; /* Slightly darker shade for hover state */
+        background-color: #C20909; 
     }
 
-    /* Secondary Color Utilities */
+    
     .text-secondary {
-        color: #4A4A4A; /* Dark Gray */
+        color: #4A4A4A;
     }
     .bg-secondary {
-        background-color: #4A4A4A; /* Dark Gray */
+        background-color: #4A4A4A;
     }
 
-    /* Additional Color Variations */
     .text-primary-light {
-        color: #FF4444; /* Lighter Red */
+        color: #FF4444; 
     }
     .bg-primary-light {
-        background-color: #FF4444; /* Lighter Red */
+        background-color: #FF4444; 
     }
 
-    /* Gradient Utilities */
+    
     .bg-primary-gradient {
         background: linear-gradient(to right, #E30B0B, #FF4444);
     }

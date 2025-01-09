@@ -5,6 +5,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState('');
   const [userDetails, setUserDetails] = useState(null);
+  const [userAddress, setUserAddress] = useState(null);
   const [isAuthReady, setIsAuthReady] = useState(false);
 
   useEffect(() => {
@@ -37,9 +38,15 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.setItem('userDetails', JSON.stringify(details));
   };
 
-  const login = (token, userDetails) => {
+  const updateUserAddress = (address) => {
+    setUserAddress(address);
+    sessionStorage.setItem('addresses', JSON.stringify(address));
+  };
+
+  const login = (token, userDetails,addresses) => {
     updateToken(token);
     updateUserDetails(userDetails);
+    updateUserAddress(addresses);
   };
 
   const logout = () => {

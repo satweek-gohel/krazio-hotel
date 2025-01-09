@@ -1,29 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useState, useEffect } from "react";
+import { X } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
 
 function ProfileModal({ isOpen, onClose }) {
   const { userDetails } = useAuth();
-  const [formData, setFormData] = useState({}); 
+  const [formData, setFormData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (userDetails) {
-      setFormData({
-        first_name: userDetails.first_name || '',
-        last_name: userDetails.last_name || '',
-        mobile_number: userDetails.mobile_number || '',
-        email_address: userDetails.email_address || '',
-        date_of_birth: userDetails.date_of_birth || null,
-        wedding_anniversary: userDetails.wedding_anniversary || null
-      });
+    if (isOpen) {
+      setIsLoading(true);
     }
-  }, [userDetails]);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && userDetails) {
+      setFormData({
+        first_name: userDetails.first_name || "",
+        last_name: userDetails.last_name || "",
+        mobile_number: userDetails.mobile_number || "",
+        email_address: userDetails.email_address || "",
+        date_of_birth: userDetails.date_of_birth || null,
+        wedding_anniversary: userDetails.wedding_anniversary || null,
+      });
+      setIsLoading(false);
+    }
+  }, [userDetails, isOpen]);
 
   const formatDateForInput = (isoDate) => {
-    if (!isoDate) return ""; 
+    if (!isoDate) return "";
     const date = new Date(isoDate);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -33,11 +40,21 @@ function ProfileModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div className="bg-white rounded-lg w-full max-w-md p-6 flex items-center justify-center">
+          <div className="text-gray-600">Loading profile...</div>
+        </div>
+      </div>
+    );
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     setHasChanges(true);
     setIsEditing(true);
@@ -45,7 +62,7 @@ function ProfileModal({ isOpen, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Submitted Data:', formData);
+    console.log("Submitted Data:", formData);
     setIsEditing(false);
     setHasChanges(false);
   };
@@ -55,13 +72,13 @@ function ProfileModal({ isOpen, onClose }) {
   };
 
   const handleCancelEdit = () => {
-        setFormData({
-      first_name: userDetails.first_name || '',
-      last_name: userDetails.last_name || '',
-      mobile_number: userDetails.mobile_number || '',
-      email_address: userDetails.email_address || '',
+    setFormData({
+      first_name: userDetails.first_name || "",
+      last_name: userDetails.last_name || "",
+      mobile_number: userDetails.mobile_number || "",
+      email_address: userDetails.email_address || "",
       date_of_birth: userDetails.date_of_birth || null,
-      wedding_anniversary: userDetails.wedding_anniversary || null
+      wedding_anniversary: userDetails.wedding_anniversary || null,
     });
     setIsEditing(false);
     setHasChanges(false);
@@ -98,7 +115,7 @@ function ProfileModal({ isOpen, onClose }) {
               <input
                 type="text"
                 name="first_name"
-                value={formData.first_name || ''}
+                value={formData.first_name || ""}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-md disabled:bg-gray-50"
@@ -111,7 +128,7 @@ function ProfileModal({ isOpen, onClose }) {
               <input
                 type="text"
                 name="last_name"
-                value={formData.last_name || ''}
+                value={formData.last_name || ""}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-md disabled:bg-gray-50"
@@ -130,7 +147,7 @@ function ProfileModal({ isOpen, onClose }) {
               <input
                 type="tel"
                 name="mobile_number"
-                value={formData.mobile_number || ''}
+                value={formData.mobile_number || ""}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className="w-full px-3 py-2 border rounded-r-md disabled:bg-gray-50"
@@ -145,7 +162,7 @@ function ProfileModal({ isOpen, onClose }) {
             <input
               type="email"
               name="email_address"
-              value={formData.email_address || ''}
+              value={formData.email_address || ""}
               onChange={handleChange}
               disabled={!isEditing}
               className="w-full px-3 py-2 border rounded-md disabled:bg-gray-50"

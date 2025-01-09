@@ -11,6 +11,7 @@ import ProfileModal from "./ProfileModal";
 import { useBranchData } from "../../hooks/useBranchData";
 import ProfileDropdown from "./ProfileDropdown";
 import { formatTime } from "../../utils/cartHelpers";
+import EmptyCartModal from "./EmptyCartModal";
 
 function Navbar() {
   const { uniqueItemsCount } = useCart();
@@ -18,7 +19,7 @@ function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isCouponSidebarOpen, setIsCouponSidebarOpen] = useState(false);
-
+  const [isEmptyCartModalOpen, setIsEmptyCartModalOpen] = useState(false);
   const modals = useModals();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -63,6 +64,14 @@ function Navbar() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleCartClick = () => {
+    if (uniqueItemsCount > 0) {
+      navigate('/checkout');
+    } else {
+      setIsEmptyCartModalOpen(true);
+    }
+  };
+
   const renderAuthButtons = () => {
     if (isLoading) {
       return (
@@ -76,7 +85,7 @@ function Navbar() {
       return (
         <div className="flex items-center gap-2 sm:gap-4">
           <button
-            onClick={() => navigate("/checkout")}
+            onClick={handleCartClick}
             className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 transition-colors shadow-lg"
           >
             <img
@@ -285,6 +294,11 @@ function Navbar() {
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
       />
+      <EmptyCartModal 
+  isOpen={isEmptyCartModalOpen}
+  onClose={() => setIsEmptyCartModalOpen(false)}
+/>
+
     </>
   );
 }
