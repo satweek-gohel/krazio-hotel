@@ -326,23 +326,26 @@ function BranchPage() {
   };
 
   const handleItemClick = async (item) => {
+    const enrichedItem = {
+      ...item,
+      restaurant_id: restaurantId,
+      branch_id: branchId,
+    };
+
     if (item.is_extra_ingradient_available === "1") {
-      try {
-        const enrichedItem = {
-          ...item,
-          restaurant_id: restaurantId,
-          branch_id: branchId,
-        };
-        setSelectedItem(enrichedItem);
-      } catch (error) {
-        console.error("Error preparing item for customization:", error);
-      }
+      setSelectedItem(enrichedItem);
     } else {
-      handleAddToCart(item);
+      console.log(" in else ===========>", item.price);
+      handleAddToCart({
+        ...enrichedItem,
+        totalPrice: item.price,
+        quantity: 1,
+      });
     }
   };
 
   const handleAddToCart = (customizedItem) => {
+    console.log("customizedItem ===========>", customizedItem);
     addItem({
       ...customizedItem,
       id: customizedItem.item_id,
@@ -359,23 +362,23 @@ function BranchPage() {
     }
   };
 
-  const getFilteredItems = () => {
-    let items = filteredItems;
+  // const getFilteredItems = () => {
+  //   let items = filteredItems;
 
-    if (selectedCategory && selectedCategory.category_id !== "all") {
-      items = items.filter(
-        (item) => item.category_id === selectedCategory.category_id
-      );
-    }
+  //   if (selectedCategory && selectedCategory.category_id !== "all") {
+  //     items = items.filter(
+  //       (item) => item.category_id === selectedCategory.category_id
+  //     );
+  //   }
 
-    if (searchTerm) {
-      items = items.filter((item) =>
-        item.item_name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+  //   if (searchTerm) {
+  //     items = items.filter((item) =>
+  //       item.item_name.toLowerCase().includes(searchTerm.toLowerCase())
+  //     );
+  //   }
 
-    return items;
-  };
+  //   return items;
+  // };
 
   if (loading) {
     return <LoadingSpinner />;
