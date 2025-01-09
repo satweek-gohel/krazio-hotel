@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export default function AddressModal({ onClose, onSave }) {
   const [formData, setFormData] = useState({
-    streetAddress: '',
-    aptNumber: '',
-    state: '',
-    zipCode: ''
+    streetAddress: "",
+    aptNumber: "",
+    state: "",
+    zipCode: "",
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave({
       ...formData,
-      id: Date.now() // Simple unique ID
+      id: Date.now(), // Simple unique ID
     });
     onClose();
   };
@@ -22,7 +22,10 @@ export default function AddressModal({ onClose, onSave }) {
       <div className="bg-white rounded-2xl w-full max-w-md p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Add New Address</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
             ✕
           </button>
         </div>
@@ -35,7 +38,9 @@ export default function AddressModal({ onClose, onSave }) {
             <input
               type="text"
               value={formData.streetAddress}
-              onChange={(e) => setFormData({ ...formData, streetAddress: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, streetAddress: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
               placeholder="Enter street address"
               required
@@ -50,7 +55,9 @@ export default function AddressModal({ onClose, onSave }) {
               <input
                 type="text"
                 value={formData.aptNumber}
-                onChange={(e) => setFormData({ ...formData, aptNumber: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, aptNumber: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 placeholder="Apt #"
               />
@@ -63,7 +70,9 @@ export default function AddressModal({ onClose, onSave }) {
               <input
                 type="text"
                 value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, state: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 placeholder="State"
                 required
@@ -77,7 +86,9 @@ export default function AddressModal({ onClose, onSave }) {
               <input
                 type="text"
                 value={formData.zipCode}
-                onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, zipCode: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 placeholder="Zip code"
                 required

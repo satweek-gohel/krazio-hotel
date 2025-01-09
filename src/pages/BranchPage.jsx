@@ -79,15 +79,19 @@ function BranchPage() {
   };
 
   const handleItemClick = async (item) => {
-    try {
-      const enrichedItem = {
-        ...item,
-        restaurant_id: restaurantId,
-        branch_id: branchId,
-      };
-      setSelectedItem(enrichedItem);
-    } catch (error) {
-      console.error("Error preparing item for customization:", error);
+    if (item.is_extra_ingradient_available === "1") {
+      try {
+        const enrichedItem = {
+          ...item,
+          restaurant_id: restaurantId,
+          branch_id: branchId,
+        };
+        setSelectedItem(enrichedItem);
+      } catch (error) {
+        console.error("Error preparing item for customization:", error);
+      }
+    } else {
+      handleAddToCart(item);
     }
   };
 
@@ -157,13 +161,14 @@ function BranchPage() {
           disabled={isOpen}
         />
       )}
-
-      <ItemCustomizationModal
-        item={selectedItem}
-        isOpen={!!selectedItem}
-        onClose={() => setSelectedItem(null)}
-        onAddToCart={handleAddToCart}
-      />
+      {selectedItem?.is_extra_ingradient_available === "1" ? (
+        <ItemCustomizationModal
+          item={selectedItem}
+          isOpen={!!selectedItem}
+          onClose={() => setSelectedItem(null)}
+          onAddToCart={handleAddToCart}
+        />
+      ) : null}
     </div>
   );
 }
