@@ -21,7 +21,6 @@ function App() {
     if (JSON.parse(items).length) {
       setOpen(true);
     }
-    console.log(" ===========>");
   }, []);
 
   return (
