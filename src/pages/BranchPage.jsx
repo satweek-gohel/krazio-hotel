@@ -335,7 +335,6 @@ function BranchPage() {
     if (item.is_extra_ingradient_available === "1") {
       setSelectedItem(enrichedItem);
     } else {
-      console.log(" in else ===========>", item.price);
       handleAddToCart({
         ...enrichedItem,
         totalPrice: item.price,
@@ -345,7 +344,6 @@ function BranchPage() {
   };
 
   const handleAddToCart = (customizedItem) => {
-    console.log("customizedItem ===========>", customizedItem);
     addItem({
       ...customizedItem,
       id: customizedItem.item_id,
