@@ -1,13 +1,17 @@
-import React from 'react';
-
-export default function AddressCard({ address, onSelect, isSelectable = true }) {
+export default function AddressCard({
+  address,
+  onSelect,
+  isSelectable = true,
+}) {
   return (
     <div className="border rounded-lg p-3 hover:border-primary cursor-pointer">
       <div className="flex justify-between items-start gap-2">
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <h3 className="font-medium text-sm">{address.user_name}</h3>
-            <span className="text-sm text-gray-500">{address.mobile_number}</span>
+            <span className="text-sm text-gray-500">
+              {address.mobile_number}
+            </span>
           </div>
           <p className="text-sm mt-1">
             {address.address}
@@ -36,4 +40,4 @@ export default function AddressCard({ address, onSelect, isSelectable = true }) 
       )}
     </div>
   );
-};
+}
