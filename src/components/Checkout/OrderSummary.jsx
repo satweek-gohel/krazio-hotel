@@ -34,18 +34,25 @@ const OrderSummary = () => {
     .toLowerCase();
   const schedule = JSON.parse(localStorage.getItem("branch_schedule"));
 
-  const currentDaySchedule = schedule?.find((day) => day.day === today);
-  const closedInMilliseconds = timeStringToMilliseconds(
-    currentDaySchedule?.close_time
-  );
+  const { close_time, open_time } =
+    schedule?.find((day) => day.day === today) || {};
+  const closedInMilliseconds = timeStringToMilliseconds(close_time);
 
-  const tookLArgestTimeToCook = findLargestTimestamp(
+  const tookLargestTimeToCook = findLargestTimestamp(
     items,
     "item_preparation_time"
   );
 
-  const currentTime = Date.now();
-  const totalTimeToCook = currentTime + tookLArgestTimeToCook;
+  const now = Date.now();
+
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const millisecondsSpentToday = now - startOfToday.getTime();
+
+  const openTime = timeStringToMilliseconds(open_time);
+  const totalTime = millisecondsSpentToday - openTime;
+  const totalTimeToCook = totalTime + tookLargestTimeToCook;
 
   const condition = closedInMilliseconds < totalTimeToCook;
 
