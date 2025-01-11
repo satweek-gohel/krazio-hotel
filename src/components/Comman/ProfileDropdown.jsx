@@ -25,7 +25,7 @@ const ProfileDropdown = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close dropdown when any modal opens
+  
   useEffect(() => {
     if (isProfileModalOpen || isConfirmLogoutOpen || isAddressModalOpen) {
       setIsOpen(false);
@@ -39,8 +39,8 @@ const ProfileDropdown = () => {
 
   const handleModalOpen = (modalSetter) => {
     return () => {
-      setIsOpen(false); // Close dropdown first
-      setTimeout(() => { // Small delay for smooth transition
+      setIsOpen(false); 
+      setTimeout(() => { 
         modalSetter(true);
       }, 100);
     };

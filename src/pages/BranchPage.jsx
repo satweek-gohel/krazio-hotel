@@ -326,19 +326,26 @@ function BranchPage() {
   };
 
   const handleItemClick = async (item) => {
-    try {
-      const enrichedItem = {
-        ...item,
-        restaurant_id: restaurantId,
-        branch_id: branchId,
-      };
+    const enrichedItem = {
+      ...item,
+      restaurant_id: restaurantId,
+      branch_id: branchId,
+    };
+
+    if (item.is_extra_ingradient_available === "1") {
       setSelectedItem(enrichedItem);
-    } catch (error) {
-      console.error("Error preparing item for customization:", error);
+    } else {
+      console.log(" in else ===========>", item.price);
+      handleAddToCart({
+        ...enrichedItem,
+        totalPrice: item.price,
+        quantity: 1,
+      });
     }
   };
 
   const handleAddToCart = (customizedItem) => {
+    console.log("customizedItem ===========>", customizedItem);
     addItem({
       ...customizedItem,
       id: customizedItem.item_id,
@@ -355,23 +362,23 @@ function BranchPage() {
     }
   };
 
-  const getFilteredItems = () => {
-    let items = filteredItems;
+  // const getFilteredItems = () => {
+  //   let items = filteredItems;
 
-    if (selectedCategory && selectedCategory.category_id !== "all") {
-      items = items.filter(
-        (item) => item.category_id === selectedCategory.category_id
-      );
-    }
+  //   if (selectedCategory && selectedCategory.category_id !== "all") {
+  //     items = items.filter(
+  //       (item) => item.category_id === selectedCategory.category_id
+  //     );
+  //   }
 
-    if (searchTerm) {
-      items = items.filter((item) =>
-        item.item_name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+  //   if (searchTerm) {
+  //     items = items.filter((item) =>
+  //       item.item_name.toLowerCase().includes(searchTerm.toLowerCase())
+  //     );
+  //   }
 
-    return items;
-  };
+  //   return items;
+  // };
 
   if (loading) {
     return <LoadingSpinner />;
@@ -388,12 +395,12 @@ function BranchPage() {
       <PromotionalSlider title="Deals For You" images={images2} />
 
       <div className="recmandtions mt-5">
-          <MenuSlider
-            items={RecommendedItems}
-            onAddToCart={handleItemClick}
-            disabled={isOpen}
-            title={'Recommended Items'}
-          />
+        <MenuSlider
+          items={RecommendedItems}
+          onAddToCart={handleItemClick}
+          disabled={isOpen}
+          title={"Recommended Items"}
+        />
       </div>
 
       <div className="flex justify-between items-center mt-10">
@@ -427,18 +434,21 @@ function BranchPage() {
         <BranchHeader branchName={selectedCategory.category_name} />
       )}
 
-      <MenuGrid
-        items={getFilteredItems()}
-        onAddToCart={handleItemClick}
-        disabled={isOpen}
-      />
-
-      <ItemCustomizationModal
-        item={selectedItem}
-        isOpen={!!selectedItem}
-        onClose={() => setSelectedItem(null)}
-        onAddToCart={handleAddToCart}
-      />
+      {filteredItems && (
+        <MenuGrid
+          items={filteredItems}
+          onAddToCart={handleItemClick}
+          disabled={isOpen}
+        />
+      )}
+      {selectedItem?.is_extra_ingradient_available === "1" ? (
+        <ItemCustomizationModal
+          item={selectedItem}
+          isOpen={!!selectedItem}
+          onClose={() => setSelectedItem(null)}
+          onAddToCart={handleAddToCart}
+        />
+      ) : null}
     </div>
   );
 }

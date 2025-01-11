@@ -1,53 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { X } from 'lucide-react';
-import { getItemSteps } from '../../services/api/itemService';
-import SizeSection from './SizeSection';
-import SauceSection from './SauceSection';
-import TasteSection from './TasteSection';
-import ToppingsSection from './ToppingsSection';
-import MainQuantitySelector from './MainQuantitySelector';
+import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { X } from "lucide-react";
+import { getItemSteps } from "../../services/api/itemService";
+import SizeSection from "./SizeSection";
+import SauceSection from "./SauceSection";
+import TasteSection from "./TasteSection";
+import ToppingsSection from "./ToppingsSection";
+import MainQuantitySelector from "./MainQuantitySelector";
 import {
   calculateSizePrice,
   calculateSaucesPrice,
   calculateTastePrice,
   calculateToppingsPrice,
-  calculateTotalPrice
-} from './priceCalculator';
+  calculateTotalPrice,
+} from "./priceCalculator";
 
-const ItemCustomizationModal = ({
-  item,
-  isOpen,
-  onClose,
-  onAddToCart,
-}) => {
+const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
   const [itemDetails, setItemDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // State for selections
-  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectedSauces, setSelectedSauces] = useState([]);
-  const [selectedTaste, setSelectedTaste] = useState('');
+  const [selectedTaste, setSelectedTaste] = useState("");
   const [selectedToppings, setSelectedToppings] = useState([]);
 
   useEffect(() => {
     const fetchItemDetails = async () => {
       if (!item?.item_id) return;
-      
+
       setLoading(true);
       try {
-        const data = await getItemSteps(item.restaurant_id, item.branch_id, item.item_id);
+        const data = await getItemSteps(
+          item.restaurant_id,
+          item.branch_id,
+          item.item_id
+        );
         setItemDetails(data);
-        
-        const sizeStep = data?.step_details?.find(step => step.display_name === "Size");
-        const defaultSize = sizeStep?.category_steps_item?.find(size => size.is_auto_selected_item === "1");
-        setSelectedSize(defaultSize?.extra_ingredient_name || sizeStep?.category_steps_item?.[0]?.extra_ingredient_name || '');
-        
+
+        const sizeStep = data?.step_details?.find(
+          (step) => step.display_name === "Size"
+        );
+        const defaultSize = sizeStep?.category_steps_item?.find(
+          (size) => size.is_auto_selected_item === "1"
+        );
+        setSelectedSize(
+          defaultSize?.extra_ingredient_name ||
+            sizeStep?.category_steps_item?.[0]?.extra_ingredient_name ||
+            ""
+        );
+
         setSelectedToppings([]);
       } catch (err) {
-        setError('Failed to load item details');
+        setError("Failed to load item details");
         console.error(err);
       } finally {
         setLoading(false);
@@ -56,11 +63,11 @@ const ItemCustomizationModal = ({
 
     if (isOpen) {
       fetchItemDetails();
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [item, isOpen]);
 
@@ -75,17 +82,20 @@ const ItemCustomizationModal = ({
 
     // Add size selection
     if (selectedSize) {
-      const sizeStep = itemDetails?.step_details?.find(step => step.display_name === "Size");
-      const selectedSizeItem = sizeStep?.category_steps_item?.find(
-        size => size.extra_ingredient_name === selectedSize
+      const sizeStep = itemDetails?.step_details?.find(
+        (step) => step.display_name === "Size"
       );
-      
+      const selectedSizeItem = sizeStep?.category_steps_item?.find(
+        (size) => size.extra_ingredient_name === selectedSize
+      );
+
       if (selectedSizeItem) {
         orderItemsStep.push({
           session_id: sessionId,
           step_id: selectedSizeItem.branch_extra_ingredient_category_steps,
           step_name: sizeStep.display_name,
-          branch_extra_ingredient_category_steps_item_id: selectedSizeItem.branch_extra_ingredient_category_steps_item,
+          branch_extra_ingredient_category_steps_item_id:
+            selectedSizeItem.branch_extra_ingredient_category_steps_item,
           branch_extra_ingredient_price_for_parent_item_id: "0",
           extra_ingredient_name: selectedSizeItem.extra_ingredient_name,
           is_price_applicable: selectedSizeItem.is_price_applicable,
@@ -93,22 +103,25 @@ const ItemCustomizationModal = ({
           quantity: quantity.toString(),
           terminal_id: terminalId,
           price_type: selectedSizeItem.price_type || "0",
-          is_quantity_applicable: selectedSizeItem.is_quantity_applicable || "0",
-          quantity_price: selectedSizeItem.quantity_price || "0"
+          is_quantity_applicable:
+            selectedSizeItem.is_quantity_applicable || "0",
+          quantity_price: selectedSizeItem.quantity_price || "0",
         });
 
         // Add selected toppings
-        selectedToppings.forEach(topping => {
+        selectedToppings.forEach((topping) => {
           const toppingItem = selectedSizeItem.price_for_parent_item.find(
-            item => item.extra_ingredient_name === topping.name
+            (item) => item.extra_ingredient_name === topping.name
           );
           if (toppingItem) {
             orderItemsStep.push({
               session_id: sessionId,
               step_id: toppingItem.branch_extra_ingredient_category_steps,
               step_name: "Toppings",
-              branch_extra_ingredient_category_steps_item_id: toppingItem.branch_extra_ingredient_category_steps_item,
-              branch_extra_ingredient_price_for_parent_item_id: toppingItem.branch_extra_ingredient_price_for_parent_item,
+              branch_extra_ingredient_category_steps_item_id:
+                toppingItem.branch_extra_ingredient_category_steps_item,
+              branch_extra_ingredient_price_for_parent_item_id:
+                toppingItem.branch_extra_ingredient_price_for_parent_item,
               extra_ingredient_name: toppingItem.extra_ingredient_name,
               is_price_applicable: toppingItem.is_price_applicable,
               price: toppingItem.price,
@@ -116,7 +129,7 @@ const ItemCustomizationModal = ({
               terminal_id: terminalId,
               price_type: toppingItem.price_type || "0",
               is_quantity_applicable: toppingItem.is_quantity_applicable || "0",
-              quantity_price: toppingItem.quantity_price || "0"
+              quantity_price: toppingItem.quantity_price || "0",
             });
           }
         });
@@ -124,17 +137,20 @@ const ItemCustomizationModal = ({
     }
 
     // Add sauce selections
-    selectedSauces.forEach(sauce => {
-      const sauceStep = itemDetails?.step_details?.find(step => step.display_name === "Sauces");
+    selectedSauces.forEach((sauce) => {
+      const sauceStep = itemDetails?.step_details?.find(
+        (step) => step.display_name === "Sauces"
+      );
       const sauceItem = sauceStep?.category_steps_item?.find(
-        s => s.extra_ingredient_name === sauce.name
+        (s) => s.extra_ingredient_name === sauce.name
       );
       if (sauceItem) {
         orderItemsStep.push({
           session_id: sessionId,
           step_id: sauceItem.branch_extra_ingredient_category_steps,
           step_name: sauceStep.display_name,
-          branch_extra_ingredient_category_steps_item_id: sauceItem.branch_extra_ingredient_category_steps_item,
+          branch_extra_ingredient_category_steps_item_id:
+            sauceItem.branch_extra_ingredient_category_steps_item,
           branch_extra_ingredient_price_for_parent_item_id: "0",
           extra_ingredient_name: sauceItem.extra_ingredient_name,
           is_price_applicable: sauceItem.is_price_applicable,
@@ -143,23 +159,26 @@ const ItemCustomizationModal = ({
           terminal_id: terminalId,
           price_type: sauceItem.price_type || "0",
           is_quantity_applicable: sauceItem.is_quantity_applicable || "0",
-          quantity_price: sauceItem.quantity_price || "0"
+          quantity_price: sauceItem.quantity_price || "0",
         });
       }
     });
 
     // Add taste selection
     if (selectedTaste) {
-      const tasteStep = itemDetails?.step_details?.find(step => step.display_name === "Taste");
+      const tasteStep = itemDetails?.step_details?.find(
+        (step) => step.display_name === "Taste"
+      );
       const tasteItem = tasteStep?.category_steps_item?.find(
-        taste => taste.extra_ingredient_name === selectedTaste
+        (taste) => taste.extra_ingredient_name === selectedTaste
       );
       if (tasteItem) {
         orderItemsStep.push({
           session_id: sessionId,
           step_id: tasteItem.branch_extra_ingredient_category_steps,
           step_name: tasteStep.display_name,
-          branch_extra_ingredient_category_steps_item_id: tasteItem.branch_extra_ingredient_category_steps_item,
+          branch_extra_ingredient_category_steps_item_id:
+            tasteItem.branch_extra_ingredient_category_steps_item,
           branch_extra_ingredient_price_for_parent_item_id: "0",
           extra_ingredient_name: tasteItem.extra_ingredient_name,
           is_price_applicable: tasteItem.is_price_applicable,
@@ -168,7 +187,7 @@ const ItemCustomizationModal = ({
           terminal_id: terminalId,
           price_type: tasteItem.price_type || "0",
           is_quantity_applicable: tasteItem.is_quantity_applicable || "0",
-          quantity_price: tasteItem.quantity_price || "0"
+          quantity_price: tasteItem.quantity_price || "0",
         });
       }
     }
@@ -178,7 +197,7 @@ const ItemCustomizationModal = ({
 
   const handleSubmit = () => {
     const orderItemsStep = prepareOrderItemsSteps();
-    
+
     onAddToCart({
       ...item,
       ...itemDetails,
@@ -189,46 +208,75 @@ const ItemCustomizationModal = ({
       toppings: selectedToppings,
       totalPrice: calculateTotalPrice(
         itemDetails?.price || 0,
-        calculateSizePrice(itemDetails?.step_details?.find(step => step.display_name === "Size"), selectedSize),
-        calculateSaucesPrice(itemDetails?.step_details?.find(step => step.display_name === "Sauces"), selectedSauces),
-        calculateTastePrice(itemDetails?.step_details?.find(step => step.display_name === "Taste"), selectedTaste),
+        calculateSizePrice(
+          itemDetails?.step_details?.find(
+            (step) => step.display_name === "Size"
+          ),
+          selectedSize
+        ),
+        calculateSaucesPrice(
+          itemDetails?.step_details?.find(
+            (step) => step.display_name === "Sauces"
+          ),
+          selectedSauces
+        ),
+        calculateTastePrice(
+          itemDetails?.step_details?.find(
+            (step) => step.display_name === "Taste"
+          ),
+          selectedTaste
+        ),
         calculateToppingsPrice(
-          itemDetails?.step_details?.find(step => step.display_name === "Size"),
+          itemDetails?.step_details?.find(
+            (step) => step.display_name === "Size"
+          ),
           selectedSize,
           selectedToppings
         ),
         quantity
       ),
-      order_items_step: orderItemsStep
+      order_items_step: orderItemsStep,
     });
     onClose();
   };
 
   if (!isOpen) return null;
-  if (loading) return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-6">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+  if (loading)
+    return (
+      <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white rounded-xl p-6">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+        </div>
       </div>
-    </div>
-  );
-  if (error) return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-6">
-        <p className="text-red-600">{error}</p>
+    );
+  if (error)
+    return (
+      <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white rounded-xl p-6">
+          <p className="text-red-600">{error}</p>
+        </div>
       </div>
-    </div>
-  );
+    );
 
-  const sizeStep = itemDetails?.step_details?.find(step => step.display_name === "Size");
-  const sauceStep = itemDetails?.step_details?.find(step => step.display_name === "Sauces");
-  const tasteStep = itemDetails?.step_details?.find(step => step.display_name === "Taste");
+  const sizeStep = itemDetails?.step_details?.find(
+    (step) => step.display_name === "Size"
+  );
+  const sauceStep = itemDetails?.step_details?.find(
+    (step) => step.display_name === "Sauces"
+  );
+  const tasteStep = itemDetails?.step_details?.find(
+    (step) => step.display_name === "Taste"
+  );
 
   const basePrice = itemDetails?.price || 0;
   const sizePrice = calculateSizePrice(sizeStep, selectedSize);
   const saucesPrice = calculateSaucesPrice(sauceStep, selectedSauces);
   const tastePrice = calculateTastePrice(tasteStep, selectedTaste);
-  const toppingsPrice = calculateToppingsPrice(sizeStep, selectedSize, selectedToppings);
+  const toppingsPrice = calculateToppingsPrice(
+    sizeStep,
+    selectedSize,
+    selectedToppings
+  );
   const totalPrice = calculateTotalPrice(
     basePrice,
     sizePrice,
@@ -242,7 +290,7 @@ const ItemCustomizationModal = ({
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] flex flex-col relative">
         <div className="p-6 border-b">
-          <button 
+          <button
             onClick={onClose}
             className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
           >
@@ -277,8 +325,6 @@ const ItemCustomizationModal = ({
             selectedTaste={selectedTaste}
             onTasteSelect={setSelectedTaste}
           />
-
-         
         </div>
 
         <div className="border-t p-6 space-y-4 bg-white">
@@ -317,17 +363,17 @@ const ItemCustomizationModal = ({
             </div>
           </div>
           <div className="container flex justify-between items-center gap-4">
-      <MainQuantitySelector 
-        quantity={quantity}
-        onQuantityChange={setQuantity}
-      />
-      <button
-        onClick={handleSubmit}
-        className="px-4 py-4 bg-primary text-white rounded-xl font-semibold hover:bg-red-700 transition-colors"
-      >
-        Add To Order
-      </button>
-    </div>
+            <MainQuantitySelector
+              quantity={quantity}
+              onQuantityChange={setQuantity}
+            />
+            <button
+              onClick={handleSubmit}
+              className="px-4 py-4 bg-primary text-white rounded-xl font-semibold hover:bg-red-700 transition-colors"
+            >
+              Add To Order
+            </button>
+          </div>
         </div>
       </div>
     </div>
