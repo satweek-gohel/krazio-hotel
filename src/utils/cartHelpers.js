@@ -81,7 +81,7 @@ export function findLargestTimestamp(objects, key) {
   // Find the largest timestamp
   const largestTimestamp = objects.reduce((max, obj) => {
     if (obj[key] === undefined) {
-      throw new Error(`Key '${key}' does not exist in one or more objects.`);
+      console.error(`Key '${key}' does not exist in one or more objects.`);
     }
     const timestamp = new Date(obj[key]).getTime(); // Ensure it's a valid timestamp
     return Math.max(max, timestamp);

@@ -1,28 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useCart } from '../../../contexts/CartContext';
-import AddressModal from './AddressModal';
-import AddressCard from './AddressCard';
-import { CheckCircle, XCircle, Phone, BellElectricIcon, Bell, BellOffIcon, DoorClosed, PhoneOff } from 'lucide-react'; // Importing icons
+import { useState } from "react";
+import { useCart } from "../../../contexts/CartContext";
+import AddressModal from "./AddressModal";
+import AddressCard from "./AddressCard";
+import { BellOffIcon, DoorClosed, PhoneOff } from "lucide-react"; // Importing icons
 
 export default function AddressStep({ onNext }) {
+  const addressesString = sessionStorage.getItem("addresses");
   const [showModal, setShowModal] = useState(false);
-  const [addresses, setAddresses] = useState([]);
-  
-  const { 
-    setSelectedAddress, 
+  const [addresses, setAddresses] = useState(JSON.parse(addressesString) || []);
+
+  const {
+    setSelectedAddress,
     setDeliveryInstructions,
     deliveryInstructions,
-    setCheckoutStep
+    setCheckoutStep,
   } = useCart();
-
-  
-
-  useEffect(() => {
-    const addressesString = sessionStorage.getItem("addresses");
-    if (addressesString) {
-      setAddresses(JSON.parse(addressesString));
-    }
-  }, []);
 
   const handleAddressSelect = (address) => {
     setSelectedAddress(address);
@@ -35,9 +27,9 @@ export default function AddressStep({ onNext }) {
   };
 
   const handleInstructionToggle = (instruction) => {
-    setDeliveryInstructions(prev => {
+    setDeliveryInstructions((prev) => {
       if (prev.includes(instruction)) {
-        return prev.filter(i => i !== instruction);
+        return prev.filter((i) => i !== instruction);
       }
       return [...prev, instruction];
     });
@@ -51,7 +43,6 @@ export default function AddressStep({ onNext }) {
       <div className="grid md:grid-cols-2 gap-4">
         {/* Saved Addresses */}
         {addresses.map((address) => (
-        
           <AddressCard
             key={address.id}
             address={address}
@@ -60,14 +51,16 @@ export default function AddressStep({ onNext }) {
         ))}
 
         {/* Add New Address Card */}
-        <div 
+        <div
           onClick={() => setShowModal(true)}
           className="border rounded-lg p-4 hover:border-red-500 cursor-pointer"
         >
           <div className="flex justify-between items-start mb-3">
             <div>
               <h3 className="font-medium">Add New Address</h3>
-              <p className="text-sm text-gray-500">Add a new delivery address</p>
+              <p className="text-sm text-gray-500">
+                Add a new delivery address
+              </p>
             </div>
           </div>
           <button className="w-full border-2 bg-primary text-white py-2 rounded-md ">
@@ -81,17 +74,17 @@ export default function AddressStep({ onNext }) {
         <h3 className="font-medium mb-4">Delivery Instructions</h3>
         <div className="flex flex-wrap gap-3">
           {[
-            { label: 'Leave at the door', icon: <DoorClosed size={16} /> },
-            { label: 'Avoid ringing bell', icon: <BellOffIcon size={16} /> },
-            { label: 'Avoid calling', icon: <PhoneOff size={16} /> }
+            { label: "Leave at the door", icon: <DoorClosed size={16} /> },
+            { label: "Avoid ringing bell", icon: <BellOffIcon size={16} /> },
+            { label: "Avoid calling", icon: <PhoneOff size={16} /> },
           ].map(({ label, icon }) => (
             <button
               key={label}
               onClick={() => handleInstructionToggle(label)}
               className={`flex items-center px-4 py-2 rounded text-sm ${
                 deliveryInstructions.includes(label)
-                  ? 'bg-primary text-white'
-                  : 'bg-gray-100 text-gray-600'
+                  ? "bg-primary text-white"
+                  : "bg-gray-100 text-gray-600"
               }`}
             >
               {icon}

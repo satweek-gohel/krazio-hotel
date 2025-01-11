@@ -1,9 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { MoreVertical, X, Pencil, Trash2 } from 'lucide-react';
-import AddressModal from '../Checkout/Address/AddressModal';
+import { useEffect, useState } from "react";
+import { MoreVertical, X, Pencil, Trash2 } from "lucide-react";
+import AddressModal from "../Checkout/Address/AddressModal";
 
-
-const AddressCard = ({ image, title, address, onMoreClick, showMenu, onEdit, onDelete, onCloseMenu }) => (
+const AddressCard = ({
+  image,
+  title,
+  address,
+  onMoreClick,
+  showMenu,
+  onEdit,
+  onDelete,
+  onCloseMenu,
+}) => (
   <div className="border border-gray-200 rounded-lg p-4 mb-3 flex items-start justify-between relative">
     <div className="flex gap-3">
       <img src={image} alt={title} className="w-5 h-5 rounded-full mt-1" />
@@ -13,19 +21,16 @@ const AddressCard = ({ image, title, address, onMoreClick, showMenu, onEdit, onD
       </div>
     </div>
     <div className="relative">
-      <button 
+      <button
         onClick={onMoreClick}
         className="text-gray-400 hover:text-gray-600"
       >
         <MoreVertical size={20} />
       </button>
-      
+
       {showMenu && (
         <>
-          <div 
-            className="fixed inset-0" 
-            onClick={onCloseMenu}
-          />
+          <div className="fixed inset-0" onClick={onCloseMenu} />
           <div className="absolute right-0 top-8 w-36 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
             <button
               onClick={onEdit}
@@ -48,63 +53,52 @@ const AddressCard = ({ image, title, address, onMoreClick, showMenu, onEdit, onD
   </div>
 );
 
-const SavedAddressModal = ({
-  isOpen,
-  onClose,
-  addresses = [],
-  onAddressSelect,
-  onDone
-}) => {
-  if (!isOpen) return null;
-
-  const [address, setAddress] = useState([]);
+const SavedAddressModal = ({ isOpen, onClose, onDone }) => {
+  const addressesString = sessionStorage.getItem("addresses");
+  const [address, setAddress] = useState(JSON.parse(addressesString) || []);
   const [activeMenu, setActiveMenu] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
 
-  useEffect(() => {
-    const addressesString = sessionStorage.getItem("addresses");
-    if (addressesString) {
-      setAddress(JSON.parse(addressesString));
-    }
-  }, []);
+  if (!isOpen) return null;
 
   const handleMoreClick = (addressId) => {
     setActiveMenu(activeMenu === addressId ? null : addressId);
   };
 
-  const handleEdit = (address) => {
-    setSelectedAddress(address);
+  const handleEdit = (addr) => {
+    setSelectedAddress(addr);
     setShowEditModal(true);
     setActiveMenu(null);
   };
 
-  const handleDelete = async (addressId) => {
+  const handleDelete = async () => {
     // Implement delete functionality here
     setActiveMenu(null);
   };
 
   const handleSaveAddress = (updatedAddress) => {
-    // Update the addresses list after edit
-    const updatedAddresses = address.map(addr => 
-      addr.user_address_id === updatedAddress.user_address_id ? updatedAddress : addr
+    const addr = [...JSON.parse(sessionStorage.getItem("addresses"))];
+    const addrToUpdateIndex = addr.findIndex(
+      (i) => i.user_address_id === updatedAddress.user_address_id
     );
-    setAddress(updatedAddresses);
-    sessionStorage.setItem("addresses", JSON.stringify(updatedAddresses));
-    setShowEditModal(false);
+    addr[addrToUpdateIndex] = updatedAddress;
+    sessionStorage.setItem("addresses", JSON.stringify(addr));
+    setAddress(addr);
+    window.location.reload();
   };
-  
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl w-full max-w-lg">
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-gray-200">
           <h2 className="text-2xl font-bold">Saved Address</h2>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 bg-black rounded-full p-1"
           >
-            <X size={15} className='text-white bg-black' />
+            <X size={15} className="text-white bg-black" />
           </button>
         </div>
 
@@ -112,11 +106,17 @@ const SavedAddressModal = ({
         <div className="p-4">
           {address.map((addr) => {
             const formattedAddress = `${addr.street_1}, ${addr.street_2}, ${addr.landmark}, ${addr.location_name}, ${addr.city_name}, ${addr.state_name}, ${addr.country_name}, ${addr.pincode}`;
-            const title = `${addr.user_name} - ${addr.address_type === '0' ? 'Home' : addr.address_type === '1' ? 'Work' : 'Other'}`;
+            const title = `${addr.user_name} - ${
+              addr.address_type === "0"
+                ? "Home"
+                : addr.address_type === "1"
+                ? "Work"
+                : "Other"
+            }`;
             return (
               <AddressCard
                 key={addr.user_address_id}
-                image={'/addressmodalhome.svg'}
+                image={"/addressmodalhome.svg"}
                 title={title}
                 address={formattedAddress}
                 showMenu={activeMenu === addr.user_address_id}

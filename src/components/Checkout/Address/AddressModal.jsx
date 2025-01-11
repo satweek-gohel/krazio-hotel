@@ -73,10 +73,11 @@ export default function AddressModal({ onClose, onSave, initialData = null }) {
           payload.user_address_id = initialData.user_address_id;
         }
 
-        const response = await addressService.createAddress(payload);
-        onSave(response);
+        await addressService.createAddress(payload);
+        onSave(payload);
         onClose();
-      } catch (error) {
+      } catch (err) {
+        console.log("err ===========>", err);
         setErrors((prev) => ({
           ...prev,
           submit: "Failed to save address. Please try again.",
