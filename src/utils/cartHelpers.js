@@ -54,15 +54,14 @@ export function formatTime(timeString) {
 }
 
 export function timeStringToMilliseconds(timeString) {
-  console.log("timeString ===========>", timeString);
   if (!timeString || typeof timeString !== "string") {
-    throw new Error("Invalid time string format. Expected 'HH:MM:SS'");
+    console.error("Invalid time string format. Expected 'HH:MM:SS'");
   }
 
   const [hours, minutes, seconds] = timeString.split(":").map(Number);
 
   if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
-    throw new Error(
+    console.error(
       "Time string must contain valid numbers in 'HH:MM:SS' format"
     );
   }
@@ -72,13 +71,11 @@ export function timeStringToMilliseconds(timeString) {
 
 export function findLargestTimestamp(objects, key) {
   if (!Array.isArray(objects) || objects.length === 0) {
-    throw new Error("Input must be a non-empty array of objects.");
+    console.error("Input must be a non-empty array of objects.");
   }
 
   if (typeof key !== "string") {
-    throw new Error(
-      "Key must be a string representing the timestamp property."
-    );
+    console.error("Key must be a string representing the timestamp property.");
   }
 
   // Find the largest timestamp

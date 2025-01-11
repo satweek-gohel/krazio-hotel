@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { addressService } from "../../../services/api/addressService";
 
@@ -7,7 +7,7 @@ export default function AddressModal({ onClose, onSave, initialData = null }) {
     const userDetailsString = sessionStorage.getItem("userDetails");
     if (userDetailsString) {
       const userDetails = JSON.parse(userDetailsString);
-      setUserId(userDetails.user_id); 
+      setUserId(userDetails.user_id);
     }
   }, []);
   const [userId, setUserId] = useState(null);
@@ -117,7 +117,6 @@ export default function AddressModal({ onClose, onSave, initialData = null }) {
         </div>
 
         <div className="max-h-[80vh] overflow-y-auto px-1">
-          
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -381,7 +380,11 @@ export default function AddressModal({ onClose, onSave, initialData = null }) {
                 className="w-full py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Saving..." : initialData ? "Update Address" : "Add Address"}
+                {isSubmitting
+                  ? "Saving..."
+                  : initialData
+                  ? "Update Address"
+                  : "Add Address"}
               </button>
             </div>
           </form>
