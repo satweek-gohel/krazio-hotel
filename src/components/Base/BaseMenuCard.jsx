@@ -31,16 +31,13 @@ const MenuCard = ({
           </div> */}
         </div>
 
-        
         <div className="flex items-center gap-1 mb-2">
           <Clock className="w-4 h-4 text-primary" />
           <span className="text-sm text-gray-600">{time} Minutes</span>
         </div>
 
-       
         <hr className="my-3 border-gray-200" />
 
-     
         <div className="flex items-center justify-between">
           <span className="text-primary font-bold">
             ${Number(price).toFixed(2)}

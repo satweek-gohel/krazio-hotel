@@ -95,7 +95,7 @@ const OrderSummary = () => {
   return (
     <div
       className="bg-white rounded-xl shadow-lg max-w-xl w-full p-4 border overflow-auto"
-      style={{ maxHeight: "calc(100vh - 150px)" }}
+      style={{ maxHeight: "calc(100vh - 150px)", minWidth: "100%" }}
     >
       <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
 

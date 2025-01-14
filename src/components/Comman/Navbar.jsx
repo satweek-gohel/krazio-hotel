@@ -143,7 +143,6 @@ function Navbar() {
     if (!restaurantId || !branchId || !branchDetails) return null;
 
     const schedule = branchDetails.branch_details[0].branch_schedule;
-    console.log("branchDetails ===========>", branchDetails);
     const today = new Date()
       .toLocaleString("en-US", { weekday: "short" })
       .toLowerCase();
