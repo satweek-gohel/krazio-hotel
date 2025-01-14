@@ -28,14 +28,13 @@ const OrderSummary = () => {
     placeOrder,
   } = useCart();
 
-  //! Improve the logic
   const today = new Date()
     .toLocaleString("en-US", { weekday: "short" })
     .toLowerCase();
   const schedule = JSON.parse(localStorage.getItem("branch_schedule"));
+  const { close_time } = schedule?.find((day) => day.day === today) || {};
 
-  const { close_time, open_time } =
-    schedule?.find((day) => day.day === today) || {};
+  // Hardcode the close_time and test it. Like :- "12:00:00" or "14:00:00"
   const closedInMilliseconds = timeStringToMilliseconds(close_time);
 
   const tookLargestTimeToCook = findLargestTimestamp(
@@ -43,16 +42,14 @@ const OrderSummary = () => {
     "item_preparation_time"
   );
 
-  const now = Date.now();
-
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-
-  const millisecondsSpentToday = now - startOfToday.getTime();
-
-  const openTime = timeStringToMilliseconds(open_time);
-  const totalTime = millisecondsSpentToday - openTime;
-  const totalTimeToCook = totalTime + tookLargestTimeToCook;
+  const now = new Date();
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+  const millisecondsSinceStartOfToday = now.getTime() - startOfToday.getTime();
+  const totalTimeToCook = millisecondsSinceStartOfToday + tookLargestTimeToCook;
 
   const condition = closedInMilliseconds < totalTimeToCook;
 

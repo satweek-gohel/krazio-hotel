@@ -66,7 +66,7 @@ function Navbar() {
 
   const handleCartClick = () => {
     if (uniqueItemsCount > 0) {
-      navigate('/checkout');
+      navigate("/checkout");
     } else {
       setIsEmptyCartModalOpen(true);
     }
@@ -143,6 +143,7 @@ function Navbar() {
     if (!restaurantId || !branchId || !branchDetails) return null;
 
     const schedule = branchDetails.branch_details[0].branch_schedule;
+    console.log("branchDetails ===========>", branchDetails);
     const today = new Date()
       .toLocaleString("en-US", { weekday: "short" })
       .toLowerCase();
@@ -294,11 +295,10 @@ function Navbar() {
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
       />
-      <EmptyCartModal 
-  isOpen={isEmptyCartModalOpen}
-  onClose={() => setIsEmptyCartModalOpen(false)}
-/>
-
+      <EmptyCartModal
+        isOpen={isEmptyCartModalOpen}
+        onClose={() => setIsEmptyCartModalOpen(false)}
+      />
     </>
   );
 }
