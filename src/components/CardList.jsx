@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getBranches } from "../services/api/branchService";
 
@@ -24,28 +24,31 @@ const CardList = () => {
 
   const getCurrentDaySchedule = (schedule) => {
     if (!schedule || schedule.length === 0) return null;
-    
-    const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+    const days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
     const today = new Date().getDay();
     const currentDay = days[today];
-    
-    return schedule.find(s => s.day === currentDay);
+
+    return schedule.find((s) => s.day === currentDay);
   };
 
   const formatTime = (time) => {
-    if (!time) return '';
-    const [hours, minutes] = time.split(':');
+    if (!time) return "";
+    const [hours, minutes] = time.split(":");
     const date = new Date();
     date.setHours(parseInt(hours), parseInt(minutes));
-    return date.toLocaleTimeString('en-US', { 
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true 
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   const handlePickup = (restaurant) => {
-    if (restaurant.is_pickup_available === "1" || restaurant.is_pickup_available === 1) {
+    if (
+      restaurant.is_pickup_available === "1" ||
+      restaurant.is_pickup_available === 1
+    ) {
       navigate(
         `/branch-menu/${restaurant.restaurant_id}/${restaurant.branch_id}?mode=pickup`
       );
@@ -53,7 +56,10 @@ const CardList = () => {
   };
 
   const handleDelivery = (restaurant) => {
-    if (restaurant.is_delivery_available === "1" || restaurant.is_delivery_available === 1) {
+    if (
+      restaurant.is_delivery_available === "1" ||
+      restaurant.is_delivery_available === 1
+    ) {
       navigate(
         `/branch-menu/${restaurant.restaurant_id}/${restaurant.branch_id}?mode=delivery`
       );
@@ -87,15 +93,18 @@ const CardList = () => {
     </div>
   );
 
-
   const Card = ({ restaurant }) => {
     const todaySchedule = getCurrentDaySchedule(restaurant.branch_schedule);
     const isOpen = todaySchedule?.is_open === "1";
     const openTime = formatTime(todaySchedule?.open_time);
     const closeTime = formatTime(todaySchedule?.close_time);
 
-    const pickupDisabled = restaurant.is_pickup_available !== "1" && restaurant.is_pickup_available !== 1;
-    const deliveryDisabled = restaurant.is_delivery_available !== "1" && restaurant.is_delivery_available !== 1;
+    const pickupDisabled =
+      restaurant.is_pickup_available !== "1" &&
+      restaurant.is_pickup_available !== 1;
+    const deliveryDisabled =
+      restaurant.is_delivery_available !== "1" &&
+      restaurant.is_delivery_available !== 1;
 
     return (
       <div className="bg-white rounded-lg shadow-lg shadow-slate-300 overflow-hidden">
@@ -118,7 +127,9 @@ const CardList = () => {
           <div className="flex items-center gap-3">
             <img src="/home-location-dark.svg" alt="" className="w-5 h-5" />
             <p className="text-gray-600">
-              {restaurant.street1 || restaurant.branch_address || "Address not available"}
+              {restaurant.street1 ||
+                restaurant.branch_address ||
+                "Address not available"}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -156,7 +167,6 @@ const CardList = () => {
       </div>
     );
   };
-
 
   return (
     <div className="container mx-auto p-4">
