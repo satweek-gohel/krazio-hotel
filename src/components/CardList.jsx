@@ -181,16 +181,17 @@ const CardList = () => {
         </p>
       </div>
 
-      <div className="container flex align-center justify-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 p-3 lg:w-2/3">
-          {loading
-            ? Array(2)
-                .fill(null)
-                .map((_, index) => <SkeletonCard key={`skeleton-${index}`} />)
-            : branches.map((restaurant) => (
-                <Card key={restaurant.branch_id} restaurant={restaurant} />
-              ))}
-        </div>
+      <div
+        style={{ margin: "auto" }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 p-3 lg:w-2/3"
+      >
+        {loading
+          ? Array(2)
+              .fill(null)
+              .map((_, index) => <SkeletonCard key={`skeleton-${index}`} />)
+          : branches.map((restaurant) => (
+              <Card key={restaurant.branch_id} restaurant={restaurant} />
+            ))}
       </div>
     </div>
   );

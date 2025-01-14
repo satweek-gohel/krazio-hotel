@@ -69,7 +69,7 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          <div className="w-full max-w-md lg:w-1/3 p-5 lg:me-20 mx-auto">
+          <div className="w-full lg:w-1/3 p-5 lg:me-20 mx-auto">
             <OrderSummary />
           </div>
         </div>
