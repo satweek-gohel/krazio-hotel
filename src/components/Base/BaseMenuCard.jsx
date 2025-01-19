@@ -1,4 +1,3 @@
-import React from "react";
 import { Clock } from "lucide-react";
 
 const MenuCard = ({
@@ -25,22 +24,15 @@ const MenuCard = ({
       <div className="p-4">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-semibold truncate">{foodName}</h3>
-          {/* <div className="flex items-center gap-1">
-            <span className="text-sm">{rating}</span>
-            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-          </div> */}
         </div>
 
-        
         <div className="flex items-center gap-1 mb-2">
           <Clock className="w-4 h-4 text-primary" />
           <span className="text-sm text-gray-600">{time} Minutes</span>
         </div>
 
-       
         <hr className="my-3 border-gray-200" />
 
-     
         <div className="flex items-center justify-between">
           <span className="text-primary font-bold">
             ${Number(price).toFixed(2)}

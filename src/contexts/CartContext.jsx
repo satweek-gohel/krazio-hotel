@@ -52,7 +52,6 @@ export const CartProvider = ({ children }) => {
   const toggleCart = () => setIsOpen(!isOpen);
 
   const addItem = (item) => {
-    console.log("item in addItem ===========>", item);
     setItems((currentItems) => {
       const existingItem = currentItems.find(
         (i) =>

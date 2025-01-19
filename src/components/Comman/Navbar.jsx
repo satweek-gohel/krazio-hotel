@@ -66,7 +66,7 @@ function Navbar() {
 
   const handleCartClick = () => {
     if (uniqueItemsCount > 0) {
-      navigate('/checkout');
+      navigate("/checkout");
     } else {
       setIsEmptyCartModalOpen(true);
     }
@@ -294,11 +294,10 @@ function Navbar() {
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
       />
-      <EmptyCartModal 
-  isOpen={isEmptyCartModalOpen}
-  onClose={() => setIsEmptyCartModalOpen(false)}
-/>
-
+      <EmptyCartModal
+        isOpen={isEmptyCartModalOpen}
+        onClose={() => setIsEmptyCartModalOpen(false)}
+      />
     </>
   );
 }
