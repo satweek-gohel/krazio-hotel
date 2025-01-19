@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import StepIndicator from './StepIndicator';
+import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import StepIndicator from "./StepIndicator";
 
 import AddressStep from './Address/AddressStep';
 import PaymentForm from './PaymentForm';
@@ -25,19 +24,17 @@ const CheckoutPage = () => {
     if (!isAuthenticated() && currentStep === 1) {
       return;
     }
-    setCurrentStep(prev => Math.min(prev + 1, 3));
+    setCurrentStep((prev) => Math.min(prev + 1, 3));
   };
 
   const handlePreviousStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return !isAuthenticated() ? (
-          <AuthCard />
-        ) : null; // No need to show anything if authenticated and on step 1
+        return !isAuthenticated() ? <AuthCard /> : null; // No need to show anything if authenticated and on step 1
       case 2:
         return (
           <AddressStep
@@ -58,12 +55,10 @@ const CheckoutPage = () => {
       <div className="w-full mt-20">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="lg:w-2/3 ">
-            <div className="steps p-4">
+            <div className="steps p-4 mt-5">
               <StepIndicator currentStep={currentStep} />
             </div>
-            <div className="rounded-lg p-7">
-              {renderStepContent()}
-            </div>
+            <div className="rounded-lg p-7">{renderStepContent()}</div>
 
             <div className="flex justify-between p-10">
               {currentStep > 1 && (
@@ -77,7 +72,7 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          <div className="lg:w-1/3 p-5 me-20">
+          <div className="w-full lg:w-1/3 p-5 lg:me-20 mx-auto">
             <OrderSummary />
           </div>
         </div>

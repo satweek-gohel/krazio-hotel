@@ -33,25 +33,29 @@ const OrderSummary = () => {
   const [orderPlaceModal, setOrderPlacedModal] = useState(false)
  
   //! Improve the logic
+
   const today = new Date()
     .toLocaleString("en-US", { weekday: "short" })
     .toLowerCase();
   const schedule = JSON.parse(localStorage.getItem("branch_schedule"));
+  const { close_time } = schedule?.find((day) => day.day === today) || {};
 
-  const currentDaySchedule = schedule?.find((day) => day.day === today);
-  const closedInMilliseconds = timeStringToMilliseconds(
-    currentDaySchedule?.close_time
-  );
+  // Hardcode the close_time and test it. Like :- "12:00:00" or "14:00:00"
+  const closedInMilliseconds = timeStringToMilliseconds(close_time);
 
-  const tookLArgestTimeToCook = findLargestTimestamp(
+  const tookLargestTimeToCook = findLargestTimestamp(
     items,
     "item_preparation_time"
   );
 
-  console.log(items);
-
-  const currentTime = Date.now();
-  const totalTimeToCook = currentTime + tookLArgestTimeToCook;
+  const now = new Date();
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+  const millisecondsSinceStartOfToday = now.getTime() - startOfToday.getTime();
+  const totalTimeToCook = millisecondsSinceStartOfToday + tookLargestTimeToCook;
 
   const condition = closedInMilliseconds < totalTimeToCook;
 
@@ -99,7 +103,7 @@ const OrderSummary = () => {
   return (
     <div
       className="bg-white rounded-xl shadow-lg max-w-xl w-full p-4 border overflow-auto"
-      style={{ maxHeight: "calc(100vh - 150px)" }}
+      style={{ maxHeight: "calc(100vh - 150px)", minWidth: "100%" }}
     >
       <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
 
