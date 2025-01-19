@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "../../contexts/CartContext";
 import CartItem from "./CartItem";
 import TipSection from "./TipSection";
@@ -8,6 +8,7 @@ import {
   findLargestTimestamp,
   timeStringToMilliseconds,
 } from "../../utils/cartHelpers";
+import OrderPlacedModal from "../OrderPlaced/OrderPlacedModal";
 
 const OrderSummary = () => {
   const {
@@ -18,6 +19,7 @@ const OrderSummary = () => {
     setDeliveryTime,
     selectedDateTime,
     setSelectedDateTime,
+    updateItem,
     selectedTip,
     setSelectedTip,
     updateQuantity,
@@ -28,6 +30,8 @@ const OrderSummary = () => {
     placeOrder,
   } = useCart();
 
+  const [orderPlaceModal, setOrderPlacedModal] = useState(false)
+ 
   //! Improve the logic
   const today = new Date()
     .toLocaleString("en-US", { weekday: "short" })
@@ -43,6 +47,8 @@ const OrderSummary = () => {
     items,
     "item_preparation_time"
   );
+
+  console.log(items);
 
   const currentTime = Date.now();
   const totalTimeToCook = currentTime + tookLArgestTimeToCook;
@@ -64,6 +70,8 @@ const OrderSummary = () => {
     const orderData = placeOrder();
     if (orderData) {
       console.log("Order successfully placed:", orderData);
+      setOrderPlacedModal(true);
+      
     }
   };
 
@@ -111,6 +119,7 @@ const OrderSummary = () => {
             key={`${item.id}-${JSON.stringify(item.selectedToppings)}`}
             item={item}
             updateQuantity={updateQuantity}
+            updateItem={updateItem}
           />
         ))}
       </div>
@@ -137,7 +146,10 @@ const OrderSummary = () => {
           ? "Place Order"
           : "Select Payment Method to Place Order"}
       </button>
+
+      <OrderPlacedModal isOpen={orderPlaceModal} />
     </div>
+   
   );
 };
 

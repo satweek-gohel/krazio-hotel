@@ -5,7 +5,6 @@ import { getBranchDetails } from "../services/api/branchService";
 import { Search } from "lucide-react";
 import PromotionalSlider from "../components/Base/BasePromotionSlider";
 import Category from "../components/Base/BaseCategory";
-import CartSidebar from "../components/Cart/CartSidebar";
 import BranchHeader from "../components/Branch/BranchHeader";
 import MenuGrid from "../components/Menu/MenuGrid";
 import LoadingSpinner from "../components/Loading/LoadingSpinner";
@@ -29,13 +28,14 @@ const MenuFilters = ({ items, onFilterChange, onSortChange }) => {
     offers: false,
   });
 
+ 
   const buttonClasses =
     "px-3 py-1.5 rounded-lg flex items-center gap-2 bg-white hover:bg-gray-50 shadow-md border font-semibold text-sm transition-colors duration-200";
 
   const getToggleButtonClasses = (isActive) => {
     return `${buttonClasses} ${
       isActive
-        ? "bg-[#C8102E] text-white hover:bg-[#C8102E]"
+        ? "bg-primary text-white hover:bg-[#C8102E]"
         : "bg-white text-gray-800"
     }`;
   };
@@ -362,23 +362,23 @@ function BranchPage() {
     }
   };
 
-  // const getFilteredItems = () => {
-  //   let items = filteredItems;
+  const getFilteredItems = () => {
+    let items = filteredItems;
 
-  //   if (selectedCategory && selectedCategory.category_id !== "all") {
-  //     items = items.filter(
-  //       (item) => item.category_id === selectedCategory.category_id
-  //     );
-  //   }
+    if (selectedCategory && selectedCategory.category_id !== "all") {
+      items = items.filter(
+        (item) => item.category_id === selectedCategory.category_id
+      );
+    }
 
-  //   if (searchTerm) {
-  //     items = items.filter((item) =>
-  //       item.item_name.toLowerCase().includes(searchTerm.toLowerCase())
-  //     );
-  //   }
+    if (searchTerm) {
+      items = items.filter((item) =>
+        item.item_name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
-  //   return items;
-  // };
+    return items;
+  };
 
   if (loading) {
     return <LoadingSpinner />;
@@ -386,14 +386,14 @@ function BranchPage() {
 
   return (
     <div className="container mx-auto px-2 lg:px-20 py-8 lg:py-5 branch-page">
-      <CartSidebar />
+   
 
       <div className="base mt-20">
         <RestaurantHeader name={branchData.branch_details[0].branch_name} />
       </div>
-
-      <PromotionalSlider title="Deals For You" images={images2} />
-
+      {images2.length > 0 && (
+        <PromotionalSlider title="Deals For You" images={images2} />
+      )}
       <div className="recmandtions mt-5">
         <MenuSlider
           items={RecommendedItems}
@@ -434,9 +434,9 @@ function BranchPage() {
         <BranchHeader branchName={selectedCategory.category_name} />
       )}
 
-      {filteredItems && (
+      {getFilteredItems().length > 0 && (
         <MenuGrid
-          items={filteredItems}
+          items={getFilteredItems()}
           onAddToCart={handleItemClick}
           disabled={isOpen}
         />

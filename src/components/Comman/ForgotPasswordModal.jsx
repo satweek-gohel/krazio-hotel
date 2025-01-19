@@ -1,10 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { X } from 'lucide-react';
-
+import { forgotPassword, resetPassword } from '../../services/api/authService';
+import PasswordResetModal from './PasswordResetModal';
 
 const ForgotPasswordModal = ({ isOpen, onClose }) => {
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false); 
   if (!isOpen) return null;
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true); 
+
+    try {
+      const response = await forgotPassword(email);
+      setSuccess(response.MESSAGE || 'Password reset link sent to your email.');
+      setIsModalOpen(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleResetPassword = async (data) => {
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    try {
+      const response = await resetPassword(
+        data.email,
+        data.otp,
+        data.password,
+        data.confirm_password
+      );
+      setSuccess(response.MESSAGE || 'Password reset successful');
+  
+      onClose(); 
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={onClose} />
@@ -13,29 +57,44 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
           <X className="h-4 w-4 text-white" />
         </button>
 
-       
-
         <h2 className="text-2xl font-semibold mb-4">Forgot Password</h2>
         <p className="text-gray-600 mb-6">Enter your email address below to reset your password</p>
 
-        <form className="space-y-4">
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {success && <p className="text-green-500 mb-4">{success}</p>}
+
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-gray-700 mb-2">Email ID</label>
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter Your Email ID"
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
+              required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-primary text-white py-3 rounded-lg hover:bg-red-600 transition-colors"
+            className={`w-full py-3 rounded-lg transition-colors text-white ${loading ? 'bg-gray-400' : 'bg-primary hover:bg-red-600'}`}
+            disabled={loading}
           >
-            Send
+            {loading ? 'Sending...' : 'Send'} 
           </button>
         </form>
       </div>
+
+      <PasswordResetModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleResetPassword}
+        loading={loading}
+        email={email}
+        title="Reset Your Password"
+        submitButtonText="Update Password"
+      />
     </>
   );
 };

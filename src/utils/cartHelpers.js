@@ -1,5 +1,4 @@
 export const createItemKey = (item, customizations) => {
-  // Create a unique key that includes all relevant item and customization details
   const keyData = {
     item_id: item.item_id,
     restaurant_id: item.restaurant_id,
@@ -38,10 +37,6 @@ export const calculateItemTotal = (item) => {
   const basePrice = Number(item.price);
   const quantity = item.quantity || item.customizations?.quantity || 1;
 
-  // Add additional price calculations for customizations if needed
-  // const sizePrice = calculateSizePrice(item.customizations.size);
-  // const saucesPrice = calculateSaucesPrice(item.customizations.sauces);
-
   return basePrice * quantity;
 };
 
@@ -78,14 +73,35 @@ export function findLargestTimestamp(objects, key) {
     console.error("Key must be a string representing the timestamp property.");
   }
 
-  // Find the largest timestamp
   const largestTimestamp = objects.reduce((max, obj) => {
     if (obj[key] === undefined) {
       console.error(`Key '${key}' does not exist in one or more objects.`);
     }
-    const timestamp = new Date(obj[key]).getTime(); // Ensure it's a valid timestamp
+    const timestamp = new Date(obj[key]).getTime();
     return Math.max(max, timestamp);
   }, -Infinity);
 
-  return largestTimestamp ? new Date(largestTimestamp) : 1800000; // Return as a Date object OR 30 mins in milliseconds
+  return largestTimestamp ? new Date(largestTimestamp) : 1800000;
 }
+
+export const generateCartItemId = (item) => {
+  const customizations = {
+    size: item.selectedSize || item.size,
+    sauces: item.selectedSauces || item.sauces,
+    taste: item.selectedTaste || item.taste,
+    toppings: item.selectedToppings || [],
+    steps: item.order_items_step || [],
+  };
+
+  if (Array.isArray(customizations.sauces)) {
+    customizations.sauces.sort();
+  }
+  if (Array.isArray(customizations.toppings)) {
+    customizations.toppings.sort();
+  }
+  if (Array.isArray(customizations.steps)) {
+    customizations.steps.sort((a, b) => a.step_name.localeCompare(b.step_name));
+  }
+
+  return `${item.id}-${JSON.stringify(customizations)}`;
+};

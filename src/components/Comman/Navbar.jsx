@@ -5,13 +5,13 @@ import AuthModals from "../auth/authModals";
 import { useAuth } from "../../contexts/AuthContext";
 import { useModals } from "../../hooks/useModals";
 import { useCart } from "../../contexts/CartContext";
-import CartSidebar from "../Cart/CartSidebar";
 import CouponSidebar from "./CouponSidebar";
 import ProfileModal from "./ProfileModal";
 import { useBranchData } from "../../hooks/useBranchData";
 import ProfileDropdown from "./ProfileDropdown";
 import { formatTime } from "../../utils/cartHelpers";
 import EmptyCartModal from "./EmptyCartModal";
+import { useLogo } from "../../contexts/LogoContext";
 
 function Navbar() {
   const { uniqueItemsCount } = useCart();
@@ -25,7 +25,8 @@ function Navbar() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-
+  const { logo } = useLogo();
+  console.log(logo);
   function isBranchCurrentlyOpen(schedule) {
     if (!schedule || schedule.length === 0) return false;
 
@@ -66,7 +67,7 @@ function Navbar() {
 
   const handleCartClick = () => {
     if (uniqueItemsCount > 0) {
-      navigate('/checkout');
+      navigate("/checkout");
     } else {
       setIsEmptyCartModalOpen(true);
     }
@@ -81,36 +82,42 @@ function Navbar() {
       );
     }
 
+    const cartAndCouponButtons = (
+      <>
+        <button
+          onClick={handleCartClick}
+          className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 transition-colors shadow-lg"
+        >
+          <img
+            src="/cart.svg"
+            alt="Cart"
+            className="w-4 h-4 sm:w-5 sm:h-5 object-cover"
+          />
+          {uniqueItemsCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+              {uniqueItemsCount}
+            </span>
+          )}
+        </button>
+        {isAuthenticated() && (
+          <button
+            onClick={() => setIsCouponSidebarOpen(true)}
+            className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 shadow-lg transition-colors"
+          >
+            <img
+              src="/coupon.svg"
+              alt="Coupon"
+              className="w-4 h-4 sm:w-5 sm:h-5 object-cover"
+            />
+          </button>
+        )}
+      </>
+    );
+
     if (isAuthenticated()) {
       return (
         <div className="flex items-center gap-2 sm:gap-4">
-          <button
-            onClick={handleCartClick}
-            className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 transition-colors shadow-lg"
-          >
-            <img
-              src="/cart.svg"
-              alt="Cart"
-              className="w-4 h-4 sm:w-5 sm:h-5 object-cover"
-            />
-            {uniqueItemsCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                {uniqueItemsCount}
-              </span>
-            )}
-          </button>
-          {restaurantId && branchId && (
-            <button
-              onClick={() => setIsCouponSidebarOpen(true)}
-              className="relative p-1.5 sm:p-2 rounded bg-white-100 hover:bg-gray-200 shadow-lg transition-colors"
-            >
-              <img
-                src="/coupon.svg"
-                alt="Coupon"
-                className="w-4 h-4 sm:w-5 sm:h-5 object-cover"
-              />
-            </button>
-          )}
+          {cartAndCouponButtons}
           <div className="flex items-center">
             <ProfileDropdown
               isOpen={isDropdownOpen}
@@ -123,6 +130,7 @@ function Navbar() {
 
     return (
       <div className="flex items-center gap-2 sm:gap-3">
+        {cartAndCouponButtons}
         <button
           onClick={modals.openLoginModal}
           className="px-2 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base bg-primary text-white rounded-lg transition-colors"
@@ -188,6 +196,7 @@ function Navbar() {
       </div>
     );
   };
+
   const renderMobileBranchInfo = () => {
     if (!restaurantId || !branchId || branchLoading || !branchDetails)
       return null;
@@ -217,22 +226,16 @@ function Navbar() {
         <div className="max-w-7xl mx-auto px-3 sm:px-4">
           <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-8">
             <div className="flex-shrink-0">
-              <span className="text-xl sm:text-2xl font-bold text-primary">
-                LOGO
-              </span>
+              <img
+                src={logo}
+                alt="Restaurant Logo"
+                className="h-8 w-auto md:h-10 lg:h-12"
+              />
             </div>
 
             {renderBranchInfo()}
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <div className="relative hidden sm:block w-48 lg:w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search for food"
-                  className="w-full px-4 py-1.5 sm:py-2 bg-gray-50 rounded border text-sm focus:ring-2 focus:ring-primary pl-9 sm:pl-10"
-                />
-              </div>
               {renderAuthButtons()}
               <button
                 onClick={toggleSidebar}
@@ -285,20 +288,21 @@ function Navbar() {
       </div>
 
       <AuthModals {...modals} />
-      <CartSidebar />
-      <CouponSidebar
-        isOpen={isCouponSidebarOpen}
-        onClose={() => setIsCouponSidebarOpen(false)}
-      />
+
+      {isAuthenticated() && (
+        <CouponSidebar
+          isOpen={isCouponSidebarOpen}
+          onClose={() => setIsCouponSidebarOpen(false)}
+        />
+      )}
       <ProfileModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
       />
-      <EmptyCartModal 
-  isOpen={isEmptyCartModalOpen}
-  onClose={() => setIsEmptyCartModalOpen(false)}
-/>
-
+      <EmptyCartModal
+        isOpen={isEmptyCartModalOpen}
+        onClose={() => setIsEmptyCartModalOpen(false)}
+      />
     </>
   );
 }

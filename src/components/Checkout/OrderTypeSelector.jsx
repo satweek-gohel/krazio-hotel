@@ -7,6 +7,9 @@ const OrderTypeSelector = ({
   onDateTimeChange,
   condition,
 }) => {
+  // Ensure the selectedDateTime has a default value if not provided
+  const currentDateTime = new Date().toISOString().slice(0, 16);
+
   return (
     <div className="px-4 mx-1 py-1 space-y-4 border rounded mb-6">
       <div className="mb-0 flex justify-between p-3 rounded items-center border-b">
@@ -37,7 +40,6 @@ const OrderTypeSelector = ({
 
       {orderType === "Delivery" && (
         <>
-          {/* */}
           <div
             className={`flex justify-between items-center p-3 rounded ${
               condition ? "cursor-not-allowed" : "pointer"
@@ -77,11 +79,11 @@ const OrderTypeSelector = ({
               <div className="relative">
                 <input
                   type="datetime-local"
-                  value={selectedDateTime}
+                  value={selectedDateTime || currentDateTime} // Ensure default value
                   onChange={(e) => onDateTimeChange(e.target.value)}
                   className="w-full px-4 py-3 bg-white border-2 border-red-600/10 
-             rounded-lg text-gray-700 focus:outline-none focus:border-red-600"
-                  min={new Date().toISOString().slice(0, 16)} // Minimum is the current date and time
+                  rounded-lg text-gray-700 focus:outline-none focus:border-red-600"
+                  min={currentDateTime}
                   max={
                     condition
                       ? new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000)

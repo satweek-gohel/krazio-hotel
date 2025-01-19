@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { prepareOrderPayload } from "../utils/orderCalculate";
 import { calculateOrder } from "../services/api/orderCalculations";
+import { generateCartItemId } from "../utils/cartHelpers";
 
 const CartContext = createContext();
 
@@ -52,19 +53,16 @@ export const CartProvider = ({ children }) => {
   const toggleCart = () => setIsOpen(!isOpen);
 
   const addItem = (item) => {
-    console.log("item in addItem ===========>", item);
     setItems((currentItems) => {
-      const existingItem = currentItems.find(
-        (i) =>
-          i.id === item.id &&
-          i.selectedSize === item.size &&
-          JSON.stringify(i.selectedSauces) === JSON.stringify(item.sauces) &&
-          i.selectedTaste === item.taste
+      const cartItemId = generateCartItemId(item);
+      
+      const existingItemIndex = currentItems.findIndex(
+        (i) => generateCartItemId(i) === cartItemId
       );
 
-      if (existingItem) {
-        return currentItems.map((i) =>
-          i === existingItem
+      if (existingItemIndex !== -1) {
+        return currentItems.map((i, index) =>
+          index === existingItemIndex
             ? { ...i, quantity: i.quantity + item.quantity }
             : i
         );
@@ -74,6 +72,7 @@ export const CartProvider = ({ children }) => {
         ...currentItems,
         {
           ...item,
+          cartItemId,
           selectedSize: item.size,
           selectedSauces: item.sauces,
           selectedTaste: item.taste,
@@ -83,32 +82,45 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  const updateItem = (itemId, updatedItem) => {
+  const updateItem = (cartItemId, updatedItem) => {
     setItems((currentItems) =>
       currentItems.map((item) =>
-        item.id === itemId ? { ...item, ...updatedItem } : item
+        generateCartItemId(item) === cartItemId ? { ...item, ...updatedItem } : item
       )
     );
   };
 
-  const removeItem = (itemId) => {
+  const removeItem = (cartItemId) => {
     setItems((currentItems) =>
-      currentItems.filter((item) => item.id !== itemId)
+      currentItems.filter((item) => generateCartItemId(item) !== cartItemId)
     );
   };
 
-  const updateQuantity = (itemId, newQuantity) => {
+  const updateQuantity = (cartItemId, newQuantity) => {
     if (newQuantity < 1) {
-      removeItem(itemId);
+      removeItem(cartItemId);
       return;
     }
 
     setItems((currentItems) =>
       currentItems.map((item) =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
+        generateCartItemId(item) === cartItemId ? { ...item, quantity: newQuantity } : item
       )
     );
   };
+
+  const updatemenuQuantity = (itemId, newQuantity) => {
+    setItems((currentItems) => {
+      if (newQuantity === 0) {
+        return currentItems.filter((item) => item.id !== itemId);
+      }
+      
+      return currentItems.map((item) =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      );
+    });
+  };
+
 
   const canPlaceOrder = () => {
     if (items.length === 0) return false;
@@ -201,6 +213,7 @@ export const CartProvider = ({ children }) => {
         placeOrder,
         canPlaceOrder,
         updateOrderCalculation,
+        updatemenuQuantity
       }}
     >
       {children}

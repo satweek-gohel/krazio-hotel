@@ -1,8 +1,32 @@
+// MenuGrid.jsx
 import React from 'react';
 import MenuCard from '../Base/BaseMenuCard';
 import { ChefHat, UtensilsCrossed } from 'lucide-react';
+import { useCart } from '../../contexts/CartContext';
+
 
 const MenuGrid = ({ items, onAddToCart, disabled }) => {
+  const { items: cartItems, updatemenuQuantity } = useCart();
+
+  const getItemQuantity = (itemId) => {
+    const cartItem = cartItems.find(item => item.id === itemId);
+    return cartItem ? cartItem.quantity : 0;
+  };
+
+  const handleUpdateQuantity = (item, newQuantity) => {
+    if (newQuantity === 0) {
+      updatemenuQuantity(item.item_id, 0);
+    } else if (newQuantity === 1 && getItemQuantity(item.item_id) === 0) {
+      onAddToCart({
+        ...item,
+        totalPrice: item.price,
+        quantity: 1,
+      });
+    } else {
+      updatemenuQuantity(item.item_id, newQuantity);
+    }
+  };
+
   if (!items || items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[300px] md:min-h-[400px] bg-neutral-50 rounded-lg border-2 border-dashed border-primary p-4 sm:p-6 md:p-8">
@@ -31,11 +55,13 @@ const MenuGrid = ({ items, onAddToCart, disabled }) => {
           key={item.item_id}
           foodName={item.item_name}
           imageSrc={item.item_image || 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=1000'}
-          rating={item.rating || 4.5}
           time={item.item_preparation_time || 30}
           price={item.price}
           onAddClick={() => onAddToCart(item)}
+          onUpdateQuantity={(newQuantity) => handleUpdateQuantity(item, newQuantity)}
+          quantity={getItemQuantity(item.item_id)}
           disabled={disabled}
+          is_extra_ingradient_available={item.is_extra_ingradient_available}
         />
       ))}
     </div>

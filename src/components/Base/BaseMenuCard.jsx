@@ -1,3 +1,4 @@
+// MenuCard.jsx
 import React from "react";
 import { Clock } from "lucide-react";
 
@@ -8,7 +9,77 @@ const MenuCard = ({
   price,
   onAddClick,
   disabled,
+  quantity = 0,
+  onUpdateQuantity,
+  is_extra_ingradient_available
 }) => {
+  const handleQuantityChange = (change, e) => {
+    e.stopPropagation();
+    const newQuantity = quantity + change;
+    if (newQuantity >= 0) {
+      onUpdateQuantity(newQuantity);
+    }
+  };
+
+  const renderAddButton = () => {
+    if (disabled) {
+      return (
+        <button
+          className="px-4 sm:px-10 py-2 rounded-md bg-gray-400 cursor-not-allowed text-white text-sm"
+          disabled
+        >
+          Add
+        </button>
+      );
+    }
+
+    if (is_extra_ingradient_available === "1") {
+      return (
+        <button
+          className="px-4 sm:px-10 py-2 rounded-md bg-primary hover:bg-red-600 active:bg-red-700 text-white text-sm transition-colors duration-200"
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddClick();
+          }}
+        >
+          Add
+        </button>
+      );
+    }
+
+    if (quantity > 0) {
+      return (
+        <div className="flex items-center gap-2 bg-primary rounded">
+          <button
+            className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-red-600"
+            onClick={(e) => handleQuantityChange(-1, e)}
+          >
+            -
+          </button>
+          <span className="text-sm font-medium w-6 text-center text-white">{quantity}</span>
+          <button
+            className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-red-600"
+            onClick={(e) => handleQuantityChange(1, e)}
+          >
+            +
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <button
+        className="px-4 sm:px-10 py-2 rounded-md bg-primary hover:bg-red-600 active:bg-red-700 text-white text-sm transition-colors duration-200"
+        onClick={(e) => {
+          e.stopPropagation();
+          onAddClick();
+        }}
+      >
+        Add
+      </button>
+    );
+  };
+
   return (
     <div className="max-w-sm rounded-lg p-1 overflow-hidden shadow-lg bg-white hover:shadow-xl border border-gray-300 transition-shadow duration-300">
       <div className="relative">
@@ -25,42 +96,20 @@ const MenuCard = ({
       <div className="p-4">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-lg font-semibold truncate">{foodName}</h3>
-          {/* <div className="flex items-center gap-1">
-            <span className="text-sm">{rating}</span>
-            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-          </div> */}
         </div>
 
-        
         <div className="flex items-center gap-1 mb-2">
           <Clock className="w-4 h-4 text-primary" />
           <span className="text-sm text-gray-600">{time} Minutes</span>
         </div>
 
-       
         <hr className="my-3 border-gray-200" />
 
-     
         <div className="flex items-center justify-between">
           <span className="text-primary font-bold">
             ${Number(price).toFixed(2)}
           </span>
-          <button
-            className={`px-4 sm:px-10 py-2 rounded-md ${
-              disabled
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-primary hover:bg-red-600 active:bg-red-700"
-            } text-white text-sm transition-colors duration-200`}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (!disabled) {
-                onAddClick();
-              }
-            }}
-            disabled={disabled}
-          >
-            Add
-          </button>
+          {renderAddButton()}
         </div>
       </div>
     </div>

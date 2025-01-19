@@ -7,12 +7,14 @@ import AddressStep from './Address/AddressStep';
 import PaymentForm from './PaymentForm';
 import OrderSummary from './OrderSummary';
 import AuthCard from './Auth/AuthContainer';
+import { useCart } from '../../contexts/CartContext';
 
 const CheckoutPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const { userDetails, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-
+    const {items} = useCart();
+    console.log(items)
   useEffect(() => {
     if (isAuthenticated()) {
       setCurrentStep(2); // Directly go to Address Step if authenticated

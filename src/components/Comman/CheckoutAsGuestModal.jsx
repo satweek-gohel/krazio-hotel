@@ -1,10 +1,30 @@
-import React from 'react';
-import { X } from 'lucide-react';
-
-
+import React, { useState } from 'react';
+import { X, Eye, EyeOff } from 'lucide-react';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import { useAuth } from '../../hooks/useAuth';
 
 const CheckoutAsGuestModal = ({ isOpen, onClose, onLoginClick }) => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [mobileNo, setMobileNo] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState(''); 
+  const [gender, setGender] = useState(''); 
+  const { loginAsGuest, isLoading, error } = useAuth();
+
   if (!isOpen) return null;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await loginAsGuest(firstName, lastName, email, password, mobileNo, dateOfBirth, gender); 
+      onClose();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <>
@@ -14,16 +34,16 @@ const CheckoutAsGuestModal = ({ isOpen, onClose, onLoginClick }) => {
           <X className="h-4 w-4 text-white" />
         </button>
 
-       
-
         <h2 className="text-2xl font-semibold mb-8">Checkout As Guest</h2>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-gray-700 mb-2">First Name</label>
               <input
                 type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 placeholder="Enter your First Name"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
               />
@@ -32,6 +52,8 @@ const CheckoutAsGuestModal = ({ isOpen, onClose, onLoginClick }) => {
               <label className="block text-gray-700 mb-2">Last Name</label>
               <input
                 type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 placeholder="Enter your Last Name"
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
               />
@@ -40,35 +62,79 @@ const CheckoutAsGuestModal = ({ isOpen, onClose, onLoginClick }) => {
 
           <div>
             <label className="block text-gray-700 mb-2">Mobile No</label>
-            <div className="flex">
-              <div className="w-24 mr-2">
-                <select className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none">
-                  <option value="+91">🇮🇳 +91</option>
-                </select>
-              </div>
-              <input
-                type="tel"
-                placeholder="Enter Your Mobile No"
-                className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
-              />
-            </div>
+            <PhoneInput
+              country={'in'}
+              value={mobileNo}
+              onChange={setMobileNo}
+              containerClass="!w-full"
+              inputClass="!w-full !h-[42px] !py-2.5 !pl-[48px] !rounded-lg !border-gray-300 focus:!ring-2 focus:!ring-red-500 focus:!border-transparent !outline-none"
+              buttonClass="!border-gray-300 !rounded-l-lg !h-[42px] !bg-transparent"
+              dropdownClass="!rounded-lg !shadow-lg"
+            />
           </div>
 
           <div>
             <label className="block text-gray-700 mb-2">Email</label>
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter Your Email ID"
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
             />
           </div>
 
+          <div>
+            <label className="block text-gray-700 mb-2">Password</label>
+            <div className="relative">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter Your Password"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <EyeOff className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Date of Birth</label>
+            <input
+              type="date"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-2">Gender</label>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
+            >
+              <option value="">Select Gender</option>
+              <option value="1">Male</option>
+              <option value="2">Female</option>
+            </select>
+          </div>
+
           <button
             type="submit"
             className="w-full bg-primary text-white py-3 rounded-lg hover:bg-red-600 transition-colors"
+            disabled={isLoading}
           >
-            Sign Up
+            {isLoading ? 'Signing Up...' : 'Sign Up'}
           </button>
+
+          {error && <p className="text-red-500 text-center">{error}</p>}
 
           <div className="text-center mt-4">
             <p className="text-gray-600">

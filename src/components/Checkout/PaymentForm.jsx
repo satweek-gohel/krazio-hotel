@@ -103,7 +103,7 @@ export default function PaymentForm({ onSubmit }) {
       <h1 className="text-2xl font-bold mb-6">Payment</h1>
       
       <DeliveryInfo 
-        restaurantName="SUSHI HOUSE"
+        restaurantName="VOVPOS Branch 1"
         deliveryTime="20 Mins"
         address={address}
       />

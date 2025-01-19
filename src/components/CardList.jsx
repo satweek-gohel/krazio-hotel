@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getBranches } from "../services/api/branchService";
+import { useLogo } from "../contexts/LogoContext";
 
 const CardList = () => {
   const navigate = useNavigate();
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const { setLogo } = useLogo();
   useEffect(() => {
     const fetchBranches = async () => {
       try {
         const data = await getBranches();
         setBranches(data.branchDetails);
+        setLogo(data.restaurantDetails.restaurant_image);
       } catch (error) {
         console.error("Failed to fetch branch data:", error);
       } finally {

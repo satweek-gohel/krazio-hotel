@@ -77,6 +77,7 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
 
   const prepareOrderItemsSteps = () => {
     const orderItemsStep = [];
+    console.log(orderItemsStep);
     const sessionId = "SESSION_" + Math.random().toString(36).substr(2, 9);
     const terminalId = "1";
 
@@ -193,7 +194,10 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
     }
 
     return orderItemsStep;
+    
   };
+
+  
 
   const handleSubmit = () => {
     const orderItemsStep = prepareOrderItemsSteps();

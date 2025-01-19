@@ -16,10 +16,9 @@ const CouponSidebar = ({ isOpen, onClose }) => {
       try {
         const data = await getCoupons(restaurantId, branchId);
         setCoupon(data);
-        } catch (error) {
-        console.error('Failed to fetch branch data:', error);
+      } catch (error) {
+        console.error("Failed to fetch branch data:", error);
       } finally {
-        
       }
     };
 
@@ -56,17 +55,14 @@ const CouponSidebar = ({ isOpen, onClose }) => {
               key={index}
               className="relative bg-white rounded-lg overflow-hidden flex shadow-sm hover:shadow-md transition-shadow"
             >
-              {/* Left red section with vertical text */}
               <div className="bg-red-600 w-[70px] flex items-center justify-center relative">
                 <div className="transform -rotate-90 whitespace-nowrap text-white text-2xl font-bold absolute w-[120px] text-center">
                   {coupon.coupon_code}
                 </div>
 
-                {/* Circular cutouts */}
                 <div className="absolute -left-3 -bottom- w-6 h-6 bg-gray-50 rounded-full" />
               </div>
 
-              {/* Content section */}
               <div className="flex-1 p-2 pl-5">
                 <div className="flex flex-col h-full justify-between">
                   <div>

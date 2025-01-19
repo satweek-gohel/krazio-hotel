@@ -54,10 +54,10 @@ export const AuthProvider = ({ children }) => {
     setUserDetails(null);
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('userDetails');
+    sessionStorage.removeItem('addresses');
   };
 
   const isAuthenticated = () => {
-    // Explicitly check for token in sessionStorage
     return !!sessionStorage.getItem('token');
   };
 
