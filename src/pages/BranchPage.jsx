@@ -481,7 +481,7 @@ function BranchPage() {
     </div>
 
     {/* Categories Section */}
-    <div className="sticky top-20 bg-white z-40 mb-6">
+    <div className=" bg-white z-40 mb-6">
       {categories.length > 0 && (
         <Category 
           title={'Food Category'} 

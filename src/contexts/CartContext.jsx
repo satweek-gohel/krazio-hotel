@@ -38,6 +38,7 @@ export const CartProvider = ({ children }) => {
     try {
       const payload = prepareOrderPayload(items, selectedTip, orderType);
       const result = await calculateOrder(payload);
+      
       setOrderCalculation(result.RESULT);
     } catch (error) {
       console.error("Error updating order calculation:", error);
@@ -45,6 +46,7 @@ export const CartProvider = ({ children }) => {
       setIsCalculating(false);
     }
   };
+  
 
   useEffect(() => {
     updateOrderCalculation();

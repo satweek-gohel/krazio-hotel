@@ -1,3 +1,5 @@
+import { json } from "react-router-dom";
+
 export const formatPrice = (price) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -16,10 +18,11 @@ export const formatPrice = (price) => {
         order_items_step: item.order_items_step?.map(step => ({
           session_id: step.session_id,
           step_name: step.step_name,
-          branch_extra_ingredient_category_steps_item_id: step.branch_extra_ingredient_category_steps_item_id || "10",
+          branch_extra_ingredient_category_steps_item_id: JSON.stringify(step.branch_extra_ingredient_category_steps_item_id) || "10",
           branch_extra_ingredient_price_for_parent_item_id: step.branch_extra_ingredient_price_for_parent_item_id || "0",
           extra_ingredient_name: step.extra_ingredient_name,
           is_price_applicable: step.is_price_applicable,
+          step_id: JSON.stringify(step.step_id),
           price: step.price,
           quantity: step.quantity,
           terminal_id: step.terminal_id,

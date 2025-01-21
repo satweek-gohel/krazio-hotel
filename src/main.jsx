@@ -13,6 +13,7 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { BranchProvider } from "./contexts/BranchContext.jsx";
 import Orders from "./components/Comman/Orders.jsx";
 import { LogoProvider } from "./contexts/LogoContext.jsx";
+import OrderPlacedPage from "./pages/OrderPlacedPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -30,6 +31,7 @@ createRoot(document.getElementById("root")).render(
               />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/my-orders" element={<Orders />} />
+              <Route path="/order-placed" element={<OrderPlacedPage />} />
             </Routes>
             </LogoProvider>
           </BrowserRouter>

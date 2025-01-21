@@ -9,6 +9,7 @@ import {
   timeStringToMilliseconds,
 } from "../../utils/cartHelpers";
 import OrderPlacedModal from "../OrderPlaced/OrderPlacedModal";
+import { useNavigate } from "react-router-dom";
 
 const OrderSummary = () => {
   const {
@@ -30,9 +31,8 @@ const OrderSummary = () => {
     placeOrder,
   } = useCart();
 
+const navigate = useNavigate();
   const [orderPlaceModal, setOrderPlacedModal] = useState(false);
-
-  //! Improve the logic
 
   const today = new Date()
     .toLocaleString("en-US", { weekday: "short" })
@@ -40,13 +40,14 @@ const OrderSummary = () => {
   const schedule = JSON.parse(localStorage.getItem("branch_schedule"));
   const { close_time } = schedule?.find((day) => day.day === today) || {};
 
-  // Hardcode the close_time and test it. Like :- "12:00:00" or "14:00:00"
   const closedInMilliseconds = timeStringToMilliseconds(close_time);
 
   const tookLargestTimeToCook = findLargestTimestamp(
     items,
     "item_preparation_time"
   );
+
+  
 
   const now = new Date();
   const startOfToday = new Date(
@@ -61,7 +62,6 @@ const OrderSummary = () => {
 
   useEffect(() => {
     if (condition) {
-      // setOrderType('Delivery')
       setDeliveryTime("Later");
     }
   }, []);
@@ -74,8 +74,15 @@ const OrderSummary = () => {
     const orderData = placeOrder();
     if (orderData) {
       console.log("Order successfully placed:", orderData);
-      setOrderPlacedModal(true);
+
+       navigate('/order-placed')
+
     }
+  };
+
+  const handleRemoveItem = (cartItemId) => {
+    // Set quantity to 0 to remove the item
+    updateQuantity(cartItemId, 0);
   };
 
   const renderOrderSummary = () => {
@@ -123,6 +130,7 @@ const OrderSummary = () => {
             item={item}
             updateQuantity={updateQuantity}
             updateItem={updateItem}
+            removeItem={handleRemoveItem}
           />
         ))}
       </div>
