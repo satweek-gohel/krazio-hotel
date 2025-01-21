@@ -77,7 +77,7 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
 
   const prepareOrderItemsSteps = () => {
     const orderItemsStep = [];
-    console.log(orderItemsStep);
+    
     const sessionId = "SESSION_" + Math.random().toString(36).substr(2, 9);
     const terminalId = "1";
 
@@ -95,20 +95,21 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
       if (selectedSizeItem) {
         orderItemsStep.push({
           session_id: sessionId,
-          step_id: selectedSizeItem.branch_extra_ingredient_category_steps,
+          step_id: selectedSizeItem.branch_extra_ingredient_category_steps_id,
           step_name: sizeStep.display_name,
-          branch_extra_ingredient_category_steps_item_id:
-            selectedSizeItem.branch_extra_ingredient_category_steps_item_id,
+          branch_extra_ingredient_category_steps_item_id:selectedSizeItem.branch_extra_ingredient_category_steps_item_id,
           extra_ingredient_name: selectedSizeItem.extra_ingredient_name,
           is_price_applicable: selectedSizeItem.is_price_applicable,
+          branch_extra_ingredient_price_for_parent_item_id: selectedSizeItem.parent_branch_extra_ingredient_category_steps_item,
           price: selectedSizeItem.price,
           quantity: quantity.toString(),
           terminal_id: terminalId,
           price_type: selectedSizeItem.price_type || "0",
-          is_quantity_applicable:
-            selectedSizeItem.is_quantity_applicable || "0",
+          is_quantity_applicable:selectedSizeItem.is_quantity_applicable || "0",
           quantity_price: selectedSizeItem.quantity_price || "0",
         });
+
+        
 
         // Add selected toppings
         selectedToppings.forEach((topping) => {
@@ -202,7 +203,7 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
 
   const handleSubmit = () => {
     const orderItemsStep = prepareOrderItemsSteps();
-
+    console.log(orderItemsStep);
     onAddToCart({
       ...item,
       ...itemDetails,

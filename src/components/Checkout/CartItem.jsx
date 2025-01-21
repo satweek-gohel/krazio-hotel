@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { formatPrice } from "../../utils/orderCalculate";
 import { generateCartItemId } from "../../utils/cartHelpers";
 import ItemCustomizationModal from "../ItemCustomization/ItemCustomizationModal";
@@ -16,7 +16,7 @@ const NonVegIcon = () => (
   </div>
 );
 
-const CartItem = ({ item, updateQuantity, updateItem }) => {
+const CartItem = ({ item, updateQuantity, updateItem, removeItem }) => {
   const cartItemId = generateCartItemId(item);
   const [itemNote, setItemNote] = useState(item.note || "");
   const [isCustomizing, setIsCustomizing] = useState(false);
@@ -35,7 +35,6 @@ const CartItem = ({ item, updateQuantity, updateItem }) => {
   };
 
   const handleCustomizationComplete = (customizedItem) => {
-    // Update the cart item with new customizations and price
     updateItem(cartItemId, {
       ...item,
       ...customizedItem,
@@ -49,11 +48,15 @@ const CartItem = ({ item, updateQuantity, updateItem }) => {
     setIsCustomizing(false);
   };
 
+  const handleRemoveItem = () => {
+    removeItem(cartItemId);
+  };
+
   const renderStepDetails = () => {
     return Object.entries(groupedSteps).map(([stepName, steps]) => (
       <div key={stepName} className="mt-1">
-        <span className="text-xs text-gray-600 font-medium">{stepName}: </span>
-        <span className="text-xs text-gray-500">
+        <span className="text-sm text-black font-semibold">{stepName}: </span>
+        <span className="text-sm text-black">
           {steps.map((step, index) => (
             <span key={index}>
               {step.extra_ingredient_name}
@@ -68,7 +71,6 @@ const CartItem = ({ item, updateQuantity, updateItem }) => {
   const calculateTotalPrice = () => {
     let basePrice = item.price * item.quantity;
     
-    // Add toppings price if any
     if (item.selectedToppings?.length > 0) {
       const toppingsPrice = item.selectedToppings.length * 1.5 * item.quantity;
       basePrice += toppingsPrice;
@@ -79,22 +81,33 @@ const CartItem = ({ item, updateQuantity, updateItem }) => {
 
   return (
     <>
-      <div className="space-y-3 rounded border border-gray-300 p-1">
-        <div className="grid grid-cols-4 items-center gap-4 p-3 border-b dashed">
+      <div className="space-y-3 rounded border border-gray-300 p-1 relative">
+        {/* Remove button */}
+        <button
+          onClick={handleRemoveItem}
+          className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors"
+          aria-label="Remove item"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+        <div className="grid grid-cols-4 items-start gap-4 p-3 border-b dashed">
           <div className="col-span-2 flex flex-col">
             <span className="font-bold text-left flex items-center gap-2 text-sm">
-              {item.isVeg ? <VegIcon /> : <NonVegIcon />}
+              {item.food_type === 1 || item.food_type === 4 ? <VegIcon /> : item.food_type === 2 ? <NonVegIcon /> : null}
               {item.item_name}
             </span>
-           
+
             <div className="flex flex-col gap-1 mt-2">
-              <button 
-                onClick={handleCustomize}
-                className="flex items-center gap-1 text-xs text-red-600 hover:text-red-700 w-fit"
-              >
-                <img src="/customize.svg" alt="" className="w-3 h-3" />
-                Customize
-              </button>
+              {item.is_extra_ingradient_available === "1" && (
+                <button 
+                  onClick={handleCustomize}
+                  className="flex items-center gap-1 text-xs text-red-600 hover:text-red-700 w-fit"
+                >
+                  <img src="/customize.svg" alt="" className="w-3 h-3" />
+                  Customize
+                </button>
+              )}
               {item.order_items_step && renderStepDetails()}
             </div>
           </div>
