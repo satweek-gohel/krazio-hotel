@@ -30,8 +30,8 @@ const OrderSummary = () => {
     placeOrder,
   } = useCart();
 
-  const [orderPlaceModal, setOrderPlacedModal] = useState(false)
- 
+  const [orderPlaceModal, setOrderPlacedModal] = useState(false);
+
   //! Improve the logic
 
   const today = new Date()
@@ -57,7 +57,7 @@ const OrderSummary = () => {
   const millisecondsSinceStartOfToday = now.getTime() - startOfToday.getTime();
   const totalTimeToCook = millisecondsSinceStartOfToday + tookLargestTimeToCook;
 
-  const condition = closedInMilliseconds < totalTimeToCook;
+  const condition = closedInMilliseconds > totalTimeToCook;
 
   useEffect(() => {
     if (condition) {
@@ -75,7 +75,6 @@ const OrderSummary = () => {
     if (orderData) {
       console.log("Order successfully placed:", orderData);
       setOrderPlacedModal(true);
-      
     }
   };
 
@@ -153,7 +152,6 @@ const OrderSummary = () => {
 
       <OrderPlacedModal isOpen={orderPlaceModal} />
     </div>
-   
   );
 };
 
