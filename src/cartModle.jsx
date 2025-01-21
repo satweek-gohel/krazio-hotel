@@ -1,15 +1,6 @@
 import { X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
-function CartModal({ isOpen, onClose }) {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    localStorage.setItem("cartItems", JSON.stringify([]));
-    window.location.reload();
-    onClose();
-  };
-
+function CartModal({ isOpen, onClose, onOk }) {
   if (!isOpen) return null;
 
   return (
@@ -22,26 +13,24 @@ function CartModal({ isOpen, onClose }) {
           <X className="h-6 w-6 text-gray-700" />
         </button>
 
-        <h2 className="text-3xl font-semibold text-gray-800 mb-6">Cart</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Leave Page?</h2>
 
-        <p className="text-gray-600 mb-6">
-          It looks like you have items in your cart. If you proceed, your cart
-          will be emptied.
+        <p className="text-gray-600 mb-8">
+          You have items in your cart. Going back will clear your cart. Do you want to proceed?
         </p>
 
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-end gap-4">
           <button
-            onClick={() => navigate(-1)}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 p-3 bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors rounded-lg shadow-md"
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg transition-colors"
           >
-            <span className="font-medium">Cancel</span>
+            Stay Here
           </button>
-
           <button
-            onClick={handleClick}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 p-3 bg-primary text-white hover:bg-primary-dark transition-colors rounded-lg shadow-md"
+            onClick={onOk}
+            className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors"
           >
-            <span className="font-medium">Ok</span>
+            Leave & Clear Cart
           </button>
         </div>
       </div>

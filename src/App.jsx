@@ -1,7 +1,7 @@
 import "./index.css";
 import CardList from "./components/CardList";
 import ImageSlider from "./components/Slider";
-import CartModal from "./cartModle";
+
 import { useEffect, useState } from "react";
 
 function App() {
@@ -16,16 +16,11 @@ function App() {
     "/hero-2.jpg",
   ];
 
-  useEffect(() => {
-    const items = localStorage.getItem("cartItems", JSON.stringify([]));
-    if (JSON.parse(items).length) {
-      setOpen(true);
-    }
-  }, []);
+ 
 
   return (
     <div>
-      <CartModal isOpen={open} onClose={() => setOpen(false)} />;
+    
       <div className="mt-20">
         <ImageSlider images={images} />
       </div>

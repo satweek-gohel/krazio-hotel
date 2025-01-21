@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Eye, EyeOff } from 'lucide-react';
+import { X } from 'lucide-react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { useAuth } from '../../hooks/useAuth';
@@ -9,8 +9,6 @@ const CheckoutAsGuestModal = ({ isOpen, onClose, onLoginClick }) => {
   const [lastName, setLastName] = useState('');
   const [mobileNo, setMobileNo] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(''); 
   const [gender, setGender] = useState(''); 
   const { loginAsGuest, isLoading, error } = useAuth();
 
@@ -19,7 +17,7 @@ const CheckoutAsGuestModal = ({ isOpen, onClose, onLoginClick }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await loginAsGuest(firstName, lastName, email, password, mobileNo, dateOfBirth, gender); 
+      await loginAsGuest(firstName, lastName, email, mobileNo, gender); 
       onClose();
     } catch (err) {
       console.error(err);
@@ -80,35 +78,6 @@ const CheckoutAsGuestModal = ({ isOpen, onClose, onLoginClick }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter Your Email ID"
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 mb-2">Password</label>
-            <div className="relative">
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter Your Password"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                <EyeOff className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-gray-700 mb-2">Date of Birth</label>
-            <input
-              type="date"
-              value={dateOfBirth}
-              onChange={(e) => setDateOfBirth(e.target.value)}
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
             />
           </div>

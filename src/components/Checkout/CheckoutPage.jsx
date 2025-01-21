@@ -7,6 +7,7 @@ import PaymentForm from './PaymentForm';
 import OrderSummary from './OrderSummary';
 import AuthCard from './Auth/AuthContainer';
 import { useCart } from '../../contexts/CartContext';
+import { useNavigate } from "react-router-dom";
 
 const CheckoutPage = () => {
   const [currentStep, setCurrentStep] = useState(1);

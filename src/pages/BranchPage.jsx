@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import { getBranchDetails } from "../services/api/branchService";
 import { Search } from "lucide-react";
@@ -12,7 +12,7 @@ import { ItemCustomizationModal } from "../components/ItemCustomization";
 import { images2 } from "../components/Enumes/Enumes";
 import RestaurantHeader from "../components/Branch/ResHeader";
 import MenuSlider from "../components/Menu/MenuSlider";
-
+import CartModal from ".././cartModle";
 const MenuFilters = ({ items, onFilterChange, onSortChange }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState({
@@ -27,6 +27,7 @@ const MenuFilters = ({ items, onFilterChange, onSortChange }) => {
     rating4Plus: false,
     offers: false,
   });
+  
 
  
   const buttonClasses =
@@ -269,7 +270,6 @@ function BranchPage() {
   const [isOpen, setIsOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
-
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -324,6 +324,76 @@ function BranchPage() {
       prevCategory?.category_id === category.category_id ? null : category
     );
   };
+  const [showCartModal, setShowCartModal] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+ const [shouldBlockNavigation, setShouldBlockNavigation] = useState(false);
+
+  // Add this effect to handle the back button
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+      if (cartItems.length > 0) {
+        e.preventDefault();
+        setShowCartModal(true);
+        return (e.returnValue = 'You have items in your cart');
+      }
+    };
+
+    const handleBackButton = (e) => {
+      const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+      if (cartItems.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowCartModal(true);
+        // Push current state again to prevent immediate navigation
+        window.history.pushState(null, document.title, window.location.href);
+        return false;
+      }
+    };
+
+    // Push initial state
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener('popstate', handleBackButton);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('popstate', handleBackButton);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  // Check cart items on component mount
+  useEffect(() => {
+    const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+    if (cartItems.length > 0) {
+      setShouldBlockNavigation(true);
+    }
+  }, []);
+
+  const handleModalConfirm = async () => {
+    // First clear the cart
+    localStorage.setItem("cartItems", JSON.stringify([]));
+    setShowCartModal(false);
+    setShouldBlockNavigation(false);
+  
+    try {
+      // First navigate
+      await navigate('/');
+      // Then refresh
+      window.location.reload();
+    } catch (error) {
+      // Fallback to direct location change if navigation fails
+      window.location.href = '/';
+    }
+  };
+
+  const handleModalCancel = () => {
+    setShowCartModal(false);
+    // Push state again to prevent immediate back navigation
+    window.history.pushState(null, document.title, window.location.href);
+  };
+
 
   const handleItemClick = async (item) => {
     const enrichedItem = {
@@ -384,14 +454,22 @@ function BranchPage() {
 
   return (
     <div className="container mx-auto px-2 lg:px-20 py-8 lg:py-5 branch-page">
-   
+    <CartModal
+      isOpen={showCartModal}
+      onClose={handleModalCancel}
+      onOk={handleModalConfirm}
+    />
 
+    {/* Fixed content above sticky section */}
+    <div className="mb-6">
       <div className="base mt-20">
         <RestaurantHeader name={branchData.branch_details[0].branch_name} />
       </div>
+      
       {images2.length > 0 && (
         <PromotionalSlider title="Deals For You" images={images2} />
       )}
+      
       <div className="recmandtions mt-5">
         <MenuSlider
           items={RecommendedItems}
@@ -400,34 +478,44 @@ function BranchPage() {
           title={"Recommended Items"}
         />
       </div>
+    </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center mt-10 space-y-4 sm:space-y-0">
-        <BranchHeader branchName={"Food Categories"} />
-        <div className="relative w-full sm:w-auto">
-          <input
-            type="text"
-            placeholder="Search items..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary w-full sm:w-64"
-          />
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
-          />
-        </div>
-      </div>
-
+    {/* Categories Section */}
+    <div className="sticky top-20 bg-white z-40 mb-6">
       {categories.length > 0 && (
-        <Category categories={categories} onSelect={handleCategorySelect} />
+        <Category 
+          title={'Food Category'} 
+          categories={categories} 
+          onSelect={handleCategorySelect} 
+        />
       )}
+    </div>
 
+    {/* Filters and Search Section */}
+    <div className="flex justify-between items-start gap-4 mb-6">
       <MenuFilters
         items={branchData?.item_details || []}
         onFilterChange={setFilteredItems}
         onSortChange={setFilteredItems}
       />
+      
+      <div className="relative min-w-[240px]">
+        <input
+          type="text"
+          placeholder="Search items..."
+          value={searchTerm}
+          onChange={handleSearch}
+          className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <Search
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+          size={20}
+        />
+      </div>
+    </div>
 
+    {/* Content Below Sticky Section */}
+    <div className="mt-4">
       {selectedCategory && selectedCategory.category_id !== "all" && (
         <BranchHeader branchName={selectedCategory.category_name} />
       )}
@@ -439,16 +527,18 @@ function BranchPage() {
           disabled={isOpen}
         />
       )}
-      {selectedItem?.is_extra_ingradient_available === "1" ? (
-        <ItemCustomizationModal
-          item={selectedItem}
-          isOpen={!!selectedItem}
-          onClose={() => setSelectedItem(null)}
-          onAddToCart={handleAddToCart}
-        />
-      ) : null}
     </div>
-  );
+
+    {selectedItem?.is_extra_ingradient_available === "1" ? (
+      <ItemCustomizationModal
+        item={selectedItem}
+        isOpen={!!selectedItem}
+        onClose={() => setSelectedItem(null)}
+        onAddToCart={handleAddToCart}
+      />
+    ) : null}
+  </div>
+);
 }
 
 export default BranchPage;

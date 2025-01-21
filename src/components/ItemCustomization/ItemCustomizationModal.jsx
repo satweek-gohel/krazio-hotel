@@ -90,14 +90,15 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
         (size) => size.extra_ingredient_name === selectedSize
       );
 
+      console.log(selectedSizeItem);
+
       if (selectedSizeItem) {
         orderItemsStep.push({
           session_id: sessionId,
           step_id: selectedSizeItem.branch_extra_ingredient_category_steps,
           step_name: sizeStep.display_name,
           branch_extra_ingredient_category_steps_item_id:
-            selectedSizeItem.branch_extra_ingredient_category_steps_item,
-          branch_extra_ingredient_price_for_parent_item_id: "0",
+            selectedSizeItem.branch_extra_ingredient_category_steps_item_id,
           extra_ingredient_name: selectedSizeItem.extra_ingredient_name,
           is_price_applicable: selectedSizeItem.is_price_applicable,
           price: selectedSizeItem.price,
