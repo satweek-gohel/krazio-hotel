@@ -30,6 +30,7 @@ const OrderSummary = () => {
     selectedAddress,
     placeOrder,
   } = useCart();
+
 const navigate = useNavigate();
   const [orderPlaceModal, setOrderPlacedModal] = useState(false);
 
@@ -57,7 +58,7 @@ const navigate = useNavigate();
   const millisecondsSinceStartOfToday = now.getTime() - startOfToday.getTime();
   const totalTimeToCook = millisecondsSinceStartOfToday + tookLargestTimeToCook;
 
-  const condition = closedInMilliseconds < totalTimeToCook;
+  const condition = closedInMilliseconds > totalTimeToCook;
 
   useEffect(() => {
     if (condition) {
@@ -73,7 +74,9 @@ const navigate = useNavigate();
     const orderData = placeOrder();
     if (orderData) {
       console.log("Order successfully placed:", orderData);
+
        navigate('/order-placed')
+
     }
   };
 
