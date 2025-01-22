@@ -260,11 +260,14 @@ const MenuFilters = ({ items, onFilterChange, onSortChange }) => {
 };
 
 function BranchPage() {
-  const { restaurantId, branchId } = useParams();
+  const { restaurantName, branchName } = useParams();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [branchData, setBranchData] = useState(null);
+  const [restaurantId, setRestaurantId] = useState(null);
+  const [branchId, setBranchId] = useState(null);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [RecommendedItems, setRecommendedItems] = useState([]);
   const [isOpen, setIsOpen] = useState(true);
@@ -272,8 +275,51 @@ function BranchPage() {
   const [filteredItems, setFilteredItems] = useState([]);
   const { addItem } = useCart();
 
+  // First fetch restaurant data
+  useEffect(() => {
+    const fetchRestaurantData = async () => {
+      try {
+        const response = await fetch('https://sandbox.vovpos.com:3002/web/home', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            restaurant_id: 2 // This should come from config
+          })
+        });
+
+        const restaurantData = await response.json();
+
+        if (restaurantData.STATUS !== "1") {
+          throw new Error("Failed to fetch restaurant data");
+        }
+
+        const branch = restaurantData.RESULT.branchDetails.find(
+          branch => branch.branch_name.toLowerCase() === decodeURIComponent(branchName).toLowerCase()
+        );
+
+        if (!branch) {
+          throw new Error("Branch not found");
+        }
+
+        setRestaurantId(restaurantData.RESULT.restaurantDetails.restaurant_id);
+        setBranchId(branch.branch_id);
+
+      } catch (error) {
+        console.error("Failed to fetch restaurant data:", error);
+        setError("Failed to load restaurant data");
+      }
+    };
+
+    fetchRestaurantData();
+  }, [restaurantName, branchName]);
+
+  // Then fetch branch details once we have the IDs
   useEffect(() => {
     const fetchBranchData = async () => {
+      if (!restaurantId || !branchId) return;
+
       try {
         const data = await getBranchDetails(restaurantId, branchId);
         setBranchData(data);
@@ -284,6 +330,7 @@ function BranchPage() {
           category_image: "/coffe.png",
           category_id: "all",
         };
+
         localStorage.setItem(
           "branch_schedule",
           JSON.stringify(data?.branch_details[0]?.branch_schedule)
@@ -311,6 +358,7 @@ function BranchPage() {
         setRecommendedItems(recommendedItems);
       } catch (error) {
         console.error("Failed to fetch branch data:", error);
+        setError("Failed to load branch details");
       } finally {
         setLoading(false);
       }
@@ -318,7 +366,6 @@ function BranchPage() {
 
     fetchBranchData();
   }, [restaurantId, branchId]);
-
   const handleCategorySelect = (category) => {
     setSelectedCategory((prevCategory) =>
       prevCategory?.category_id === category.category_id ? null : category
@@ -396,6 +443,11 @@ function BranchPage() {
 
 
   const handleItemClick = async (item) => {
+    if (!restaurantId || !branchId) {
+      console.error("Restaurant or branch ID not available");
+      return;
+    }
+
     const enrichedItem = {
       ...item,
       restaurant_id: restaurantId,
@@ -420,8 +472,29 @@ function BranchPage() {
       item_name: customizedItem.item_name,
       price: customizedItem.totalPrice,
       item_image: customizedItem.item_image,
+      restaurant_id: restaurantId,
+      branch_id: branchId,
     });
   };
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-red-600">{error}</h2>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-primary text-white rounded-lg"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);

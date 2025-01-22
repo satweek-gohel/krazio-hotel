@@ -68,8 +68,9 @@ const OTPVerificationModal = ({ isOpen, onClose, onVerify, email }) => {
 
     setLoading(true);
     try {
-      // Here you would make your API call to verify the OTP
-      await onVerify(otp.join(''));
+      // Convert OTP to a number before sending
+      const otpNumber = parseInt(otp.join(''), 10);
+      await onVerify(otpNumber);
       onClose();
     } catch (err) {
       setError('Invalid OTP. Please try again.');

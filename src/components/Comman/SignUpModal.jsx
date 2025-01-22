@@ -129,8 +129,8 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: formData.email_address,
-            otp: otp,
+            "email_address": formData.email_address,
+            "otp": otp,
           }),
         }
       );

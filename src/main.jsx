@@ -14,6 +14,7 @@ import { BranchProvider } from "./contexts/BranchContext.jsx";
 import Orders from "./components/Comman/Orders.jsx";
 import { LogoProvider } from "./contexts/LogoContext.jsx";
 import OrderPlacedPage from "./pages/OrderPlacedPage.jsx";
+import NotFound from "./components/Comman/NotFound.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -26,12 +27,13 @@ createRoot(document.getElementById("root")).render(
             <Routes>
               <Route path="/*" element={<App />} />
               <Route
-                path="/branch-menu/:restaurantId/:branchId"
+                path="/:restaurantName/:branchName/branch-menu"
                 element={<BranchPage />}
               />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/my-orders" element={<Orders />} />
               <Route path="/order-placed" element={<OrderPlacedPage />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
             </LogoProvider>
           </BrowserRouter>

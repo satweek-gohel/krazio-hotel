@@ -110,7 +110,8 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
         });
 
         
-
+        console.log(selectedToppings);
+        
         // Add selected toppings
         selectedToppings.forEach((topping) => {
           const toppingItem = selectedSizeItem.price_for_parent_item.find(
@@ -138,7 +139,7 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
         });
       }
     }
-
+ 
     // Add sauce selections
     selectedSauces.forEach((sauce) => {
       const sauceStep = itemDetails?.step_details?.find(
@@ -147,14 +148,15 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
       const sauceItem = sauceStep?.category_steps_item?.find(
         (s) => s.extra_ingredient_name === sauce.name
       );
+      console.log(sauceItem);
       if (sauceItem) {
         orderItemsStep.push({
           session_id: sessionId,
-          step_id: sauceItem.branch_extra_ingredient_category_steps,
+          step_id: sauceItem.branch_extra_ingredient_category_steps_id,
           step_name: sauceStep.display_name,
           branch_extra_ingredient_category_steps_item_id:
-            sauceItem.branch_extra_ingredient_category_steps_item,
-          branch_extra_ingredient_price_for_parent_item_id: "0",
+            sauceItem.branch_extra_ingredient_category_steps_item_id,
+          branch_extra_ingredient_price_for_parent_item_id: sauceItem.parent_branch_extra_ingredient_category_steps_item,
           extra_ingredient_name: sauceItem.extra_ingredient_name,
           is_price_applicable: sauceItem.is_price_applicable,
           price: sauceItem.price,
@@ -166,6 +168,9 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
         });
       }
     });
+
+    console.log(selectedSauces);
+
 
     // Add taste selection
     if (selectedTaste) {

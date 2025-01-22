@@ -4,18 +4,24 @@ import QuantitySelector from './QuantitySelector';
 const SauceSection = ({ sauceStep, selectedSauces, onSauceUpdate }) => {
   if (!sauceStep) return null;
 
-  const handleSauceToggle = (sauceName) => {
-    const isSelected = selectedSauces.some(s => s.name === sauceName);
+  const handleSauceToggle = (sauce) => {
+    const isSelected = selectedSauces.some(s => s.name === sauce.extra_ingredient_name);
     if (isSelected) {
-      onSauceUpdate(selectedSauces.filter(s => s.name !== sauceName));
+      // Remove the sauce from the selected list
+      onSauceUpdate(selectedSauces.filter(s => s.name !== sauce.extra_ingredient_name));
     } else {
-      onSauceUpdate([...selectedSauces, { name: sauceName, quantity: 1 }]);
+      // Add the entire sauce object along with the quantity
+      onSauceUpdate([
+        ...selectedSauces,
+        { ...sauce, name: sauce.extra_ingredient_name, quantity: 1 },
+      ]);
     }
   };
 
   const handleQuantityChange = (sauceName, newQuantity) => {
+    // Update the quantity for the selected sauce
     onSauceUpdate(
-      selectedSauces.map(s => 
+      selectedSauces.map(s =>
         s.name === sauceName ? { ...s, quantity: newQuantity } : s
       )
     );
@@ -39,7 +45,7 @@ const SauceSection = ({ sauceStep, selectedSauces, onSauceUpdate }) => {
                   type="checkbox"
                   value={sauce.extra_ingredient_name}
                   checked={isSelected}
-                  onChange={() => handleSauceToggle(sauce.extra_ingredient_name)}
+                  onChange={() => handleSauceToggle(sauce)}
                   className="mr-3"
                 />
                 <span>{sauce.extra_ingredient_name}</span>
@@ -48,7 +54,7 @@ const SauceSection = ({ sauceStep, selectedSauces, onSauceUpdate }) => {
                 {isSelected && (
                   <QuantitySelector
                     quantity={selectedSauce.quantity}
-                    onQuantityChange={(newQuantity) => 
+                    onQuantityChange={(newQuantity) =>
                       handleQuantityChange(sauce.extra_ingredient_name, newQuantity)
                     }
                     size="small"

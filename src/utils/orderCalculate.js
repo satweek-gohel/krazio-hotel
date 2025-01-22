@@ -18,8 +18,8 @@ export const formatPrice = (price) => {
         order_items_step: item.order_items_step?.map(step => ({
           session_id: step.session_id,
           step_name: step.step_name,
-          branch_extra_ingredient_category_steps_item_id: JSON.stringify(step.branch_extra_ingredient_category_steps_item_id) || "10",
-          branch_extra_ingredient_price_for_parent_item_id: step.branch_extra_ingredient_price_for_parent_item_id || "0",
+          branch_extra_ingredient_category_steps_item_id: JSON.stringify(step.branch_extra_ingredient_category_steps_item_id) ,
+          branch_extra_ingredient_price_for_parent_item_id: step.branch_extra_ingredient_price_for_parent_item_id ,
           extra_ingredient_name: step.extra_ingredient_name,
           is_price_applicable: step.is_price_applicable,
           step_id: JSON.stringify(step.step_id),
@@ -29,7 +29,7 @@ export const formatPrice = (price) => {
           price_type: step.price_type,
           is_quantity_applicable: step.is_quantity_applicable,
           quantity_price: step.quantity_price
-        }))
+        })) || []
       })),
       total_tips_amount: selectedTip || 0,
       order_type: orderType === 'Delivery' ? 2 : 1,

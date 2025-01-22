@@ -49,5 +49,30 @@ export const addressService = {
       console.error('Error updating address:', error);
       throw error;
     }
+  },
+
+  deleteAddress: async (addressId) => {
+    try {
+      const token = sessionStorage.getItem('token'); 
+      if (!token) throw new Error('No authentication token found');
+
+      const response = await fetch(`${API_BASE_URL}/deleteAddress`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ address_id: addressId })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete address');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error deleting address:', error);
+      throw error;
+    }
   }
 };

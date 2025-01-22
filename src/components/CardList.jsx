@@ -6,6 +6,7 @@ import { useLogo } from "../contexts/LogoContext";
 const CardList = () => {
   const navigate = useNavigate();
   const [branches, setBranches] = useState([]);
+  const [restaurant, setRestaurant] = useState([]);
   const [loading, setLoading] = useState(true);
   const { setLogo } = useLogo();
   useEffect(() => {
@@ -13,6 +14,7 @@ const CardList = () => {
       try {
         const data = await getBranches();
         setBranches(data.branchDetails);
+        setRestaurant(data.restaurantDetails);
         setLogo(data.restaurantDetails.restaurant_image);
       } catch (error) {
         console.error("Failed to fetch branch data:", error);
@@ -46,25 +48,29 @@ const CardList = () => {
     });
   };
 
-  const handlePickup = (restaurant) => {
+  const handlePickup = (restaurant, restaurantDetails) => {
     if (
       restaurant.is_pickup_available === "1" ||
       restaurant.is_pickup_available === 1
     ) {
-      navigate(
-        `/branch-menu/${restaurant.restaurant_id}/${restaurant.branch_id}?mode=pickup`
+      const branchName = encodeURIComponent(restaurant.branch_name);
+      const restaurantName = encodeURIComponent(
+        restaurantDetails.restaurant_name
       );
+      navigate(`/${restaurantName}/${branchName}/branch-menu?mode=pickup`);
     }
   };
 
-  const handleDelivery = (restaurant) => {
+  const handleDelivery = (restaurant, restaurantDetails) => {
     if (
       restaurant.is_delivery_available === "1" ||
       restaurant.is_delivery_available === 1
     ) {
-      navigate(
-        `/branch-menu/${restaurant.restaurant_id}/${restaurant.branch_id}?mode=delivery`
+      const branchName = encodeURIComponent(restaurant.branch_name);
+      const restaurantName = encodeURIComponent(
+        restaurantDetails.restaurant_name
       );
+      navigate(`/${restaurantName}/${branchName}/branch-menu?mode=delivery`);
     }
   };
 
@@ -95,7 +101,7 @@ const CardList = () => {
     </div>
   );
 
-  const Card = ({ restaurant }) => {
+  const Card = ({ restaurant, restaurantDetails }) => {
     const todaySchedule = getCurrentDaySchedule(restaurant.branch_schedule);
     const isOpen = todaySchedule?.is_open === "1";
     const openTime = formatTime(todaySchedule?.open_time);
@@ -144,7 +150,7 @@ const CardList = () => {
         <hr className="border-gray-200" />
         <div className="grid grid-cols-2 divide-x divide-gray-200 gap-4 p-3 rounded">
           <button
-            onClick={() => handlePickup(restaurant)}
+            onClick={() => handlePickup(restaurant, restaurantDetails)}
             disabled={pickupDisabled}
             className={`flex items-center justify-center gap-2 p-2 text-white rounded transition-colors ${
               pickupDisabled
@@ -155,7 +161,7 @@ const CardList = () => {
             <span className="font-medium">Pickup</span>
           </button>
           <button
-            onClick={() => handleDelivery(restaurant)}
+            onClick={() => handleDelivery(restaurant, restaurantDetails)}
             disabled={deliveryDisabled}
             className={`flex items-center justify-center gap-2 p-2 text-white rounded transition-colors ${
               deliveryDisabled
@@ -188,12 +194,16 @@ const CardList = () => {
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 p-3 lg:w-2/3"
       >
         {loading
-          ? Array(2)
-              .fill(null)
-              .map((_, index) => <SkeletonCard key={`skeleton-${index}`} />)
-          : branches.map((restaurant) => (
-              <Card key={restaurant.branch_id} restaurant={restaurant} />
-            ))}
+    ? Array(2)
+        .fill(null)
+        .map((_, index) => <SkeletonCard key={`skeleton-${index}`} />)
+    : branches.map((branch) => (
+        <Card
+          key={branch.branch_id}
+          restaurant={branch}
+          restaurantDetails={restaurant}
+        />
+      ))}
       </div>
     </div>
   );

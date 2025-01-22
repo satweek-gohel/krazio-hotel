@@ -14,9 +14,12 @@ const CheckoutPage = () => {
   const { items, orderType } = useCart();
 
   console.log(items);
+  
   useEffect(() => {
-    if (isAuthenticated()) {
-      setCurrentStep(2);
+    if (!isAuthenticated()) {
+      setCurrentStep(1); // Show step 1 if not authenticated
+    } else {
+      setCurrentStep(2); // Directly go to step 2 if authenticated
     }
   }, [isAuthenticated]);
 
@@ -39,10 +42,12 @@ const CheckoutPage = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
+  console.log(isAuthenticated());
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return !isAuthenticated() ? <AuthCard /> : null; // No need to show anything if authenticated and on step 1
+        return !isAuthenticated() ? <AuthCard /> : null; 
       case 2:
         return (
           <AddressStep
