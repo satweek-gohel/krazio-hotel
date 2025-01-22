@@ -72,10 +72,10 @@ export default function AddressModal({ onClose, onSave, initialData = null }) {
         if (initialData?.user_address_id) {
           payload.user_address_id = initialData.user_address_id;
         }
-
         await addressService.createAddress(payload);
         onSave(payload);
         onClose();
+        window.location.reload();
       } catch (err) {
         console.log("err ===========>", err);
         setErrors((prev) => ({
