@@ -13,6 +13,26 @@ import { formatTime } from "../../utils/cartHelpers";
 import EmptyCartModal from "./EmptyCartModal";
 import { useLogo } from "../../contexts/LogoContext";
 
+// eslint-disable-next-line react-refresh/only-export-components
+export function isBranchCurrentlyOpen(schedule) {
+  if (!schedule || schedule.length === 0) return false;
+
+  const today = new Date()
+    .toLocaleString("en-US", { weekday: "short" })
+    .toLowerCase();
+  const currentDaySchedule = schedule?.find((day) => day.day === today);
+
+  if (!currentDaySchedule || currentDaySchedule.is_open !== "1") return false;
+
+  const now = new Date();
+  const currentTime = now.toTimeString().split(" ")[0];
+
+  return (
+    currentTime >= currentDaySchedule.open_time &&
+    currentTime <= currentDaySchedule.close_time
+  );
+}
+
 function Navbar() {
   const { uniqueItemsCount } = useCart();
   const { isAuthenticated, isAuthReady } = useAuth();
@@ -50,9 +70,7 @@ function Navbar() {
     ? location.pathname.split("/").slice(-2)
     : [null, null];
 
-  const { branchDetails, loading: branchLoading } = useBranchData(
-  2,3
-  );
+  const { branchDetails, loading: branchLoading } = useBranchData(2, 3);
 
   useEffect(() => {
     if (isAuthReady) {
@@ -149,7 +167,6 @@ function Navbar() {
   const renderBranchInfo = () => {
     if (!restaurantId || !branchId || !branchDetails) return null;
 
-
     const schedule = branchDetails.branch_details[0].branch_schedule;
     const today = new Date()
       .toLocaleString("en-US", { weekday: "short" })
@@ -222,17 +239,17 @@ function Navbar() {
       <nav className="bg-white shadow-sm fixed w-full top-0 left-0 z-40">
         <div className="max-w-7xl mx-auto px-3 sm:px-4">
           <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-8">
-          <div className="flex-shrink-0">
-            <img
-              src={logo}
-              alt="Restaurant Logo"
-              className="h-8 w-auto md:h-10 lg:h-12"
-              onError={(e) => {
-                const target = e.target;
-                target.src = '/vite.svg';
-              }}
-            />
-          </div>
+            <div className="flex-shrink-0">
+              <img
+                src={logo}
+                alt="Restaurant Logo"
+                className="h-8 w-auto md:h-10 lg:h-12"
+                onError={(e) => {
+                  const target = e.target;
+                  target.src = "/vite.svg";
+                }}
+              />
+            </div>
 
             {renderBranchInfo()}
 

@@ -48,22 +48,6 @@ export function formatTime(timeString) {
   return `${formattedHour}:${minutes} ${period}`;
 }
 
-export function timeStringToMilliseconds(timeString) {
-  if (!timeString || typeof timeString !== "string") {
-    console.error("Invalid time string format. Expected 'HH:MM:SS'");
-  }
-
-  const [hours, minutes, seconds] = timeString.split(":").map(Number);
-
-  if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
-    console.error(
-      "Time string must contain valid numbers in 'HH:MM:SS' format"
-    );
-  }
-
-  return (hours * 60 * 60 + minutes * 60 + seconds) * 1000;
-}
-
 export function findLargestTimestamp(objects, key) {
   if (!Array.isArray(objects) || objects.length === 0) {
     console.error("Input must be a non-empty array of objects.");
