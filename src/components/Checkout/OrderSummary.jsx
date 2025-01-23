@@ -27,12 +27,12 @@ const OrderSummary = () => {
     orderCalculation,
     isCalculating,
     paymentMethod,
-    selectedAddress,
+    // selectedAddress,
     placeOrder,
   } = useCart();
 
-const navigate = useNavigate();
-  const [orderPlaceModal, setOrderPlacedModal] = useState(false);
+  const navigate = useNavigate();
+  const [orderPlaceModal] = useState(false);
 
   const today = new Date()
     .toLocaleString("en-US", { weekday: "short" })
@@ -46,8 +46,6 @@ const navigate = useNavigate();
     items,
     "item_preparation_time"
   );
-
-  
 
   const now = new Date();
   const startOfToday = new Date(
@@ -67,7 +65,7 @@ const navigate = useNavigate();
   }, []);
 
   const isOrderEnabled = () => {
-    return paymentMethod && selectedAddress;
+    return paymentMethod;
   };
 
   const handlePlaceOrder = () => {
@@ -75,8 +73,7 @@ const navigate = useNavigate();
     if (orderData) {
       console.log("Order successfully placed:", orderData);
 
-       navigate('/order-placed')
-
+      navigate("/order-placed");
     }
   };
 

@@ -22,8 +22,13 @@ export default function AddressStep({ onNext }) {
     onNext();
   };
 
-  const handleAddAddress = (newAddress) => {
-    setAddresses([...addresses, newAddress]);
+  const handleAddAddress = (newAddr) => {
+    window.location.reload();
+
+    const addr = [...JSON.parse(sessionStorage.getItem("addresses"))];
+    addr.push(newAddr);
+    sessionStorage.setItem("addresses", JSON.stringify(addr));
+    setAddresses(addr);
   };
 
   const handleInstructionToggle = (instruction) => {
