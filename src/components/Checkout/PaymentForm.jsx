@@ -8,14 +8,50 @@ export default function PaymentForm({ onSubmit }) {
   const { setPaymentMethod, selectedAddress } = useCart();
   const [selectedMethod, setSelectedMethod] = useState("");
   const [paymentMethods, setPaymentMethods] = useState([]);
+  const [branchName, setBranchName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const address = selectedAddress?.location_name + selectedAddress?.address;
   const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
   const restaurantId = cartItems[0]?.restaurant_id;
   const branchId = cartItems[0]?.branch_id;
-
+  
   useEffect(() => {
+    const fetchBranchDetails = async () => {
+      try {
+        const response = await fetch(
+          "https://sandbox.vovpos.com:3002/web/home",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              restaurant_id: restaurantId,
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (data.STATUS === "1") {
+          // Find branch name by matching branch_id
+          const matchedBranch = data.RESULT.branchDetails.find(
+            branch => branch.branch_id === branchId
+          );
+
+          if (matchedBranch) {
+            setBranchName(matchedBranch.branch_name);
+          }
+        } else {
+          setError("Failed to load branch details");
+        }
+      } catch (err) {
+        setError("Failed to fetch branch details");
+        console.error("Error fetching branch details:", err);
+      }
+    };
+
     const fetchPaymentMethods = async () => {
       try {
         const response = await fetch(
@@ -55,13 +91,19 @@ export default function PaymentForm({ onSubmit }) {
     };
 
     if (restaurantId && branchId) {
-      fetchPaymentMethods();
+      Promise.all([
+        fetchBranchDetails(),
+        fetchPaymentMethods()
+      ]);
     }
   }, [restaurantId, branchId]);
 
+ 
+
   const handleMethodSelect = (method) => {
-    setSelectedMethod(method);
-    setPaymentMethod({ method });
+    setSelectedMethod(method.payment_mode); 
+    setPaymentMethod(method); 
+    
   };
 
   const getPaymentIcon = (paymentMode) => {
@@ -107,7 +149,7 @@ export default function PaymentForm({ onSubmit }) {
       <h1 className="text-2xl font-bold mb-6">Payment</h1>
 
       <DeliveryInfo
-        restaurantName="VOVPOS Branch 1"
+        restaurantName={branchName}
         deliveryTime="20 Mins"
         address={address}
       />
@@ -124,7 +166,7 @@ export default function PaymentForm({ onSubmit }) {
               icon={getPaymentIcon(method.payment_mode)}
               label={method.reference_name}
               selected={selectedMethod === method.payment_mode}
-              onClick={() => handleMethodSelect(method.payment_mode)}
+              onClick={() => handleMethodSelect(method)}
             />
           ))}
         </div>

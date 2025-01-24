@@ -64,7 +64,7 @@ function ProfileModal({ isOpen, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submitted Data:", formData);
+   
     setIsEditing(false);
     setHasChanges(false);
   };

@@ -1,14 +1,17 @@
-import React, { createContext, useContext, useState } from "react";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-const LogoContext = createContext();
+const DEFAULT_LOGO = 'https://sandbox.vovpos.com/backend/uploads/restaurant/restaurant.jpg';
 
-export const LogoProvider = ({ children }) => {
-  const [logo, setLogo] = useState("/default-logo.png"); // Default logo
-  return (
-    <LogoContext.Provider value={{ logo, setLogo }}>
-      {children}
-    </LogoContext.Provider>
-  );
-};
-
-export const useLogo = () => useContext(LogoContext);
+export const useLogo = create(
+  persist(
+    (set) => ({
+      logo: DEFAULT_LOGO, // Default value for logo
+      setLogo: (newLogo) => set({ logo: newLogo }),
+    }),
+    {
+      name: 'logo-storage', // Unique name for the localStorage key
+      storage: localStorage, // Defaults to localStorage, can also use sessionStorage or custom storage
+    }
+  )
+);

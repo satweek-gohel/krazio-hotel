@@ -15,18 +15,21 @@ const ToppingsSection = ({
 
   if (!selectedSizeItem?.price_for_parent_item?.length) return null;
 
-  const handleToppingToggle = (toppingName) => {
-    const isSelected = selectedToppings.some(t => t.name === toppingName);
+  const handleToppingToggle = (topping) => {
+    const isSelected = selectedToppings.some(t => t.name === topping.extra_ingredient_name);
     if (isSelected) {
-      onToppingUpdate(selectedToppings.filter(t => t.name !== toppingName));
+      onToppingUpdate(selectedToppings.filter(t => t.name !== topping.extra_ingredient_name));
     } else {
-      onToppingUpdate([...selectedToppings, { name: toppingName, quantity: 1 }]);
+      onToppingUpdate([
+        ...selectedToppings,
+        { ...topping, name: topping.extra_ingredient_name, quantity: 1 }
+      ]);
     }
   };
 
   const handleQuantityChange = (toppingName, newQuantity) => {
     onToppingUpdate(
-      selectedToppings.map(t => 
+      selectedToppings.map(t =>
         t.name === toppingName ? { ...t, quantity: newQuantity } : t
       )
     );
@@ -49,7 +52,7 @@ const ToppingsSection = ({
                 <input
                   type="checkbox"
                   checked={isSelected}
-                  onChange={() => handleToppingToggle(topping.extra_ingredient_name)}
+                  onChange={() => handleToppingToggle(topping)}
                   className="mr-3"
                 />
                 <span>{topping.extra_ingredient_name}</span>

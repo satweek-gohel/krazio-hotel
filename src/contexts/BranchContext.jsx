@@ -9,13 +9,12 @@ export const BranchProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   const fetchBranchData = async (restaurantId, branchId) => {
-    if (!restaurantId || !branchId) return;
-
+   
     setLoading(true);
     setError(null);
 
     try {
-      const details = await getBranchDetails(restaurantId, branchId);
+      const details = await getBranchDetails(2,3);
       setBranchDetails(details);
     } catch (err) {
       const error = err instanceof Error ? err : new Error("An error occurred");

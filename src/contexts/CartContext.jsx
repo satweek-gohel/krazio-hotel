@@ -125,15 +125,26 @@ export const CartProvider = ({ children }) => {
 
 
   const canPlaceOrder = () => {
-    if (items.length === 0) return false;
-    if (!selectedAddress) return false;
-    if (!paymentMethod) return false;
+    if (items.length === 0) {
+      console.error("Cannot place order: Cart is empty.");
+      return false;
+    }
+    if (orderType === "Delivery" && !selectedAddress) {
+      console.error("Cannot place order: Address is not selected.");
+      return false;
+    }
+    if (!paymentMethod) {
+      console.error("Cannot place order: Payment method is not selected.");
+      return false;
+    }
     if (
       orderType === "Delivery" &&
       deliveryTime === "Later" &&
       !selectedDateTime
-    )
+    ) {
+      console.error("Cannot place order: Scheduled delivery time is missing.");
       return false;
+    }
     return true;
   };
 

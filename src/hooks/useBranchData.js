@@ -1,15 +1,12 @@
 import { useEffect } from 'react';
 import { useBranchContext } from '../contexts/BranchContext';
 
-
-export const useBranchData = (restaurantId, branchId) => {
+export const useBranchData = () => {
   const { fetchBranchData, branchDetails, loading, error } = useBranchContext();
 
   useEffect(() => {
-    if (restaurantId && branchId) {
-      fetchBranchData(restaurantId, branchId);
-    }
-  }, [restaurantId, branchId]);
+    fetchBranchData(2, 3);
+  }, []);
 
   return { branchDetails, loading, error };
 };

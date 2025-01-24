@@ -26,7 +26,7 @@ function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { logo } = useLogo();
-  console.log(logo);
+
   function isBranchCurrentlyOpen(schedule) {
     if (!schedule || schedule.length === 0) return false;
 
@@ -51,8 +51,7 @@ function Navbar() {
     : [null, null];
 
   const { branchDetails, loading: branchLoading } = useBranchData(
-    restaurantId,
-    branchId
+  2,3
   );
 
   useEffect(() => {
@@ -150,6 +149,7 @@ function Navbar() {
   const renderBranchInfo = () => {
     if (!restaurantId || !branchId || !branchDetails) return null;
 
+
     const schedule = branchDetails.branch_details[0].branch_schedule;
     const today = new Date()
       .toLocaleString("en-US", { weekday: "short" })
@@ -165,7 +165,7 @@ function Navbar() {
     const isOpen = isBranchCurrentlyOpen(schedule);
 
     return (
-      <div className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 max-w-xl justify-center">
+      <div className="flex items-center gap-4 xl:gap-6 flex-1 max-w-xl justify-center">
         <div className="flex items-center gap-2 text-black-500 border bg-white-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded text-xs sm:text-sm">
           <img
             src="/Frame.svg"
@@ -211,10 +211,7 @@ function Navbar() {
         </div>
         <div className="flex items-center gap-2 text-gray-700">
           <Clock className="h-4 w-4" />
-          <span className="text-sm">9:00AM - 10:00PM</span>
-          <span className="ml-2 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">
-            OPEN
-          </span>
+          <span className="text-sm">{renderBranchInfo()}</span>
         </div>
       </div>
     );
@@ -225,13 +222,17 @@ function Navbar() {
       <nav className="bg-white shadow-sm fixed w-full top-0 left-0 z-40">
         <div className="max-w-7xl mx-auto px-3 sm:px-4">
           <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-8">
-            <div className="flex-shrink-0">
-              <img
-                src={logo}
-                alt="Restaurant Logo"
-                className="h-8 w-auto md:h-10 lg:h-12"
-              />
-            </div>
+          <div className="flex-shrink-0">
+            <img
+              src={logo}
+              alt="Restaurant Logo"
+              className="h-8 w-auto md:h-10 lg:h-12"
+              onError={(e) => {
+                const target = e.target;
+                target.src = '/vite.svg';
+              }}
+            />
+          </div>
 
             {renderBranchInfo()}
 

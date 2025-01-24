@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getBranches } from "../services/api/branchService";
 import { useLogo } from "../contexts/LogoContext";
 
+
 const CardList = () => {
   const navigate = useNavigate();
   const [branches, setBranches] = useState([]);
@@ -15,9 +16,12 @@ const CardList = () => {
         const data = await getBranches();
         setBranches(data.branchDetails);
         setRestaurant(data.restaurantDetails);
-        setLogo(data.restaurantDetails.restaurant_image);
+        // Set restaurant logo from home page
+        if (data.restaurantDetails?.restaurant_image) {
+          setLogo(data.restaurantDetails.restaurant_image);
+        }
       } catch (error) {
-        console.error("Failed to fetch branch data:", error);
+       
       } finally {
         setLoading(false);
       }

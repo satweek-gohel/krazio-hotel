@@ -13,23 +13,21 @@ const CheckoutPage = () => {
   const { isAuthenticated } = useAuth();
   const { items, orderType } = useCart();
 
-  console.log(items);
+ 
   
   useEffect(() => {
     if (!isAuthenticated()) {
-      setCurrentStep(1); // Show step 1 if not authenticated
+      // If not authenticated, always stay on step 1
+      setCurrentStep(1);
     } else {
-      setCurrentStep(2); // Directly go to step 2 if authenticated
+      // If authenticated, proceed based on order type
+      if (orderType === "Pick Up") {
+        setCurrentStep(3);
+      } else if (orderType === "Delivery") {
+        setCurrentStep(2);
+      }
     }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (orderType === "Pick Up") {
-      setCurrentStep(3);
-    } else if (orderType === "Delivery") {
-      setCurrentStep(2);
-    }
-  }, [orderType]);
+  }, [isAuthenticated, orderType]);
 
   const handleNextStep = () => {
     if (!isAuthenticated() && currentStep === 1) {
@@ -42,7 +40,7 @@ const CheckoutPage = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
-  console.log(isAuthenticated());
+
 
   const renderStepContent = () => {
     switch (currentStep) {

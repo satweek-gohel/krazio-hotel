@@ -110,7 +110,7 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
         });
 
         
-        console.log(selectedToppings);
+       
         
         // Add selected toppings
         selectedToppings.forEach((topping) => {
@@ -118,14 +118,15 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
             (item) => item.extra_ingredient_name === topping.name
           );
           if (toppingItem) {
+            console.log(toppingItem);
             orderItemsStep.push({
               session_id: sessionId,
-              step_id: toppingItem.branch_extra_ingredient_category_steps,
-              step_name: "Toppings",
+              step_id: toppingItem.extra_ingredient_category_step_id,
+              step_name: 'Toppings',
               branch_extra_ingredient_category_steps_item_id:
-                toppingItem.branch_extra_ingredient_category_steps_item,
+                toppingItem.extra_ingredient_category_step_id,
               branch_extra_ingredient_price_for_parent_item_id:
-                toppingItem.branch_extra_ingredient_price_for_parent_item,
+                toppingItem.branch_extra_ingredient_price_for_parent_item_id,
               extra_ingredient_name: toppingItem.extra_ingredient_name,
               is_price_applicable: toppingItem.is_price_applicable,
               price: toppingItem.price,
@@ -139,7 +140,8 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
         });
       }
     }
- 
+    
+ console.log(selectedToppings);
     // Add sauce selections
     selectedSauces.forEach((sauce) => {
       const sauceStep = itemDetails?.step_details?.find(
@@ -183,11 +185,11 @@ const ItemCustomizationModal = ({ item, isOpen, onClose, onAddToCart }) => {
       if (tasteItem) {
         orderItemsStep.push({
           session_id: sessionId,
-          step_id: tasteItem.branch_extra_ingredient_category_steps,
+          step_id: tasteItem.branch_extra_ingredient_category_steps_id,
           step_name: tasteStep.display_name,
           branch_extra_ingredient_category_steps_item_id:
-            tasteItem.branch_extra_ingredient_category_steps_item,
-          branch_extra_ingredient_price_for_parent_item_id: "0",
+            tasteItem.branch_extra_ingredient_category_steps_item_id,
+          branch_extra_ingredient_price_for_parent_item_id: tasteItem.parent_branch_extra_ingredient_category_steps_item,
           extra_ingredient_name: tasteItem.extra_ingredient_name,
           is_price_applicable: tasteItem.is_price_applicable,
           price: tasteItem.price,

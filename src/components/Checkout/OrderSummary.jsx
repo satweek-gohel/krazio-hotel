@@ -10,6 +10,7 @@ import {
 } from "../../utils/cartHelpers";
 import OrderPlacedModal from "../OrderPlaced/OrderPlacedModal";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const OrderSummary = () => {
   const {
@@ -27,13 +28,13 @@ const OrderSummary = () => {
     orderCalculation,
     isCalculating,
     paymentMethod,
-    // selectedAddress,
+     selectedAddress,
     placeOrder,
   } = useCart();
 
   const navigate = useNavigate();
   const [orderPlaceModal] = useState(false);
-
+  const [loading , setIsLoading] = useState(false);
   const today = new Date()
     .toLocaleString("en-US", { weekday: "short" })
     .toLowerCase();
@@ -42,10 +43,9 @@ const OrderSummary = () => {
 
   const closedInMilliseconds = timeStringToMilliseconds(close_time);
 
-  const tookLargestTimeToCook = findLargestTimestamp(
-    items,
-    "item_preparation_time"
-  );
+  const tookLargestTimeToCook = items.length > 0 
+  ? findLargestTimestamp(items, "item_preparation_time") 
+  : 1800000; // Default to 30 minutes if no items
 
   const now = new Date();
   const startOfToday = new Date(
@@ -67,16 +67,127 @@ const OrderSummary = () => {
   const isOrderEnabled = () => {
     return paymentMethod;
   };
+  
+  const prepareOrderPayload = (orderData) => {
+    const userDetails = JSON.parse(sessionStorage.getItem('userDetails')) || {};
+    const userName = `${userDetails.first_name} ${userDetails.last_name}`;
+    console.log(orderData);
+    console.log(orderData.items[0].restaurant_id);
+    function convertNullToEmptyString(value) {
+      return value === null || value === undefined ? '' : value;
+    }
+    
+    return {
+      restaurant_id: (orderData.items[0]?.restaurant_id || 3),
+      branch_id: (orderData.items[0]?.branch_id || 5),
+      user_id: String(userDetails.user_id || 14),
+      user_name: convertNullToEmptyString(userName),
+      street_1: convertNullToEmptyString(orderData.selectedAddress?.street_1),
+      landmark: convertNullToEmptyString(orderData.selectedAddress?.landmark),
+      city: convertNullToEmptyString(orderData.selectedAddress?.city_name),
+      state: convertNullToEmptyString(orderData.selectedAddress?.state_name),
+      phone_number: convertNullToEmptyString(orderData.selectedAddress?.mobile_number),
+      customer_notes: convertNullToEmptyString(orderData.deliveryInstructions?.join(', ')),
+      pincode: convertNullToEmptyString(orderData.selectedAddress?.pincode),
+      street_2: convertNullToEmptyString(orderData.selectedAddress?.street_2),
+      order_item: orderData.items.map(item => ({
+        item_id: String(item.item_id),
+        special_notes: '',
+        is_price_applicable: 1,
+        quantity: String(item.quantity),
+        order_items_step: item.steps?.length
+          ? item.steps.map(step => ({
+              session_id: 'ABC1234',
+              step_id: String(convertNullToEmptyString(step.step_id)),
+              step_name: convertNullToEmptyString(step.step_name),
+              branch_extra_ingredient_category_steps_item_id: String(convertNullToEmptyString(step.branch_extra_ingredient_category_steps_item_id)),
+              branch_extra_ingredient_price_for_parent_item_id: String(convertNullToEmptyString(step.branch_extra_ingredient_price_for_parent_item_id)),
+              extra_ingredient_name: convertNullToEmptyString(step.extra_ingredient_name),
+              is_price_applicable: String(convertNullToEmptyString(step.is_price_applicable)),
+              price: String(convertNullToEmptyString(step.price)),
+              quantity: String(convertNullToEmptyString(step.quantity || '1')),
+              terminal_id: '1',
+              price_type: '0',
+              is_quantity_applicable: String(convertNullToEmptyString(step.is_quantity_applicable)),
+              quantity_price: String(convertNullToEmptyString(step.quantity_price))
+            }))
+          : []
+      })),
+      session_id: 'ABC1234',
+      total_tips_amount: String(convertNullToEmptyString(orderData.selectedTip?.amount || '0')),
+      order_type: orderData.orderType === 'Delivery' ? '2' : '1',
+      user_delivery_latitude: String(convertNullToEmptyString(orderData?.selectedAddress?.latitude)),
+      user_delivery_longitude: String(convertNullToEmptyString(orderData?.selectedAddress?.longitude)),
+      delivery_charges_amount_or_percent: '',
+      delivery_charges_value: '',
+      delivery_total_charges: '',
+      packaging_charges_amount_or_percent: '',
+      packaging_charges_value: '',
+      packaging_total_charges: '',
+      customer_notes: convertNullToEmptyString(orderData.deliveryInstructions?.join(', '))
+    };
+    
+  };
+  
+  const handlePlaceOrder = async () => {
+    try {
+      setIsLoading(true);
+      const orderData = placeOrder();
+  
+      if (orderData) {
+        const placeOrderPayload = prepareOrderPayload(orderData);
+  
+        const token = sessionStorage.getItem('token');
+  
+        const placeOrderResponse = await axios.post(
+          'https://sandbox.vovpos.com:3002/web/placeOrder',
+          placeOrderPayload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        navigate("/order-placed", { 
+          state: { 
+            orderDetails: orderData,
+            orderId: placeOrderResponse.data.RESULT.order_id 
+          } 
+        });
+        if (placeOrderResponse.data.STATUS === "1") {
+          const paymentPayload = {
+            restaurant_id: String(orderData.selectedAddress.restaurant_id || 3),
+            branch_id: String(orderData.selectedAddress.branch_id || 5),
+            order_id: String(placeOrderResponse.data.RESULT.order_id),
+            session_id: 'ABC1234',
+            master_payment_id: String(orderData.paymentMethod.master_payment_id),
+            branch_payment_id: String(orderData.paymentMethod.branch_payment_id)
+          };
+          console.log(orderData);
 
-  const handlePlaceOrder = () => {
-    const orderData = placeOrder();
-    if (orderData) {
-      console.log("Order successfully placed:", orderData);
-
-      navigate("/order-placed");
+         
+  
+          const paymentResponse = await axios.post(
+            'https://sandbox.vovpos.com:3002/web/orderPayment',
+            paymentPayload,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+  
+          console.log("Payment processed:", paymentResponse.data);
+         
+        }
+      }
+    } catch (error) {
+      console.error("Order placement error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
+  
   const handleRemoveItem = (cartItemId) => {
     // Set quantity to 0 to remove the item
     updateQuantity(cartItemId, 0);

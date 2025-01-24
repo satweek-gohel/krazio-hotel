@@ -12,20 +12,20 @@ import CheckoutPage from "./components/Checkout/CheckoutPage.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { BranchProvider } from "./contexts/BranchContext.jsx";
 import Orders from "./components/Comman/Orders.jsx";
-import { LogoProvider } from "./contexts/LogoContext.jsx";
 import OrderPlacedPage from "./pages/OrderPlacedPage.jsx";
 import NotFound from "./components/Comman/NotFound.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    
     <AuthProvider>
       <BranchProvider>
         <CartProvider>
           <BrowserRouter>
-          <LogoProvider>
+         
             <Navbar />
             <Routes>
-              <Route path="/*" element={<App />} />
+              <Route path="/" element={<App />} />
               <Route
                 path="/:restaurantName/:branchName/branch-menu"
                 element={<BranchPage />}
@@ -35,10 +35,11 @@ createRoot(document.getElementById("root")).render(
               <Route path="/order-placed" element={<OrderPlacedPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            </LogoProvider>
+           
           </BrowserRouter>
         </CartProvider>
       </BranchProvider>
     </AuthProvider>
+   
   </StrictMode>
 );
