@@ -80,7 +80,7 @@ const OrderSummary = () => {
     !isOrderProcessable(
       tookLargestTimeToCook,
       close_time,
-      branchTimeZone || "Asia/Kolkata"
+      branchTimeZone || "America/New_York"
     ) && isBranchCurrentlyOpen(schedule);
 
   useEffect(() => {
