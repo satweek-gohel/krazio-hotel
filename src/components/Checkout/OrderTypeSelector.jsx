@@ -38,65 +38,59 @@ const OrderTypeSelector = ({
         </div>
       </div>
 
-      {orderType === "Delivery" && (
-        <>
-          <div
-            className={`flex justify-between items-center p-3 rounded ${
-              condition ? "cursor-not-allowed" : "pointer"
+      {/* {orderType === "Delivery" && (
+        <> */}
+      <div
+        className={`flex justify-between items-center p-3 rounded ${
+          !condition ? "cursor-not-allowed" : "pointer"
+        }`}
+      >
+        <p className="text-black text-sm font-semibold">Food Delivery Time</p>
+        <div className="flex gap-3">
+          <button
+            onClick={() => onDeliveryTimeChange("Now")}
+            className={`px-4 py-2 rounded text-xs transition-colors duration-200 w-[80px] ${
+              deliveryTime === "Now"
+                ? "bg-red-600 text-white"
+                : "bg-gray-100 text-gray-700"
             }`}
+            disabled={!condition}
           >
-            <p className="text-black text-sm font-semibold">
-              Food Delivery Time
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => onDeliveryTimeChange("Now")}
-                className={`px-4 py-2 rounded text-xs transition-colors duration-200 w-[80px] ${
-                  deliveryTime === "Now"
-                    ? "bg-red-600 text-white"
-                    : "bg-gray-100 text-gray-700"
-                }`}
-                disabled={condition}
-              >
-                Now
-              </button>
-              <button
-                onClick={() => onDeliveryTimeChange("Later")}
-                className={`px-4 py-2 rounded text-xs transition-colors duration-200 w-[80px] ${
-                  deliveryTime === "Later"
-                    ? "bg-red-600 text-white"
-                    : "bg-gray-100 text-gray-700"
-                }`}
-                disabled={condition}
-              >
-                Later
-              </button>
-            </div>
-          </div>
+            Now
+          </button>
+          <button
+            onClick={() => onDeliveryTimeChange("Later")}
+            className={`px-4 py-2 rounded text-xs transition-colors duration-200 w-[80px] ${
+              deliveryTime === "Later"
+                ? "bg-red-600 text-white"
+                : "bg-gray-100 text-gray-700"
+            }`}
+            disabled={!condition}
+          >
+            Later
+          </button>
+        </div>
+      </div>
 
-          {deliveryTime === "Later" && (
-            <div className="bg-gray-100 p-4 rounded">
-              <div className="relative">
-                <input
-                  type="datetime-local"
-                  value={selectedDateTime || currentDateTime} // Ensure default value
-                  onChange={(e) => onDateTimeChange(e.target.value)}
-                  className="w-full px-4 py-3 bg-white border-2 border-red-600/10 
+      {deliveryTime === "Later" && (
+        <div className="bg-gray-100 p-4 rounded">
+          <div className="relative">
+            <input
+              type="datetime-local"
+              value={selectedDateTime || currentDateTime}
+              onChange={(e) => onDateTimeChange(e.target.value)}
+              className="w-full px-4 py-3 bg-white border-2 border-red-600/10 
                   rounded-lg text-gray-700 focus:outline-none focus:border-red-600"
-                  min={currentDateTime}
-                  max={
-                    condition
-                      ? new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000)
-                          .toISOString()
-                          .slice(0, 16)
-                      : null
-                  }
-                />
-              </div>
-            </div>
-          )}
-        </>
+              min={currentDateTime}
+              max={new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000)
+                .toISOString()
+                .slice(0, 16)}
+            />
+          </div>
+        </div>
       )}
+      {/* </>
+      )} */}
     </div>
   );
 };
