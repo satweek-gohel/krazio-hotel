@@ -14,22 +14,37 @@ import EmptyCartModal from "./EmptyCartModal";
 import { useLogo } from "../../contexts/LogoContext";
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function isBranchCurrentlyOpen(schedule) {
+export function isBranchCurrentlyOpen(schedule, timeZone = "America/New_York") {
   if (!schedule || schedule.length === 0) return false;
 
-  const today = new Date()
-    .toLocaleString("en-US", { weekday: "short" })
+  // Get the current day in the specified time zone
+  const now = new Date();
+
+  const today = new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    timeZone,
+  })
+    .format(now)
     .toLowerCase();
+
   const currentDaySchedule = schedule?.find((day) => day.day === today);
 
   if (!currentDaySchedule || currentDaySchedule.is_open !== "1") return false;
 
-  const now = new Date();
-  const currentTime = now.toTimeString().split(" ")[0];
+  const currentTime = new Intl.DateTimeFormat("en-US", {
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    timeZone,
+  }).format(now);
+
+  // Reformat the time to HH:MM:SS
+  const formattedTime = currentTime.padStart(8, "0");
 
   return (
-    currentTime >= currentDaySchedule.open_time &&
-    currentTime <= currentDaySchedule.close_time
+    formattedTime >= currentDaySchedule.open_time &&
+    formattedTime <= currentDaySchedule.close_time
   );
 }
 

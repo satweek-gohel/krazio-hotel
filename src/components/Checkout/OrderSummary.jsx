@@ -11,6 +11,53 @@ import { useBranchData } from "../../hooks/useBranchData";
 import moment from "moment-timezone";
 import { isBranchCurrentlyOpen } from "../Comman/Navbar";
 
+function isBranchOpen(schedule, timeZone = "America/New_York") {
+  const now = new Date();
+
+  // Get current day in the specified time zone
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "long",
+  });
+  const currentDay = formatter.format(now).toLowerCase();
+
+  // Find today's schedule
+  const todaySchedule = schedule?.find((day) => day.day_name === currentDay);
+
+  // If branch is closed today, return false
+  if (!todaySchedule || todaySchedule.is_open !== "1") {
+    return false;
+  }
+
+  // Get current time in hours, minutes, and seconds
+  const currentTime = new Date(
+    new Intl.DateTimeFormat("en-US", { timeZone }).format(now)
+  );
+  const [currentHour, currentMinute, currentSecond] = [
+    currentTime.getHours(),
+    currentTime.getMinutes(),
+    currentTime.getSeconds(),
+  ];
+
+  // Parse opening and closing times into hours, minutes, and seconds
+  const [openHour, openMinute, openSecond] = todaySchedule.open_time
+    .split(":")
+    .map(Number);
+  const [closeHour, closeMinute, closeSecond] = todaySchedule.close_time
+    .split(":")
+    .map(Number);
+
+  // Create Date objects for open and close times on the same day
+  const openDate = new Date(now);
+  openDate.setHours(openHour, openMinute, openSecond, 0);
+
+  const closeDate = new Date(now);
+  closeDate.setHours(closeHour, closeMinute, closeSecond, 0);
+
+  // Check if the current time is within the opening hours
+  return now >= openDate && now <= closeDate;
+}
+
 function isOrderProcessable(prepTimeMs, closingTime, branchTimeZone) {
   const branchOrderTime = moment.tz(branchTimeZone);
 
@@ -61,6 +108,13 @@ const OrderSummary = () => {
   const { branchDetails } = useBranchData(2, 3);
   const { close_time } = schedule?.find((day) => day.day === today) || {};
 
+  console.log(" schedule    ===========>", schedule);
+
+  console.log(
+    "isBranchOpen ===========>",
+    isBranchOpen(schedule, "America/New_York")
+  );
+
   const branchTimeZone = branchDetails?.branch_details[0]?.time_zone;
 
   const tookLargestTimeToCook =
@@ -77,11 +131,11 @@ const OrderSummary = () => {
   //   ) && !isBranchCurrentlyOpen(schedule);
 
   const condition =
-    !isOrderProcessable(
+    isOrderProcessable(
       tookLargestTimeToCook,
       close_time,
       branchTimeZone || "America/New_York"
-    ) && isBranchCurrentlyOpen(schedule);
+    ) && isBranchCurrentlyOpen(schedule, branchTimeZone || "America/New_York");
 
   useEffect(() => {
     if (!condition) {
