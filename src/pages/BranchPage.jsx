@@ -133,6 +133,10 @@ function BranchPage() {
     setSelectedCategory((prevCategory) =>
       prevCategory?.category_id === category.category_id ? null : category
     );
+    window.scrollTo({
+      top: 900,
+      behavior: "smooth", 
+    });
   };
   const [showCartModal, setShowCartModal] = useState(false);
   const navigate = useNavigate();
@@ -316,8 +320,16 @@ function BranchPage() {
       </div>
     </div>
 
-    {/* Categories Section */}
-    <div className=" bg-white z-40 mb-6">
+
+    <div
+  className="container sticky top-[64px] shadow-lg bg-white rounded-xl"
+  style={{
+    zIndex: '20',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 -4px 6px rgba(0, 0, 0, 0.05), 4px 0 6px rgba(0, 0, 0, 0.05), -4px 0 6px rgba(0, 0, 0, 0.05)',
+  }}
+>
+    <div className=" sticky main-container  bg-white  shadow-lg rounded-xl" >
+    <div className="   z-40 ">
       {categories.length > 0 && (
         <Category 
           title={'Food Category'} 
@@ -326,9 +338,9 @@ function BranchPage() {
         />
       )}
     </div>
-
+<hr></hr>
     {/* Filters and Search Section */}
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+    <div className="flex flex-col sm:flex-row justify-between items-center   mx-5 ">
   <MenuFilters
     items={branchData?.item_details || []}
     onFilterChange={setFilteredItems}
@@ -336,7 +348,7 @@ function BranchPage() {
     className="w-full sm:w-auto"
   />
   
-  <div className="relative w-full sm:min-w-[240px]">
+  <div className="relative mb-5 pt-3">
     <input
       type="text"
       placeholder="Search items..."
@@ -350,6 +362,9 @@ function BranchPage() {
     />
   </div>
 </div>
+</div>
+</div>
+
 
     {/* Content Below Sticky Section */}
     <div className="mt-4">

@@ -14,6 +14,8 @@ import { BranchProvider } from "./contexts/BranchContext.jsx";
 import Orders from "./components/Comman/Orders.jsx";
 import OrderPlacedPage from "./pages/OrderPlacedPage.jsx";
 import NotFound from "./components/Comman/NotFound.jsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
+import TermsConditions from "./pages/TearmsConditions.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -34,6 +36,9 @@ createRoot(document.getElementById("root")).render(
               <Route path="/my-orders" element={<Orders />} />
               <Route path="/order-placed" element={<OrderPlacedPage />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-and-conditions" element={<TermsConditions />} />
+
             </Routes>
            
           </BrowserRouter>

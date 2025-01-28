@@ -5,12 +5,14 @@ export function useModals() {
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
   const [isCheckoutAsGuestModalOpen, setIsCheckoutAsGuestModalOpen] = useState(false);
+  const [isSignupSuccessModalOpen, setIsSignupSuccessModalOpen] = useState(false);
 
   const openLoginModal = () => {
     setIsLoginModalOpen(true);
     setIsSignUpModalOpen(false);
     setIsForgotPasswordModalOpen(false);
     setIsCheckoutAsGuestModalOpen(false);
+    setIsSignupSuccessModalOpen(false);
   };
 
   const openSignUpModal = () => {
@@ -18,6 +20,7 @@ export function useModals() {
     setIsLoginModalOpen(false);
     setIsForgotPasswordModalOpen(false);
     setIsCheckoutAsGuestModalOpen(false);
+    setIsSignupSuccessModalOpen(false);
   };
 
   const openForgotPasswordModal = () => {
@@ -25,6 +28,7 @@ export function useModals() {
     setIsLoginModalOpen(false);
     setIsSignUpModalOpen(false);
     setIsCheckoutAsGuestModalOpen(false);
+    setIsSignupSuccessModalOpen(false);
   };
 
   const openCheckoutAsGuestModal = () => {
@@ -32,6 +36,15 @@ export function useModals() {
     setIsLoginModalOpen(false);
     setIsSignUpModalOpen(false);
     setIsForgotPasswordModalOpen(false);
+    setIsSignupSuccessModalOpen(false);
+  };
+
+  const openSignupSuccessModal = () => {
+    setIsSignupSuccessModalOpen(true);
+    setIsLoginModalOpen(false);
+    setIsSignUpModalOpen(false);
+    setIsForgotPasswordModalOpen(false);
+    setIsCheckoutAsGuestModalOpen(false);
   };
 
   return {
@@ -39,13 +52,16 @@ export function useModals() {
     isSignUpModalOpen,
     isForgotPasswordModalOpen,
     isCheckoutAsGuestModalOpen,
+    isSignupSuccessModalOpen,
     setIsLoginModalOpen,
     setIsSignUpModalOpen,
     setIsForgotPasswordModalOpen,
     setIsCheckoutAsGuestModalOpen,
+    setIsSignupSuccessModalOpen,
     openLoginModal,
     openSignUpModal,
     openForgotPasswordModal,
-    openCheckoutAsGuestModal
+    openCheckoutAsGuestModal,
+    openSignupSuccessModal
   };
 }

@@ -15,15 +15,15 @@ export const Category = ({
   const [itemsPerView, setItemsPerView] = useState(6);
   const sliderRef = useRef(null);
 
-  // Update items per view based on screen size
+  
   useEffect(() => {
     const updateItemsPerView = () => {
       const width = window.innerWidth;
-      if (width < 640) setItemsPerView(3);      // sm
-      else if (width < 768) setItemsPerView(4);  // md
-      else if (width < 1024) setItemsPerView(5); // lg
-      else if (width < 1280) setItemsPerView(6); // xl
-      else setItemsPerView(8);                   // 2xl
+      if (width < 640) setItemsPerView(3);      
+      else if (width < 768) setItemsPerView(4); 
+      else if (width < 1024) setItemsPerView(5); 
+      else if (width < 1280) setItemsPerView(6);
+      else setItemsPerView(8);                  
     };
 
     updateItemsPerView();
@@ -74,12 +74,12 @@ export const Category = ({
 
   return (
     <div
-      className="relative w-full mb-10 rounded-lg overflow-hidden bg-light p-5"
+      className="relative w-full rounded-lg overflow-hidden bg-light"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <div className="flex justify-between items-center mb-4 px-2 sm:px-4">
-        <h2 className="text-2xl font-semibold text-left">{title}</h2>
+        <h2 className="text-2xl font-semibold text-left mt-3">{title}</h2>
         {showNavigation && (
           <div className="flex gap-2">
             <button

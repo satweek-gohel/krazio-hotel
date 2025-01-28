@@ -17,8 +17,9 @@ export const useAuth = () => {
         sessionStorage.setItem('token', response.RESULT.token);
         sessionStorage.setItem('userDetails', JSON.stringify(response.RESULT.userDetails));
         sessionStorage.setItem('addresses', JSON.stringify(response.RESULT.addresses));
-        
+        window.location.reload();
         return response.RESULT;
+
       } else {
         throw new Error(response.MESSAGE);
       }

@@ -62,7 +62,7 @@ export default function AddressModal({ onClose, onSave, initialData = null }) {
       try {
         const payload = {
           ...formData,
-          is_active: 1,
+          is_active: "1",
           user_id: userId,
           restaurant_id: 2,
           branch_id: 3,

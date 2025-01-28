@@ -1,8 +1,30 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../../hooks/useAuth';
 
-const SignupForm = ({ onSwitchToLogin }) => {
+const CheckoutAsGuest = ({ onSwitchToLogin }) => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [mobileNo, setMobileNo] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { loginAsGuest, isLoading, error } = useAuth(); // Using the loginAsGuest function from useAuth
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+    try {
+      await loginAsGuest(firstName, lastName, email, mobileNo, password); 
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <>
@@ -16,7 +38,7 @@ const SignupForm = ({ onSwitchToLogin }) => {
         </button>
       </h2>
 
-      <form className="space-y-4">
+      <form className="space-y-4 pt-3"  onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
@@ -24,8 +46,11 @@ const SignupForm = ({ onSwitchToLogin }) => {
             </label>
             <input
               type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               placeholder="Enter your First Name"
               className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              required
             />
           </div>
 
@@ -35,8 +60,11 @@ const SignupForm = ({ onSwitchToLogin }) => {
             </label>
             <input
               type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
               placeholder="Enter your Last Name"
               className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              required
             />
           </div>
         </div>
@@ -56,8 +84,11 @@ const SignupForm = ({ onSwitchToLogin }) => {
             </div>
             <input
               type="tel"
+              value={mobileNo}
+              onChange={(e) => setMobileNo(e.target.value)}
               placeholder="Enter your mobile no"
               className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-r-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              required
             />
           </div>
         </div>
@@ -68,62 +99,28 @@ const SignupForm = ({ onSwitchToLogin }) => {
           </label>
           <input
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email id"
             className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            required
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter password"
-                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2"
-              >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Enter confirm password"
-                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2"
-              >
-                {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
-              </button>
-            </div>
-          </div>
-        </div>
+      
 
         <button
           type="submit"
           className="w-full py-3 px-4 bg-primary hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200"
+          disabled={isLoading}
         >
-          Sign Up
+          {isLoading ? 'Processing...' : 'Checkout AS Guest'}
         </button>
 
+        {error && <p className="text-red-500 text-center">{error}</p>}
+
         <p className="text-xs text-gray-500 text-center">
-          *By selecting Sign Up, you confirm your agreement to the Terms &
+          *By selecting Checkout As Guest, you confirm your agreement to the Terms &
           Conditions and Privacy Policy
         </p>
       </form>
@@ -131,4 +128,4 @@ const SignupForm = ({ onSwitchToLogin }) => {
   );
 };
 
-export default SignupForm;
+export default CheckoutAsGuest;

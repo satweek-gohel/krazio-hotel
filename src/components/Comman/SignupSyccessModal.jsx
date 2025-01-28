@@ -1,27 +1,8 @@
 import React from 'react';
 import { Mail, X } from 'lucide-react';
 
-const SignupSuccessModal = ({ isOpen, onClose, email }) => {
+const SignupSuccessModal = ({ isOpen, onClose, onLoginClick }) => {
   if (!isOpen) return null;
-
-  const handleOpenMail = () => {
-    if (!email) {
-      console.error('Email is undefined');
-      window.open('https://mail.google.com', '_blank');
-      return;
-    }
-
-    const [, domain] = email.split('@');
-    const mailProviders = {
-      'gmail.com': 'https://mail.google.com',
-      'yahoo.com': 'https://mail.yahoo.com',
-      'outlook.com': 'https://outlook.live.com',
-      'hotmail.com': 'https://outlook.live.com'
-    };
-
-    const providerUrl = mailProviders[domain] || 'https://mail.google.com';
-    window.open(providerUrl, '_blank');
-  };
 
   return (
     <>
@@ -44,15 +25,15 @@ const SignupSuccessModal = ({ isOpen, onClose, email }) => {
           </h2>
           
           <p className="text-gray-600 mb-8">
-            Your signup was successful. Please check your email to verify your account.
+            Your email is successfully verified!
           </p>
 
           <button
-            onClick={handleOpenMail}
+            onClick={onLoginClick}
             className="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
           >
             <Mail className="h-5 w-5" />
-            Open Mail
+            Continue to Login
           </button>
         </div>
       </div>

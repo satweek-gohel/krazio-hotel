@@ -1,62 +1,15 @@
 import React, { useState } from "react";
-import { useAuth } from "../../../hooks/useAuth";
-
+import { ShoppingBag } from "lucide-react";
+import LoginForm from "./LoginForm";
+import SignupForm from "./SignupForm";
+import CheckoutAsGuest from "./CheckoutAsGuest"; // Importing the CheckoutAsGuest component
 
 const AuthCard = () => {
   const [view, setView] = useState("buttons");
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const { login, isLoading, error } = useAuth(); 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
 
-  const handleEmailChange = (e) => {
-    const value = e.target.value;
-    setEmail(value);
-    if (!validateEmail(value)) {
-      setEmailError('Please enter a valid email address.');
-    } else {
-      setEmailError('');
-    }
-  };
-
-  const handlePasswordChange = (e) => {
-    const value = e.target.value;
-    setPassword(value);
-    if (value === '') {
-      setPasswordError('Please enter a password.');
-    } else {
-      setPasswordError('');
-    }
-  };
-
-  const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    let valid = true;
-
-    if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email address.');
-      valid = false;
-    }
-
-    if (password === '') {
-      setPasswordError('Please enter a password.');
-      valid = false;
-    }
-
-    if (!valid) return;
-
-    try {
-      await login(email, password);
-     window.location.reload()
-      // Handle successful login (e.g., redirect or close modal)
-    } catch (err) {
-      // Error handling is managed by useAuth
-    }
+  const handleGuestCheckout = () => {
+    // Implement guest checkout logic here
+    console.log("Proceeding as guest...");
   };
 
   return (
@@ -81,6 +34,22 @@ const AuthCard = () => {
             >
               Sign Up
             </button>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">or</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setView("checkoutasguest")}
+              className="w-full py-3 px-4 bg-white border-2 border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg transition duration-200 flex items-center justify-center gap-2"
+            >
+              Checkout as Guest
+            </button>
           </div>
 
           <div className="w-full md:w-1/2 flex justify-center">
@@ -91,189 +60,18 @@ const AuthCard = () => {
             />
           </div>
         </div>
+      ) : view === "checkoutasguest" ? (
+        <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg p-8">
+          <CheckoutAsGuest onSwitchToLogin={() => setView("login")} />{" "}
+          {/* Added CheckoutAsGuest component */}
+        </div>
       ) : (
         <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg p-8">
           <div className="space-y-6">
             {view === "login" ? (
-              <>
-                <h2 className="text-md font-semibold text-gray-800">
-                  Log In to your account or register to{" "}
-                  <button
-                    onClick={() => setView("signup")}
-                    className="text-primary hover:text-red-700"
-                  >
-                    create a new one
-                  </button>
-                </h2>
-
-                <form className="space-y-4" onSubmit={handleLoginSubmit}>
-                  <div className="flex flex-col md:flex-row md:space-x-4">
-                    <div className="space-y-2 flex-1">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Email Id
-                      </label>
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={handleEmailChange}
-                        placeholder="Enter your Email Id"
-                        className={`w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${emailError ? 'border-red-500' : ''}`}
-                      />
-                      {emailError && <p className="text-red-500 text-xs">{emailError}</p>}
-                    </div>
-
-                    <div className="space-y-2 flex-1">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Password
-                      </label>
-                      <input
-                        type="password"
-                        value={password}
-                        onChange={handlePasswordChange}
-                        placeholder="Enter your password"
-                        className={`w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${passwordError ? 'border-red-500' : ''}`}
-                      />
-                      {passwordError && <p className="text-red-500 text-xs">{passwordError}</p>}
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-3 px-4 bg-primary hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? 'Logging in...' : 'Log In'}
-                  </button>
-
-                  <p className="text-xs text-gray-500 text-center">
-                    *By selecting Log In, you confirm your agreement to the Terms &
-                    Conditions and Privacy Policy
-                  </p>
-                </form>
-              </>
+              <LoginForm onSwitchToSignup={() => setView("signup")} />
             ) : (
-              <>
-                <h2 className="text-md font-semibold text-gray-800">
-                  Sign up or{" "}
-                  <button
-                    onClick={() => setView("login")}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    Already have an account
-                  </button>
-                </h2>
-
-                {/* Sign Up Form (remains unchanged) */}
-                <form className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Enter your First Name"
-                        className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Enter your Last Name"
-                        className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Mobile No
-                    </label>
-                    <div className="flex">
-                      <div className="flex items-center px-3 border border-r-0 border-gray-200 rounded-l-lg bg-gray-50">
-                        <img
-                          src="https://flagcdn.com/w20/in.png"
-                          alt="India"
-                          className="w-5 h-auto mr-1"
-                        />
-                        <span className="text-gray-500">+91</span>
-                      </div>
-                      <input
-                        type="tel"
-                        placeholder="Enter your mobile no"
-                        className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-r-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Email Id
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="Enter your email id"
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Password
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="password"
-                          placeholder="Enter password"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                        />
-                        <button
-                          type="button"
-                          className="absolute right-3 top-1/2 -translate-y-1/2"
-                        >
-                          👁️
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Confirm Password
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="password"
-                          placeholder="Enter confirm password"
-                          className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                        />
-                        <button
-                          type="button"
-                          className="absolute right-3 top-1/2 -translate-y-1/2"
-                        >
-                          👁️
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-3 px-4 bg-primary hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200"
-                  >
-                    Sign Up
-                  </button>
-
-                  <p className="text-xs text-gray-500 text-center">
-                    *By selecting Sign Up, you confirm your agreement to the Terms &
-                    Conditions and Privacy Policy
-                  </p>
-                </form>
-              </>
+              <SignupForm onSwitchToLogin={() => setView("login")} />
             )}
           </div>
         </div>

@@ -29,7 +29,7 @@ const MenuGrid = ({ items, onAddToCart, disabled }) => {
 
   if (!items || items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] md:min-h-[400px] bg-neutral-50 rounded-lg border-2 border-dashed border-primary p-4 sm:p-6 md:p-8">
+      <div className="flex flex-col items-center justify-center z-10 min-h-[300px] md:min-h-[400px] bg-neutral-50 rounded-lg border-2 border-dashed border-primary p-4 sm:p-6 md:p-8">
         <div className="relative mb-3 md:mb-4">
           <ChefHat className="w-12 h-12 md:w-16 md:h-16 text-neutral-300" />
           <UtensilsCrossed className="w-6 h-6 md:w-8 md:h-8 text-neutral-400 absolute -bottom-2 -right-2 transform rotate-12" />

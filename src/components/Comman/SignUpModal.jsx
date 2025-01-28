@@ -5,6 +5,8 @@ import "react-phone-input-2/lib/style.css";
 import SignupSuccessModal from "./SignupSyccessModal";
 import OTPVerificationModal from "./OtpVerificationModal";
 import { detectUserCountryWithCache } from "../../services/api/countrydetection";
+import LoginModal from "./LoginModal";
+import { useNavigate } from "react-router-dom";
 
 const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,7 +15,7 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
   const [error, setError] = useState("");
   const [firstSubmitAttempt, setFirstSubmitAttempt] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [userCountry, setUserCountry] = useState("in"); // Default to India
+  const [userCountry, setUserCountry] = useState("in"); 
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -26,7 +28,8 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-
+  const [isloginmodal, setIsLoginModal] =  useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     const initializeCountry = async () => {
       const countryCode = await detectUserCountryWithCache();
@@ -37,6 +40,10 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
   }, []);
 
   if (!isOpen) return null;
+  
+  const onloginclick = () => {
+    setIsLoginModal(true);
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -63,7 +70,6 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
     setError("");
     setFirstSubmitAttempt(true);
 
-    // Validation checks
     if (!agreeToTerms) {
       setError("Please agree to the Privacy Policy and Terms and Conditions");
       return;
@@ -122,7 +128,7 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
   const handleVerifyOTP = async (otp) => {
     try {
       const response = await fetch(
-        "http://sandbox.vovpos.com:3002/web/verify-otp",
+        "https://sandbox.vovpos.com:3002/web/verifyEmail",
         {
           method: "POST",
           headers: {
@@ -140,7 +146,18 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
       }
 
       setShowOTPModal(false);
-      onClose();
+      setShowSuccessModal(true); // Open success modal on successful verification
+      setFormData({ // Clear the form data after successful signup
+        first_name: "",
+        last_name: "",
+        email_address: "",
+        password: "",
+        mobile_number: "",
+        date_of_birth: "",
+        gender: "1",
+      });
+      setConfirmPassword(""); // Clear confirm password
+      setAgreeToTerms(false); // Reset agree to terms
     } catch (error) {
       throw new Error("OTP verification failed");
     }
@@ -377,6 +394,7 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
                   <button
                     type="button"
                     className="text-red-500 hover:text-red-600"
+                    onClick={() => { window.location.href = '/privacy-policy'; window.open('/privacy-policy', '_blank'); }}
                   >
                     Privacy Policy
                   </button>{" "}
@@ -384,6 +402,8 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
                   <button
                     type="button"
                     className="text-red-500 hover:text-red-600"
+                   onClick={() => { window.location.href = '/terms-and-conditions'; window.open('/terms-and-conditions', '_blank'); }}
+
                   >
                     Terms and Conditions
                   </button>
@@ -423,6 +443,7 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
       <SignupSuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
+        onLoginClick={onloginclick}
       />
 
       <OTPVerificationModal
@@ -431,6 +452,7 @@ const SignUpModal = ({ isOpen, onClose, onLoginClick }) => {
         onVerify={handleVerifyOTP}
         email={formData.email_address}
       />
+      <LoginModal isOpen={isloginmodal} onClose={() => setIsLoginModal(false)}  />
     </>
   );
 };
